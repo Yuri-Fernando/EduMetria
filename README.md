@@ -165,9 +165,9 @@ outros itens): sem DIF → falso positivo 0,0%; com DIF uniforme em 3 itens → 
 
 | Run | Resultado principal |
 |---|---|
-| S0 | α=0,851 [0,840; 0,862]; 2PL e GRM convergiram; RMSE(b)=0,076; 1 falso positivo de DIF (A08, não uniforme) → revisão |
-| S2 | A05, A13, A21 detectados (ETS C), mais A08; RMSE(b)=0,137 (o 2PL comum fica mal especificado sob DIF, por construção) |
-| S10 | lote **bloqueado** (110 linhas em quarentena: 25 versão desconhecida, 15 categoria inválida, 40 duplicatas, 30 atrasadas); reexecução com lote corrigido reproduz S0 |
+| S0 (`run-s0-20260929T001555-192303`) | α=0,851 [0,840; 0,862]; 2PL e GRM convergiram; RMSE(b)=0,076; 1 falso positivo de DIF (A08, não uniforme) → revisão |
+| S2 (`run-s2-20260929T001628-ab547f`) | A05, A13, A21 detectados (ETS C), mais A08; RMSE(b)=0,137 (o 2PL comum fica mal especificado sob DIF, por construção) |
+| S10 (`run-s10-…-ada755` → `run-s10-…-395e01`) | lote **bloqueado** (110 linhas em quarentena: 25 versão desconhecida, 15 categoria inválida, 40 duplicatas, 30 atrasadas); reexecução com lote corrigido reproduz S0 |
 
 **Risco preditivo (S0/S2, escolas externas, t0=40)**: AUC B0=0,872 · B1=0,873 · B2=0,875 · B3=0,79;
 **ΔAUC B2−B1 = +0,003, IC95% [−0,034; 0,037]** → a hipótese H3 (escores agregam valor preditivo) **não foi

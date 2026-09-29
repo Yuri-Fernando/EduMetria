@@ -1,0 +1,55 @@
+{
+  "n_received": 72110,
+  "n_accepted": 72000,
+  "n_quarantined": 110,
+  "blocking": true,
+  "findings": [
+    {
+      "code": "unknown_item_version",
+      "count": 25,
+      "action": "quarentena; impedir score e acionar responsável pelo instrumento (alerta A2)"
+    },
+    {
+      "code": "invalid_category",
+      "count": 15,
+      "action": "quarentena; categoria fora da escala — nunca imputar"
+    },
+    {
+      "code": "duplicate_response",
+      "count": 40,
+      "action": "descartar duplicata; manter primeira ocorrência"
+    },
+    {
+      "code": "late_arrival",
+      "count": 30,
+      "action": "quarentena para revisão; não entra em snapshot já fechado"
+    }
+  ],
+  "omission_by_reason": {
+    "answered": 0.9775,
+    "omitted": 0.0199,
+    "not_applicable": 0.0026
+  },
+  "coverage_by_school": {
+    "SCH01": 95,
+    "SCH02": 94,
+    "SCH03": 109,
+    "SCH04": 108,
+    "SCH05": 97,
+    "SCH06": 88,
+    "SCH07": 113,
+    "SCH08": 117,
+    "SCH09": 88,
+    "SCH10": 102,
+    "SCH11": 95,
+    "SCH12": 102,
+    "SCH13": 97,
+    "SCH14": 106,
+    "SCH15": 88,
+    "SCH16": 112,
+    "SCH17": 98,
+    "SCH18": 98,
+    "SCH19": 98,
+    "SCH20": 95
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "run_id": "run-s0-20260929T001555-192303",
+  "created_at": "2026-09-29T00:16:13.550595+00:00",
+  "purpose": "simulation",
+  "data_origin": "synthetic",
+  "dataset_hash": "c46e9c4e78c04f5cee4c42b9afd719fd2042e8666ebe049899184b5a3685f338",
+  "item_bank_hash": "ba6ad2a0c1b52e3ed8fe8a0a9dd75dcba7eeac03a68ef91978373b189d4edbf4",
+  "instrument_versions": [
+    "math6-v0.1",
+    "belong6-v0.1"
+  ],
+  "code_commit": "ccab20dc94ae050e44e82bfb16960d03e9ba7049",
+  "image_digest": null,
+  "python_lock_hash": "4c5106bc7c5763bff0caa484a0373b2e85c0d74c3d215170be3d3a6fdf5ad93f",
+  "renv_lock_hash": null,
+  "environment": {
+    "python": "3.10.8",
+    "edumetria": "0.1.0",
+    "numpy": "2.2.6",
+    "pandas": "2.3.1",
+    "scipy": "1.15.3",
+    "scikit-learn": "1.7.2",
+    "statsmodels": "0.14.6",
+    "pydantic": "2.12.3",
+    "matplotlib": "3.10.0",
+    "platform": "Windows-10-10.0.26200-SP0"
+  },
+  "seed": 20260928,
+  "method": {
+    "math6": "2PL MML-EM (Bock-Aitkin), 1PL comparador",
+    "belong6": "GRM MML-EM",
+    "scoring": "EAP, prior N(0, 1) — escala interna EduMetria",
+    "dif": "Mantel-Haenszel + regressão logística LR, BH",
+    "engine": "python-native (edumetria.irt)"
+  },
+  "fit_options": {
+    "n_quad": 61,
+    "quad_range": [
+      -6,
+      6
+    ],
+    "tol": 0.0001,
+    "se": "crossprod"
+  },
+  "sample_design": {
+    "scenario": "s0",
+    "n_students": 2000,
+    "n_schools": 20,
+    "snapshot_id": "synthetic-s0-c46e9c4e78c0"
+  },
+  "split_manifest": {
+    "train_t0_days": [
+      20,
+      30
+    ],
+    "test_t0_days": [
+      40
+    ],
+    "train_schools": [
+      "SCH01",
+      "SCH04",
+      "SCH05",
+      "SCH06",
+      "SCH07",
+      "SCH08",
+      "SCH11",
+      "SCH12",
+      "SCH13",
+      "SCH14",
+      "SCH15",
+      "SCH17",
+      "SCH18",
+      "SCH20"
+    ],
+    "test_schools": [
+      "SCH02",
+      "SCH03",
+      "SCH09",
+      "SCH10",
+      "SCH16",
+      "SCH19"
+    ],
+    "horizon_days": 20,
+    "embargo": "escolas de teste disjuntas do treino; sem estudante em comum"
+  },
+  "warnings": [],
+  "artifacts": {
+    "content_validity.json": "c9f89571af759e04a91b08a6fd3c51b017c24279ec510fb44b99d1840b89a57c",
+    "ctt_distractors.csv": "66e8301502264c75174ab64f0e9071982bf78d9b50ef88a8c07b6cf6ff1d11e3",
+    "ctt_items.csv": "ad52a0234ff57ab4f1a2d0c60825e81236a1f0660a8fcdc9e95c7250f0d66135",
+    "ctt_test.json": "948a03825172789abe62a3a50313da1eddd73dca2c06c02aa8e0d3c7855e6eda",
+    "data_quality.json": "a3e2fd7ac51e9a33d6471eb15f40004a7d8f0ea93d2b781bbf9b43da95a78681",
+    "dataset_card.md": "27258a1694b0741ec8bdecd2eb24b0c4502ca0ec2f97df7426eda14509648af3",
+    "dif_report.csv": "247d4de680db095839e9dbd83943b4cc8271b7fa335b0bf44c2355240e586ec6",
+    "evidence_report.json": "67b3922c82a43c83a136e8eecddf11011fb90bc52b09c6c495af77ff6bf0d1f8",
+    "executive_report.html": "accea757dc0ba86da6ef470e190eb4592372047152c21656f6493116f6bb26fa",
+    "figures/ctt_math6.png": "fbcc7f119343ad6ac9a54bceb60743794a30abe86a7805ef5941d62c9847507f",
+    "figures/dif_math6.png": "772aace79d2ab3bcf9b18add838661cfb626b414bfdf2c5b5ab329965d9684f7",
+    "figures/icc_math6.png": "6d699534312f6adac6f7ed567687f29d71f855d44be4bf96ae4f953f9d02b3df",
+    "figures/information_math6.png": "245e8aac3bd2ddd5114032612cf2fd859f1fe402b5117b6d5319b64b78f12106",
+    "figures/obs_exp_worst_item.png": "1595d3d5d4893d10e4995f522075edf746efacb9ede6252122db654e92b907c2",
+    "figures/theta_uncertainty_math6.png": "7341569aaf43f307d162f3d984eca60cb959ce6ca0f136c52306213551ce4c7e",
+    "fit_diagnostics.json": "33d62d2e70e8150ee31aa1a3abd2597cfee0470a22cbb827910a259bc92e8e7a",
+    "instrument_card.md": "34099ac0492ab4e419fe7d13be22979432814ede630042ad687a4dd85649a3b6",
+    "item_parameters_belong6.csv": "85fbb34ef4c00a2d8c909ce0437a841679dbec1e4292c5a133d85bfed637e3f7",
+    "item_parameters_math6.csv": "0aa82997cbe6b4eb5424768c6d2ed8fd24ccfbc4809f1a4d1a81756dd220a09a",
+    "model_card.md": "65bc5c69f1597875c9b31e2518b20b3d3bdf366d524a2346ed41a9af944236d2",
+    "observed_expected_math6.csv": "05d0703f8e654f44aec24913a213c03feef8cc93bcae080eda9699dba5124a76",
+    "precision_curves.json": "dbccb7027d0cd8ae509be55d3ca8af0842aa5bbc89e42aa3478943325cf6c6f9",
+    "restricted/quarantine.csv": "87fd1b0d4d3d5f65c935ec5deea8b341ed37e34d7fa74c18f1be4ad7d7e89508",
+    "restricted/scores.csv": "63e6b494e1bd4b7832c9da5d3b77a96f51d372bb6c25b235a4ff872265d1b33c",
+    "risk_evaluation.json": "111609575c6f81b1d5e59cdf8573897fab5123db6e4dc7f7db360a17f1b27aea",
+    "run.log": "728009160ad272eae6fab2a7e45b9294170f60aa98600bbc71b9a20a618abf52",
+    "run_status.json": "3efe40481f19c949cca284731dc61c9f66d03822e791b72ff706652aa1170e70",
+    "simulation_recovery.json": "d9573922810499e757ec3ecf2b95eb3dc25db99aee3198890fc3fe5ecaeb8ae7",
+    "technical_report.html": "c17902e77a194f3747f74a4347dc4925d1ce7399fe998fa7c26f2e626ea04708"
+  },
+  "reviewer": null,
+  "release_status": "candidate"
+}
