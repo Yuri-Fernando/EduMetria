@@ -1,0 +1,34 @@
+{
+  "n_received": 72000,
+  "n_accepted": 72000,
+  "n_quarantined": 0,
+  "blocking": false,
+  "findings": [],
+  "omission_by_reason": {
+    "answered": 0.9775,
+    "omitted": 0.0199,
+    "not_applicable": 0.0026
+  },
+  "coverage_by_school": {
+    "SCH01": 95,
+    "SCH02": 94,
+    "SCH03": 109,
+    "SCH04": 108,
+    "SCH05": 97,
+    "SCH06": 88,
+    "SCH07": 113,
+    "SCH08": 117,
+    "SCH09": 88,
+    "SCH10": 102,
+    "SCH11": 95,
+    "SCH12": 102,
+    "SCH13": 97,
+    "SCH14": 106,
+    "SCH15": 88,
+    "SCH16": 112,
+    "SCH17": 98,
+    "SCH18": 98,
+    "SCH19": 98,
+    "SCH20": 95
+  }
+}

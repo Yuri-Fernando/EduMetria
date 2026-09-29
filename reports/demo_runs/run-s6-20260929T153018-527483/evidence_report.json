@@ -1,0 +1,171 @@
+{
+  "schema_version": "1.1.0",
+  "report_id": "evr-run-s6-20260929T153018-527483",
+  "instrument_version_id": "math6-v0.1",
+  "population_and_purpose": "População artificial (6º ano, 2 municípios fictícios); propósito: demonstrar engenharia de medição — sem uso decisório.",
+  "data_origin": "synthetic",
+  "content_review": {
+    "status": "exploratory",
+    "summary": "S-CVI/Ave=0.92 com pareceres SIMULADOS; itens para revisão: B02, B06. Não conta como evidência humana.",
+    "run_id": "run-s6-20260929T153018-527483",
+    "details": {
+      "evidence_origin": [
+        "simulated_review"
+      ],
+      "counts_as_human_evidence": false
+    }
+  },
+  "response_process": {
+    "status": "not_assessed",
+    "summary": "Entrevistas cognitivas não realizadas (exige piloto aprovado).",
+    "run_id": null,
+    "details": {}
+  },
+  "dimensionality": {
+    "status": "exploratory",
+    "summary": "Triagem por autovalores (razão 1º/2º=2.52) e Q3 (9 pares sinalizados). CFA ordinal: ver seção structure_invariance.",
+    "run_id": "run-s6-20260929T153018-527483",
+    "details": {
+      "q3_flags": [
+        {
+          "item_i": "A12",
+          "item_j": "A24",
+          "q3": 0.2651762490702272,
+          "q3_minus_mean": 0.2947304869624533
+        },
+        {
+          "item_i": "A12",
+          "item_j": "A15",
+          "q3": 0.2378077291486724,
+          "q3_minus_mean": 0.2673619670408985
+        },
+        {
+          "item_i": "A15",
+          "item_j": "A24",
+          "q3": 0.21562028187028637,
+          "q3_minus_mean": 0.24517451976251248
+        },
+        {
+          "item_i": "A08",
+          "item_j": "A12",
+          "q3": 0.2138984829633901,
+          "q3_minus_mean": 0.2434527208556162
+        },
+        {
+          "item_i": "A02",
+          "item_j": "A12",
+          "q3": 0.19776968603790251,
+          "q3_minus_mean": 0.22732392393012862
+        },
+        {
+          "item_i": "A08",
+          "item_j": "A24",
+          "q3": 0.1948875824833858,
+          "q3_minus_mean": 0.2244418203756119
+        },
+        {
+          "item_i": "A02",
+          "item_j": "A08",
+          "q3": 0.19006034146231124,
+          "q3_minus_mean": 0.21961457935453732
+        },
+        {
+          "item_i": "A08",
+          "item_j": "A15",
+          "q3": 0.1864045848992994,
+          "q3_minus_mean": 0.2159588227915255
+        },
+        {
+          "item_i": "A02",
+          "item_j": "A24",
+          "q3": 0.17181195599792254,
+          "q3_minus_mean": 0.20136619389014865
+        }
+      ]
+    }
+  },
+  "ctt": {
+    "status": "supported",
+    "summary": "α=0.807 (IC95% 0.793–0.820, n=1224 casos completos). 0 itens com flags investigativas.",
+    "run_id": "run-s6-20260929T153018-527483",
+    "details": {
+      "evidence_basis": "synthetic_simulation"
+    }
+  },
+  "irt": {
+    "status": "supported",
+    "summary": "2PL convergiu=True em 19 ciclos; GRM convergiu=True; 1 avisos de item.",
+    "run_id": "run-s6-20260929T153018-527483",
+    "details": {
+      "evidence_basis": "synthetic_simulation",
+      "engine": "python-native"
+    }
+  },
+  "precision": {
+    "status": "supported",
+    "summary": "posterior_sd mediano=0.405; 0 estudantes sem evidência suficiente (θ ausente).",
+    "run_id": "run-s6-20260929T153018-527483",
+    "details": {
+      "evidence_basis": "synthetic_simulation"
+    }
+  },
+  "dif": {
+    "status": "exploratory",
+    "summary": "0 itens sinalizados para revisão humana (nenhum); nenhuma remoção automática.",
+    "run_id": "run-s6-20260929T153018-527483",
+    "details": {
+      "review_state": "no_action"
+    }
+  },
+  "external_relations": {
+    "status": "exploratory",
+    "summary": "AUC B2−B1 (escolas externas, t0=40) = 0.009 IC95% [-0.003; 0.023]. Relação gerada pela simulação — não prova ganho real.",
+    "run_id": "run-s6-20260929T153018-527483",
+    "details": {}
+  },
+  "structure_invariance": {
+    "status": "exploratory",
+    "summary": "CFA 1 fator matemática: CFI=0.879, RMSEA=0.052, SRMR=0.077; CFA 1 fator pertencimento: CFI=1.000, RMSEA=0.006, SRMR=0.016; invariância pertencimento (A×B): limiares p=0.675, +cargas p=0.069. Índices descritivos — nenhum limiar isolado autoriza uso.",
+    "run_id": "run-s6-20260929T153018-527483",
+    "details": {
+      "evidence_basis": "synthetic_simulation",
+      "engine": "R/lavaan WLSMV"
+    }
+  },
+  "limitations": [
+    "Todos os dados são sintéticos; nenhuma conclusão sobre estudantes, escolas ou redes reais.",
+    "Pareceres de juízes são simulados; nenhuma revisão humana real ocorreu.",
+    "Sem entrevistas cognitivas; linking entre versões só em estudo simulado (scripts/p2_studies.py).",
+    "Escala interna (θ ~ N(0,1)) não é comparável a SAEB, ENEM ou PISA.",
+    "Alvo preditivo é proxy demonstrativo, não definição de evasão."
+  ],
+  "prohibited_uses": [
+    "Decisão automática sobre estudantes",
+    "Ranking punitivo de escolas/docentes",
+    "Diagnóstico psicológico",
+    "Comparação com escalas oficiais"
+  ],
+  "approval_state": "candidate — requer liberação manual por psicometrista",
+  "artifacts": [
+    "ctt_items.csv",
+    "item_parameters_math6.csv",
+    "item_parameters_belong6.csv",
+    "fit_diagnostics.json",
+    "dif_report.csv",
+    "precision_curves.json",
+    "risk_evaluation.json",
+    "content_validity.json",
+    "manifest.json"
+  ],
+  "lineage": {
+    "report": "run-s6-20260929T153018-527483",
+    "snapshot": "synthetic-s6-6ab060321f7e",
+    "dataset_hash": "6ab060321f7e0c18ae2097fcef51fe0f0ad829841719aab6e336b67149e71c0c",
+    "instrument_versions": [
+      "math6-v0.1",
+      "belong6-v0.1"
+    ],
+    "item_bank": "configs/item_bank.yaml",
+    "schema_version": "1.1.0"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "math6": {
+    "alpha": {
+      "alpha": 0.849057480662553,
+      "ci_low": 0.838276811824351,
+      "ci_high": 0.8600715192781903,
+      "ci_method": "bootstrap percentil (500 réplicas, casos completos)",
+      "n_complete": 1221,
+      "state": "ok",
+      "note": "alfa alto não prova validade nem unidimensionalidade"
+    },
+    "score_distribution": {
+      "n_complete": 1221,
+      "mean": 12.093366093366093,
+      "sd": 5.335571647693345,
+      "histogram": {
+        "0": 2,
+        "1": 12,
+        "2": 19,
+        "3": 23,
+        "4": 38,
+        "5": 59,
+        "6": 56,
+        "7": 70,
+        "8": 56,
+        "9": 81,
+        "10": 86,
+        "11": 79,
+        "12": 61,
+        "13": 74,
+        "14": 76,
+        "15": 73,
+        "16": 79,
+        "17": 59,
+        "18": 48,
+        "19": 57,
+        "20": 36,
+        "21": 34,
+        "22": 26,
+        "23": 13,
+        "24": 4
+      }
+    }
+  },
+  "belong6": {
+    "alpha": {
+      "alpha": 0.8441750507658395,
+      "ci_low": 0.8323948411110578,
+      "ci_high": 0.855181264591792,
+      "ci_method": "bootstrap percentil (500 réplicas, casos completos)",
+      "n_complete": 1425,
+      "state": "ok",
+      "note": "alfa alto não prova validade nem unidimensionalidade"
+    },
+    "note": "alfa sobre categorias 0–3 tratadas como numéricas; ômega ordinal no roadmap"
+  }
+}

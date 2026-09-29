@@ -193,6 +193,7 @@ outros itens): sem DIF → falso positivo 0,0%; com DIF uniforme em 3 itens → 
 | S0 (`run-s0-20260929T001555-192303`) | α=0,851 [0,840; 0,862]; 2PL e GRM convergiram; RMSE(b)=0,076; 1 falso positivo de DIF (A08, não uniforme) → revisão |
 | S2 (`run-s2-20260929T001628-ab547f`) | A05, A13, A21 detectados (ETS C), mais A08; RMSE(b)=0,137 (o 2PL comum fica mal especificado sob DIF, por construção) |
 | S10 (`run-s10-…-ada755` → `run-s10-…-395e01`) | lote **bloqueado** (110 linhas em quarentena: 25 versão desconhecida, 15 categoria inválida, 40 duplicatas, 30 atrasadas); reexecução com lote corrigido reproduz S0 |
+| 🆕 v0.3.0: S0, S2, S6 (`run-s0-20260929T152744-6b9ca7`, `run-s2-20260929T152846-a6a9d6`, `run-s6-20260929T153018-527483`) | mesmos resultados de medição, agora com seção `structure_invariance` (CFA/invariância), PDF técnico e manifesto ligado ao commit `9d805ae` |
 
 **Risco preditivo (S0/S2, escolas externas, t0=40)**: AUC B0=0,872 · B1=0,873 · B2=0,875 · B3=0,79;
 **ΔAUC B2−B1 = +0,003, IC95% [−0,034; 0,037]** → a hipótese H3 (escores agregam valor preditivo) **não foi
@@ -223,7 +224,7 @@ itens e pessoas como o Inep em dados reais.
 | **GRM × GPCM** (dados gerados por GRM) | logLik favorece o GRM (−28.637 × −28.691) |
 | **Multinível** (ICC conhecido) | ICC estimado 0,204 (REML) e 0,204 (ANOVA) × realizado 0,196 |
 | **Impacto** (ICC de planejamento 0,05) | MDES com 20 escolas × 100 alunos = 0,32 dp; 50 escolas para 0,20 dp; poder simulado para −3 p.p. com 20 escolas: 56% |
-| **CFA / invariância** (S0) | CFA 1 fator: matemática CFI 0,986, pertencimento CFI 0,996; invariância A×B: limiares p = 0,72, cargas p = 0,86 · no S6 a CFA de matemática cai para CFI 0,879 |
+| **CFA / invariância** (S0, run `run-s0-20260929T152744-6b9ca7`) | CFA 1 fator: matemática CFI 0,999 / RMSEA 0,006, pertencimento CFI 1,000; invariância A×B: limiares p = 0,82, cargas p = 0,22 · no S6 (`run-s6-20260929T153018-527483`, 2 dimensões) a CFA de matemática cai para CFI 0,879 / RMSEA 0,052 |
 
 ### 🆕 Governança e plataforma (P1) — verificações executadas
 
