@@ -1,7 +1,7 @@
 # Metodologia psicométrica — EduMetria v0.1
 
 > Referências conceituais: Standards AERA/APA/NCME (2014) [S01]; Chalmers (2012), mirt [S02–S06];
-> lavaan (dados categóricos) [S07]. Lista completa na seção 33 de `docs/plano/POC_EduMetria_Plano_Mestre_Implementacao.txt`.
+> lavaan (dados categóricos) [S07]. Lista completa na seção 33 de `docs/plano/POC_EduMetria_Plano_Mestre_v1.1.txt`.
 
 ## TCT (`src/edumetria/ctt/analysis.py`)
 

@@ -17,3 +17,6 @@ data/snapshots/
 .idea/
 Thumbs.db
 .DS_Store
+
+# plano original (v1.0) mantido só localmente
+docs/plano/POC_EduMetria_Plano_Mestre_Implementacao.txt

@@ -8,6 +8,10 @@ Ver também: [ROADMAP.md](ROADMAP.md) (escopo/fases), [WORKLOG.md](WORKLOG.md) (
 
 ## [Unreleased]
 
+### Changed
+- README: seção de contexto reescrita para descrever o **estudo** (pergunta de pesquisa, população simulada, o que se verifica) — sem referência a processo seletivo.
+- Plano mestre publicado como `docs/plano/POC_EduMetria_Plano_Mestre_v1.1.txt` (versão pública, sem seções de edital/aderência); a v1.0 original fica só local (ignorada pelo Git).
+
 ### Fixed
 - CI: o job de paridade com R ficava verde com os 3 testes **pulados** (`mirt` não instalava no R 4.4 do runner por falta de `Deriv`). Agora usa `r-version: release`, instala `Deriv`, verifica o `mirt` explicitamente e `EDUMETRIA_REQUIRE_R=1` transforma a ausência de R em falha.
 

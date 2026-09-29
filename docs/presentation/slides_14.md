@@ -15,4 +15,4 @@
 13. **Piloto e governança** — entrevistas cognitivas, juízes reais, CFA/invariância, LGPD/ANPD, comitê de ética.
 14. **Contribuição e próximos passos** — engenharia demonstrada; evidência de campo ainda necessária.
 
-Perguntas de banca: ver seção 30 do plano mestre (`docs/plano/`).
+Perguntas técnicas: ver seção 30 do plano mestre (`docs/plano/`).

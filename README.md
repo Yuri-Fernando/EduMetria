@@ -16,13 +16,21 @@ Infraestrutura de **medição educacional rastreável**: construção de instrum
 acompanhamento escolar com **revisão humana persistente** — mantendo separados três objetos que costumam
 ser confundidos: *medida psicométrica*, *sinal observado* (faltas) e *risco preditivo*.
 
-Inspirado nos requisitos de uma oportunidade pública de Psicometrista Sênior. **Não é produto oficial do
-IA.Edu, NEES, UFAL ou SAP, nem representa parceria com essas organizações.** Os itens são autorais e
-ilustrativos; os pareceres de juízes são simulados; nenhum dado de estudante real é usado.
+O estudo parte de uma pergunta: **como produzir medidas educacionais interpretáveis, com incerteza
+conhecida e evidência rastreável, e combiná-las com registros escolares para orientar apoio pedagógico
+e acompanhamento de permanência — sem que nenhum modelo decida sozinho sobre um estudante?**
 
-> **O que este projeto demonstra:** transformar método psicométrico em software verificável.
-> **O que ele não demonstra:** validade de instrumento em contexto real, experiência prévia em avaliações
-> de larga escala ou efeito sobre evasão — isso exige piloto, especialistas e estudo de impacto.
+Para responder com rigor, o projeto trabalha com **simulação com gabarito conhecido**: uma população
+artificial (2 municípios, 20 escolas, 2.000 estudantes do 6º ano) responde a um instrumento autoral de
+matemática (24 itens) e a uma escala de pertencimento escolar (12 itens), com frequência diária ao longo
+de 60 dias letivos. Como os parâmetros verdadeiros são conhecidos, é possível verificar se o motor
+**recupera** o que foi gerado, se **detecta** DIF plantado sem inflar falsos positivos, se **bloqueia**
+dados inválidos e vazamento temporal, e se os escores **agregam** valor preditivo à frequência.
+
+> **O que o estudo mostra:** que o método psicométrico pode ser transformado em software verificável,
+> com resultados reproduzíveis por manifesto. **O que ainda não mostra:** validade do instrumento em
+> contexto real ou efeito sobre permanência — isso exige dados reais, especialistas e estudo de impacto.
+> Itens autorais e ilustrativos; pareceres de juízes simulados; nenhum dado de estudante real.
 
 ---
 

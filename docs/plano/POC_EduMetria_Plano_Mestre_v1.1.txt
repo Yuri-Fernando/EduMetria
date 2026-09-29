@@ -4,10 +4,9 @@ Arquitetura, método científico, implementação, observabilidade e apresentaç
 
 Autor do projeto: Yuri Fernando Dubbern
 Documento preparado em: 28/09/2026
-Versão: 1.0 — especificação para desenvolvimento
+Versão: 1.1 (pública) — especificação para desenvolvimento
 Nome provisório: EduMetria. Disponibilidade de marca/domínio não verificada.
-Natureza: projeto autoral de portfólio e pesquisa aplicada, inspirado nos requisitos da oportunidade de Psicometrista Sênior do IA.Edu fornecidos pelo usuário.
-Não representa produto oficial do IA.Edu, NEES, UFAL ou SAP, nem parceria com essas organizações.
+Natureza: projeto autoral de pesquisa aplicada em medição educacional.
 
 ESTADO REAL DESTA ENTREGA
 Foi realizada pesquisa em fontes primárias e inspeção remota de documentação e arquivos de código selecionados do ecossistema GitHub de Yuri. Este TXT entrega a especificação completa da PoC, seus contratos, backlog, protocolo experimental, desenho das telas, roteiro de apresentação e instruções de implementação. Não constitui uma aplicação já implementada, executada ou implantada. Não foram calibrados instrumentos reais nem produzidas métricas experimentais nesta sessão. Metas, cenários, códigos ilustrativos e resultados esperados estão identificados como tal.
@@ -83,7 +82,7 @@ Não importar regras de oferta, desconto, receita, RFM ou win-back para alunos. 
 
 2.5 Churn_intelligence
 Evidência: README.md.
-Pipeline de churn, agentes, RAG, MLflow e API. A separação predição/decisão é aproveitável como padrão arquitetural. Os limiares comerciais descritos não são apropriados ao SAP e devem ser substituídos por política pedagógica deliberada.
+Pipeline de churn, agentes, RAG, MLflow e API. A separação predição/decisão é aproveitável como padrão arquitetural. Os limiares comerciais descritos não são apropriados ao contexto educacional e devem ser substituídos por política pedagógica deliberada.
 
 2.6 Projetos_Pessoais
 Evidência: README.md.
@@ -169,7 +168,7 @@ P2 — após PoC:
 Fora da PoC: diagnóstico clínico; decisão automática de reprovação, transferência ou exclusão; ranking punitivo de alunos/professores; inferência de saúde mental; intervenção autônoma por WhatsApp; alegação de validação oficial; uso de instrumentos proprietários sem licença.
 
 ======================================================================
-6. MATRIZ DE ADERÊNCIA À OPORTUNIDADE
+6. MATRIZ DE REQUISITOS × ARTEFATOS
 ======================================================================
 
 Requisito | Artefato implementável | Evidência de conclusão
@@ -186,7 +185,6 @@ Integração com IA | tools estruturadas + evidência | Resposta rastreável sem
 Notas técnicas | template + renderer | PDF/HTML futuro com valores do run real
 Visão de negócio | capacidade e fluxo de apoio | Métricas de operação e acompanhamento
 
-Este projeto demonstra construção técnica aplicada. Não converte experiência de engenharia em experiência profissional prévia com TRI, bancas e avaliações em larga escala. Na apresentação, distinguir explicitamente competência demonstrada, aprendizado em andamento e experiência ainda não exercida.
 
 ======================================================================
 7. INSTRUMENTOS: O QUE MEDIR E O QUE NÃO MISTURAR
@@ -962,14 +960,6 @@ Aceite: cada alegação tem comando/run/artefato verificável.
 
 Observação: a soma das faixas detalhadas é 120–190h; atividades podem se sobrepor, mas isso não elimina esforço. Se houver menos tempo, reduzir escopo explicitamente.
 
-RECORTE PARA O PRAZO DO EDITAL
-O texto fornecido informa inscrição até 01/10/2026 às 23h59 de Brasília. Esse prazo não foi confirmado independentemente na pesquisa.
-28/09: fechar especificação, repo e gerador.
-29/09: núcleo TCT/2PL e relatório real de execução.
-30/09: tela mínima, rastreabilidade e vídeo curto.
-01/10: revisar apresentação e candidatura com estado honesto do projeto.
-Esse recorte é P0 parcial; não cabe prometer todo o produto ou validação científica nesse intervalo.
-
 ======================================================================
 28. DEPLOY, RECURSOS E CUSTOS
 ======================================================================
@@ -1028,7 +1018,7 @@ Este é o roteiro de apresentação dentro do TXT, não um PPTX gerado nesta ent
 SLIDE 1 — EduMetria
 Mensagem: infraestrutura de medição e evidências para apoiar trajetórias escolares.
 Visual: três blocos — instrumento, evidência, apoio.
-Fala: projeto autoral experimental inspirado no problema descrito na oportunidade.
+Fala: projeto autoral experimental de pesquisa aplicada.
 
 SLIDE 2 — O problema de decisão
 Mensagem: dados de frequência e questionários não se tornam evidência válida automaticamente.
@@ -1095,7 +1085,7 @@ Mensagem: transformar método psicométrico em software verificável.
 Conteúdo: engenharia e integração demonstradas; evidências de campo ainda necessárias; proposta de colaboração multidisciplinar.
 Fala final: “O objetivo é que cada medida tenha origem, incerteza e uso explícitos, e que cada ação de apoio tenha responsável e acompanhamento.”
 
-Perguntas de banca a preparar:
+Perguntas técnicas a preparar:
 1. Por que 2PL e GRM? Responder pelo formato e pressupostos, não por sofisticação.
 2. Alfa alto prova validade? Não; explicar estrutura, redundância e usos.
 3. Como comparar escolas? Desenho, composição, invariância, incerteza e finalidade.
@@ -1105,7 +1095,6 @@ Perguntas de banca a preparar:
 7. Como provar impacto? Estudo de intervenção; predição não é efeito.
 8. Qual é a atuação do LLM? Linguagem/rascunho; estatística e decisão seguem motores/atores próprios.
 9. O que já funciona? Citar somente comandos e artefatos realmente executados.
-10. Você tem experiência sênior em psicometria? Apresentar trajetória real e a contribuição desta PoC sem inflar experiência.
 
 ======================================================================
 31. PROMPT MESTRE PARA CLAUDE/CODEX IMPLEMENTAR
@@ -1289,9 +1278,6 @@ G10 https://github.com/Yuri-Fernando/Projetos_Pessoais/blob/main/README.md
 Blob SHA observado de G10: 3b90fcd6d4c19efa18c9d4a23e33e93c05ec6fd3
 
 Os SHAs acima identificam blobs de arquivo, não commits de release. As URLs de branch podem mudar depois desta data; para implementação, registrar commit completo de cada dependência.
-
-EDITAL E CONTEXTO INSTITUCIONAL
-Fonte primária disponível nesta conversa: texto integral da oportunidade fornecido pelo usuário. As buscas realizadas não localizaram página oficial inequívoca para verificar independentemente o processo 06.2026 e o SAP descrito. Não se usaram iniciativas de nome parecido como se fossem esse programa. Escopo, função e prazo mencionados vêm do texto fornecido.
 
 DECISÃO FINAL DO PROJETO
 EduMetria deve acrescentar uma competência nova ao ecossistema: medição educacional rastreável, com motor psicométrico real e governança de uso. Argus, Themis e Aegis fornecem pontos de reaproveitamento, mas o instrumento, a escala, as evidências e a política de apoio precisam de desenho próprio. A primeira entrega comprova engenharia e comportamento estatístico em simulação; a etapa seguinte constrói evidências com profissionais e escolas.

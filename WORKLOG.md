@@ -5,7 +5,7 @@ Log cronológico por sessão, complementar ao `CHANGELOG.md` (orientado a versã
 ## 2026-09-28 — v0.1.0: do plano mestre ao P0 executável
 
 ### Contexto
-Plano mestre (`docs/plano/POC_EduMetria_Plano_Mestre_Implementacao.txt`, v1.0) especificava a PoC.
+Plano mestre (`docs/plano/POC_EduMetria_Plano_Mestre_v1.1.txt`, v1.0) especificava a PoC.
 Nesta sessão o P0 foi implementado de ponta a ponta, com execução real.
 
 ### Ambiente
