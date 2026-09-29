@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "edumetria"
-version = "0.3.0"
+version = "0.3.1"
 description = "EduMetria — psicometria, evidências e apoio à permanência escolar (PoC autoral, dados sintéticos)"
 readme = "README.md"
 requires-python = ">=3.10"

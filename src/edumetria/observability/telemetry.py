@@ -43,7 +43,7 @@ ALLOWED_LABELS = {
     "method": {"GET", "POST", "PUT", "DELETE", "PATCH"},
     "status_class": {"2xx", "3xx", "4xx", "5xx"},
     "job_type": {"calibration", "other"},
-    "status": {"succeeded", "failed", "retried"},
+    "status": {"succeeded", "failed", "retried", "queued", "running", "cancelled"},
 }
 
 

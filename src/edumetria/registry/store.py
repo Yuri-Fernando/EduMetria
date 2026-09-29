@@ -360,6 +360,20 @@ class Store:
                       (status, json.dumps(result) if result else None, error_code, error_detail, _now(),
                        job_id, worker_id))
 
+    def job_stats(self) -> dict:
+        """Contagem de jobs por status e duração média (fim − criação) dos concluídos com sucesso.
+        Lida do banco para que métricas de jobs executados por OUTRO processo (worker) apareçam no /metrics."""
+        with self.session("*") as c:
+            rows = [dict(r) for r in c.execute("SELECT job_type, status, created_at, updated_at FROM jobs").fetchall()]
+        counts: dict[tuple[str, str], int] = {}
+        durs = []
+        for r in rows:
+            counts[(r["job_type"], r["status"])] = counts.get((r["job_type"], r["status"]), 0) + 1
+            if r["status"] == JobStatus.SUCCEEDED.value:
+                durs.append((datetime.fromisoformat(r["updated_at"]) - datetime.fromisoformat(r["created_at"])).total_seconds())
+        return {"counts": counts, "mean_duration_seconds": (sum(durs) / len(durs)) if durs else None,
+                "n_succeeded": len(durs)}
+
     # ------------------------------------------------------------ calibrações
     def register_calibration(self, tenant: str, instrument_version_id: str, dataset_snapshot_id: str,
                              model_family: str, run_id: str, manifest_hash: str, converged: bool,

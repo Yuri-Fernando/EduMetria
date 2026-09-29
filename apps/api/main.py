@@ -102,6 +102,14 @@ def create_app(db_path: str | None = None, runs_root: str | None = None, span_ex
 
     @app.get("/metrics", response_class=PlainTextResponse)
     def metrics():
+        st = store.job_stats()
+        # zera todos os status conhecidos antes: status que sumiu do banco não pode ficar com valor antigo
+        for status in ("queued", "running", "succeeded", "failed", "cancelled"):
+            METRICS.set_gauge("edumetria_jobs_by_status", 0, job_type="calibration", status=status)
+        for (jt, status), n in st["counts"].items():
+            METRICS.set_gauge("edumetria_jobs_by_status", n, job_type=jt, status=status)
+        if st["mean_duration_seconds"] is not None:
+            METRICS.set_gauge("edumetria_job_mean_duration_seconds", st["mean_duration_seconds"], job_type="calibration")
         return METRICS.render()
 
     # ------------------------------------------------------------ calibração

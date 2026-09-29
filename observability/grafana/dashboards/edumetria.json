@@ -10,11 +10,11 @@
     {"type": "timeseries", "title": "Latência média por rota (s)", "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
      "datasource": {"uid": "prom"},
      "targets": [{"expr": "sum by (route) (rate(edumetria_http_request_duration_seconds_sum[5m])) / sum by (route) (rate(edumetria_http_request_duration_seconds_count[5m]))", "legendFormat": "{{route}}"}]},
-    {"type": "stat", "title": "Jobs de calibração (sucesso/falha)", "gridPos": {"x": 0, "y": 8, "w": 12, "h": 6},
+    {"type": "stat", "title": "Jobs por status (lido do banco)", "gridPos": {"x": 0, "y": 8, "w": 12, "h": 6},
      "datasource": {"uid": "prom"},
-     "targets": [{"expr": "sum by (status) (edumetria_jobs_total)", "legendFormat": "{{status}}"}]},
-    {"type": "stat", "title": "Duração média de calibração (s)", "gridPos": {"x": 12, "y": 8, "w": 12, "h": 6},
+     "targets": [{"expr": "sum by (status) (edumetria_jobs_by_status)", "legendFormat": "{{status}}"}]},
+    {"type": "stat", "title": "Duração média de job concluído (s)", "gridPos": {"x": 12, "y": 8, "w": 12, "h": 6},
      "datasource": {"uid": "prom"},
-     "targets": [{"expr": "sum(edumetria_job_duration_seconds_sum) / sum(edumetria_job_duration_seconds_count)"}]}
+     "targets": [{"expr": "max(edumetria_job_mean_duration_seconds)"}]}
   ]
 }

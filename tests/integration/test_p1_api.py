@@ -143,3 +143,17 @@ def test_integrations_status_real(client):
     assert r["themis"]["integration_status"] == "verified_local" and len(r["themis"]["commit"]) == 40
     assert r["aegis"]["integration_status"] == "verified_local" and r["aegis"]["probe"]["allowed"] is False
     assert c.get("/v1/integrations/status", headers=COORD).status_code == 403
+
+
+def test_job_metrics_come_from_database_and_do_not_go_stale(client):
+    c, _ = client
+    body = {"instrument_version_id": "math6-v0.1", "dataset_snapshot_id": "synthetic-s0", "model_family": "2pl"}
+    job = c.post("/v1/calibrations", json=body, headers=PSI).json()
+    assert 'edumetria_jobs_by_status{job_type="calibration",status="queued"} 1' in c.get("/metrics").text
+    store = c.app.state.store
+    claimed = store.claim_job("w-test")
+    store.finish_job(claimed["job_id"], "w-test", ok=True, result={})
+    m = c.get("/metrics").text
+    assert 'edumetria_jobs_by_status{job_type="calibration",status="queued"} 0' in m  # não fica obsoleto
+    assert 'edumetria_jobs_by_status{job_type="calibration",status="succeeded"} 1' in m
+    assert job["job_id"] == claimed["job_id"]

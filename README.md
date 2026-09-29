@@ -4,8 +4,8 @@
 
 ## Status
 
-🟡 **v0.3.0 — P0, P1 e P2 (sem parceria) implementados e testados: 105 testes (R/mirt e PostgreSQL/RLS incluídos),
-notebook end-to-end executado e validação com dados públicos reais (ENEM 2023). Piloto com escolas, juízes reais e
+🟡 **v0.3.1 — P0, P1 e P2 (sem parceria) implementados e testados: 106 testes (R/mirt e PostgreSQL/RLS incluídos),
+notebook end-to-end executado, [galeria de telas reais](#️-galeria--telas-reais-do-sistema-rodando) e validação com dados públicos reais (ENEM 2023). Piloto com escolas, juízes reais e
 estudo de impacto dependem de parceria e ainda não foram realizados.**
 
 🆕 **O que há de novo** — v0.2.0 (P1): CFA ordinal e invariância no pipeline, PostgreSQL com Row Level Security, OIDC,
@@ -239,6 +239,42 @@ itens e pessoas como o Inep em dados reais.
 
 ---
 
+## 🖼️ Galeria — telas reais do sistema rodando
+
+Capturas feitas com Playwright sobre o sistema em execução local (API + worker + painel + perfil `observability`
+do `compose.yaml`), com ~2 mil requisições reais geradas pelo fluxo completo (calibração, liberação humana, escores,
+casos de apoio, CRUD editorial, copiloto e erros 401/403/409/422). Dados sintéticos.
+
+**Painel de acompanhamento (Streamlit)**
+
+| Visão geral — mapa de evidências por seção | Equidade — DIF plantado detectado (A05, A13, A21) |
+|---|---|
+| ![Visão geral](docs/images/dashboard_visao_geral.png) | ![DIF](docs/images/dashboard_equidade.png) |
+| **Laboratório psicométrico — TCT** | **Acompanhamento — medida, sinal e risco separados** |
+| ![Laboratório](docs/images/dashboard_laboratorio.png) | ![Acompanhamento](docs/images/dashboard_acompanhamento.png) |
+
+**Observabilidade (OpenTelemetry → Jaeger · Prometheus · Grafana)**
+
+| Grafana — dashboard RED e jobs lidos do banco | Jaeger — trace da liberação humana de calibração (sem PII) |
+|---|---|
+| ![Grafana](docs/images/grafana_red_dashboard.png) | ![Jaeger](docs/images/jaeger_trace_release.png) |
+| **Prometheus — taxa de requisições por rota** | **Prometheus — regras de alerta ligadas aos runbooks** |
+| ![Prometheus](docs/images/prometheus_rate_by_route.png) | ![Alertas](docs/images/prometheus_alert_rules.png) |
+
+**API e dados reais**
+
+| OpenAPI — calibração, liberação, escores, casos, CRUD editorial, copiloto | ENEM 2023 — EduMetria × parâmetros e notas oficiais do Inep |
+|---|---|
+| ![API](docs/images/api_openapi_docs.png) | ![ENEM](docs/images/enem_vs_oficial.png) |
+
+Outras capturas: [busca de traces no Jaeger](docs/images/jaeger_search.png) · [alvo do Prometheus](docs/images/prometheus_targets.png) ·
+[operação e auditoria](docs/images/dashboard_operacao.png).
+
+> A captura do Grafana revelou uma lacuna real: os painéis de jobs ficavam vazios porque o worker roda em outro
+> processo. Corrigido na v0.3.1 — o `/metrics` da API passou a publicar o estado dos jobs lido do banco.
+
+---
+
 ## 🚀 Aplicações
 
 - Ensino e demonstração de TRI/TCT/DIF com gabarito conhecido;
@@ -286,7 +322,7 @@ python -m edumetria.cli analyze --scenario s10          # demonstra bloqueio (ex
 python -m edumetria.cli analyze --scenario s10 --resolve-quarantine
 python -m edumetria.cli recovery-study --reps 100 --dif-reps 50
 python -m edumetria.cli benchmark
-python -m pytest -q                                      # 105 testes (R e PostgreSQL opcionais localmente)
+python -m pytest -q                                      # 106 testes (R e PostgreSQL opcionais localmente)
 jupyter notebook notebooks/edumetria_end_to_end.ipynb     # notebook end-to-end (já executado)
 python scripts/build_notebook.py                         # regenera e reexecuta o notebook
 python scripts/p2_studies.py                             # linking, CAT, bifator, multinível, impacto, copiloto

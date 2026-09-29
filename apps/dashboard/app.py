@@ -75,7 +75,8 @@ with tabs[0]:
     st.markdown("**Mapa de evidências** (cada seção com status próprio — não existe 'score de validade')")
     st.dataframe(pd.DataFrame([{"seção": k, "status": ev[k]["status"], "resumo": ev[k]["summary"]}
                                for k in ("content_review", "response_process", "dimensionality", "ctt", "irt",
-                                         "precision", "dif", "external_relations")]), use_container_width=True)
+                                         "precision", "dif", "external_relations", "structure_invariance")
+                               if ev.get(k)]), use_container_width=True)
 
 with tabs[1]:
     st.subheader("Matriz, banco de itens e comitê (pareceres SIMULADOS)")

@@ -10,6 +10,19 @@ Ver também: [ROADMAP.md](ROADMAP.md) (escopo/fases), [WORKLOG.md](WORKLOG.md) (
 
 Nada ainda.
 
+## [0.3.1] — 2026-09-29 — galeria de telas reais e correções de observabilidade
+
+### Added
+- `docs/images/` com 13 capturas reais (painel, Grafana, Jaeger, Prometheus, OpenAPI, ENEM) e galeria no README.
+
+### Fixed
+- Métricas de jobs ausentes no `/metrics`: o worker roda em outro processo e suas métricas ficavam só na memória dele.
+  O `/metrics` da API passou a publicar `edumetria_jobs_by_status` e `edumetria_job_mean_duration_seconds` lidos do banco;
+  dashboard e regra de alerta atualizados.
+- Gauge obsoleto: status que saía do banco (ex.: `queued`) mantinha o valor antigo — agora todos os status são zerados a cada
+  coleta (teste de regressão incluído).
+- Painel: a tabela de evidências não exibia a seção `structure_invariance`.
+
 ## [0.3.0] — 2026-09-29 — P2: dados reais, linking, CAT, modelos alternativos, impacto e notebook
 
 ### Added
