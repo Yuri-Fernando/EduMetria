@@ -43,7 +43,7 @@ Ver também: [ROADMAP.md](ROADMAP.md) (escopo/fases), [WORKLOG.md](WORKLOG.md) (
 - **Observabilidade** — logs JSON com redação de PII, métricas RED com labels fechados, `traceparent` W3C.
 - **Adapters** — Themis (payload de política) e Argus (data product), declarados `unverified`; Aegis `disabled`.
 - **Estudo Monte Carlo** — `reports/monte_carlo/` (100 réplicas × N ∈ {500, 1000, 2000}; DIF 50 × 2 condições).
-- **Testes** — 59 testes (unit, statistical, integration, r_parity).
+- **Testes** — 58 testes (unit, statistical, integration, r_parity).
 - **Documentação** — README, AGENTS.md, ADR-001..011, metodologia, runbooks A1–A8, roteiro de demo de
   8 minutos e conteúdo dos 14 slides.
 

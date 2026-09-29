@@ -39,8 +39,7 @@ jobs:
       - name: Pacotes R
         run: Rscript -e 'install.packages(c("Deriv","mirt","jsonlite","lavaan"))'
       - name: Verificar mirt (falha se ausente — paridade não pode ser pulada em silêncio)
-        run: Rscript -e 'stopifnot(requireNamespace("mirt", quietly=TRUE)); cat("mirt", as.character(packageVersion("mirt")), "
-")'
+        run: Rscript -e 'stopifnot(requireNamespace("mirt", quietly = TRUE)); print(packageVersion("mirt"))'
       - name: Dependências Python
         run: |
           python -m pip install -U pip
