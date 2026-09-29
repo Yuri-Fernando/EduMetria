@@ -81,7 +81,16 @@ def test_small_groups_are_insufficient_not_absent():
     assert set(res["status"]) == {"insufficient_evidence"}
 
 
-r_available = pytest.mark.skipif(not r_engine.available(), reason="Rscript + mirt indisponíveis")
+R_OK = r_engine.available()
+r_available = pytest.mark.skipif(not R_OK, reason="Rscript + mirt indisponíveis")
+
+
+@pytest.mark.r_parity
+def test_r_required_when_flagged():
+    """Com EDUMETRIA_REQUIRE_R=1 (job de paridade da CI), ausência de R/mirt é falha — nunca skip silencioso."""
+    import os
+    if os.environ.get("EDUMETRIA_REQUIRE_R") == "1":
+        assert R_OK, "EDUMETRIA_REQUIRE_R=1 mas Rscript + mirt não estão disponíveis"
 
 
 @pytest.mark.r_parity

@@ -30,3 +30,9 @@ Windows 11, Python 3.10.8. R 3.5.1 local não tinha mirt; foi instalado R 4.6.1 
 
 ### Pendente
 - CFA ordinal no pipeline, S6, PostgreSQL/RLS, OIDC, perfil de observabilidade, copiloto (ver ROADMAP).
+
+## 2026-09-28 (noite) — correção da CI de paridade
+
+- Detectado ao revisar o log do GitHub Actions: o job "Paridade com R/mirt" terminava verde com os 3 testes pulados (`mirt` não instalou no R 4.4 do runner: dependência `Deriv` indisponível).
+- Correção: `r-version: release`, instalação explícita de `Deriv`, passo que falha se `mirt` não carregar e teste `test_r_required_when_flagged` (`EDUMETRIA_REQUIRE_R=1`).
+- Local: `EDUMETRIA_REQUIRE_R=1 pytest -m r_parity` → 4 passed com R; 1 failed sem R (comportamento desejado). Suíte total: 59 testes.

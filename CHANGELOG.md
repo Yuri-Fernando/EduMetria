@@ -8,7 +8,8 @@ Ver também: [ROADMAP.md](ROADMAP.md) (escopo/fases), [WORKLOG.md](WORKLOG.md) (
 
 ## [Unreleased]
 
-Nada ainda.
+### Fixed
+- CI: o job de paridade com R ficava verde com os 3 testes **pulados** (`mirt` não instalava no R 4.4 do runner por falta de `Deriv`). Agora usa `r-version: release`, instala `Deriv`, verifica o `mirt` explicitamente e `EDUMETRIA_REQUIRE_R=1` transforma a ausência de R em falha.
 
 ## [0.1.0] — 2026-09-28 — P0: núcleo psicométrico, evidências e fluxo controlado
 
@@ -42,7 +43,7 @@ Nada ainda.
 - **Observabilidade** — logs JSON com redação de PII, métricas RED com labels fechados, `traceparent` W3C.
 - **Adapters** — Themis (payload de política) e Argus (data product), declarados `unverified`; Aegis `disabled`.
 - **Estudo Monte Carlo** — `reports/monte_carlo/` (100 réplicas × N ∈ {500, 1000, 2000}; DIF 50 × 2 condições).
-- **Testes** — 58 testes (unit, statistical, integration, r_parity).
+- **Testes** — 59 testes (unit, statistical, integration, r_parity).
 - **Documentação** — README, AGENTS.md, ADR-001..011, metodologia, runbooks A1–A8, roteiro de demo de
   8 minutos e conteúdo dos 14 slides.
 

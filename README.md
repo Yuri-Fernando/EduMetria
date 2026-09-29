@@ -4,7 +4,7 @@
 
 ## Status
 
-🟡 **PoC v0.1.0 — P0 implementado e testado localmente (58 testes, paridade com mirt verificada).
+🟡 **PoC v0.1.0 — P0 implementado e testado localmente (59 testes, paridade com mirt verificada).
 Dados 100% sintéticos; piloto real, juízes reais e validação de campo ainda não realizados.**
 
 ## Descrição / Contexto
@@ -223,7 +223,7 @@ python -m edumetria.cli analyze --scenario s10          # demonstra bloqueio (ex
 python -m edumetria.cli analyze --scenario s10 --resolve-quarantine
 python -m edumetria.cli recovery-study --reps 100 --dif-reps 50
 python -m edumetria.cli benchmark
-python -m pytest -q                                      # 58 testes
+python -m pytest -q                                      # 59 testes
 
 python -m edumetria.cli demo-data --scenario s2          # snapshot p/ a API
 uvicorn apps.api.main:app --port 8000                    # API (tokens demo em configs/demo_users.yaml)
