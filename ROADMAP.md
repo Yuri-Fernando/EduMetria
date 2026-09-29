@@ -3,50 +3,42 @@
 Documento mestre de escopo. Tudo que está no plano mestre (`docs/plano/`) aparece aqui —
 nada foi descartado, apenas sequenciado. "Não feito" ≠ "fora do projeto".
 
-Legenda: ✅ implementado e testado · 🟡 parcial · ⏳ planejado · 🧪 depende de piloto real
+Legenda: ✅ implementado e testado · 🟡 parcial · ⏳ planejado · 🧪 depende de parceria/piloto real
 
-## P0 — demonstração técnica principal (v0.1.0)
+## P0 — demonstração técnica principal (v0.1.0) ✅
+
+Matriz, itens e versões · fluxo de juízes (sintético) · gerador · TCT · 2PL/GRM + 1PL · EAP com incerteza ·
+DIF com revisão · registro de calibração com liberação manual · API · painel · auditoria · telemetria · testes.
+
+## P1 — PoC completa de produto (v0.2.0)
 
 | Item | Estado | Onde |
 |---|---|---|
-| Matriz, itens e versões | ✅ (arquivo versionado; CRUD via API ⏳) | `configs/item_bank.yaml` |
-| Fluxo de juízes com registros sintéticos | ✅ | `validity/content.py` |
-| Gerador reprodutível (respostas + frequência) | ✅ | `simulation/generator.py` |
-| TCT | ✅ | `ctt/analysis.py` |
-| TRI 2PL e GRM + comparador 1PL | ✅ (paridade mirt) | `irt/` |
-| Escores com incerteza, gráficos, exportação, manifesto | ✅ | `irt/scoring.py`, `reporting/` |
-| DIF com âncoras conhecidas e estado de revisão | ✅ | `dif/analysis.py` |
-| Registro de calibração e liberação manual | ✅ | `registry/store.py` |
-| API, painel, auditoria, telemetria, testes | ✅ | `apps/`, `observability/` |
-
-## P1 — PoC completa de produto
-
-| Item | Estado | Observação |
-|---|---|---|
-| CFA ordinal (lavaan WLSMV) no pipeline | 🟡 | script `r/cfa_ordinal.R` pronto; falta integrar e testar |
-| Estudo de invariância planejado | ⏳ | documento de desenho |
+| CFA ordinal no pipeline | ✅ | `r/cfa_ordinal.R`, `pipeline._structure_block` |
+| Estudo de invariância | ✅ configural → limiares → cargas | `r/invariance.R` |
 | Previsão com validação temporal e espacial | ✅ | `risk/` |
-| Revisão humana persistente e acompanhamento | ✅ | casos + follow-up via outbox |
-| Adapter Themis / Argus | 🟡 | payloads gerados; integração real não testada (`unverified`) |
-| Copiloto restrito via Aegis | ⏳ | feature flag desligada; tools e dataset de avaliação a construir |
-| PostgreSQL + RLS + Alembic | ⏳ | ADR-011 |
-| Autenticação real (OIDC) | ⏳ | hoje: tokens demo fixos |
-| Perfil `observability` (OTel collector, Prometheus, Grafana) | ⏳ | hoje: `/metrics` + logs JSON |
-| Compose com perfis core/observability/integrations | ⏳ | |
-| CRUD de itens/versões/pareceres via API | ⏳ | |
-| Cenário S6 (multidimensionalidade) | ⏳ | |
-| 3PL e GPCM como comparadores | ⏳ | só com amostra/justificativa |
-| Relatório PDF | ⏳ | HTML já gerado |
+| Revisão humana persistente e acompanhamento | ✅ | `registry/store.py` |
+| Adapters Themis / Argus / Aegis | ✅ `verified_local` (código real, commit registrado) | `integrations/verify.py` |
+| Copiloto restrito | ✅ determinístico; LLM local opcional | `copilot/` |
+| PostgreSQL + RLS | ✅ | `registry/store.py`, `infra/postgres/` |
+| Migrations versionadas (Alembic) | ⏳ | hoje: DDL idempotente no `Store` |
+| Autenticação OIDC | ✅ emissor local; IdP institucional = configuração | `apps/api/auth.py` |
+| Perfil de observabilidade | ✅ Collector + Jaeger + Prometheus + Grafana | `compose.yaml`, `observability/` |
+| CRUD editorial via API | ✅ | `/v1/items`, `/v1/item-versions/*`, `/v1/forms` |
+| Cenário S6 | ✅ | `configs/scenarios/s6_multidim.yaml` |
+| 3PL e GPCM como comparadores | ✅ via R | `r/fit_irt.R` |
+| Relatório PDF | ✅ | `reporting/pdf.py` |
 
-## P2 — após a PoC
+## P2 — após a PoC (v0.3.0 no que não depende de parceria)
 
 | Item | Estado |
 |---|---|
-| Piloto com escolas e dados legitimamente disponibilizados | 🧪 |
+| Trilha B — dados públicos reais | ✅ ENEM 2023 (parâmetros e notas oficiais); Saeb ⏳ |
+| Equalização longitudinal e linking com erro | ✅ simulação; ⏳ com itens comuns reais entre edições do ENEM |
+| Teste adaptativo | ✅ simulação; ⏳ controle de exposição Sympson-Hetter |
+| Multinível, testlet, bifator | ✅ |
+| Desenho de estudo de impacto (MDES, poder, pré-registro) | ✅ |
+| Piloto com escolas | 🧪 |
 | Juízes reais, entrevistas cognitivas | 🧪 |
-| Trilha B — microdados públicos do Saeb (após checar dicionário/licença) | ⏳ |
-| Equalização longitudinal e linking com erro | ⏳ |
-| Teste adaptativo (só com banco calibrado suficiente) | ⏳ |
-| Modelos multinível, testlet, bifator | ⏳ |
-| Estudos de impacto de intervenções (desenho por clusters) | 🧪 |
+| Execução do estudo de impacto | 🧪 |
 | Validação externa em outras redes | 🧪 |

@@ -24,7 +24,10 @@ import pandas as pd
 from edumetria.domain.contracts import ALLOWED_MODEL_FAMILIES
 
 R_DIR = Path(__file__).resolve().parents[3] / "r"
-SCRIPTS = {"fit": R_DIR / "fit_irt.R", "dif": R_DIR / "dif.R", "cfa": R_DIR / "cfa_ordinal.R"}
+SCRIPTS = {"fit": R_DIR / "fit_irt.R", "dif": R_DIR / "dif.R", "cfa": R_DIR / "cfa_ordinal.R",
+           "invariance": R_DIR / "invariance.R", "bifactor": R_DIR / "bifactor.R"}
+# famílias aceitas pelo worker R (comparadores 3PL/GPCM só existem aqui)
+R_FAMILIES = (*ALLOWED_MODEL_FAMILIES, "3pl", "gpcm")
 
 
 class REngineUnavailable(RuntimeError):
@@ -73,7 +76,7 @@ def _run(script: str, args: list[str], timeout: int = 900) -> None:
 
 
 def fit_mirt(X: np.ndarray, item_names: list[str], family: str, seed: int = 20260928) -> dict:
-    if family not in ALLOWED_MODEL_FAMILIES:
+    if family not in R_FAMILIES:
         raise ValueError(f"família fora da allowlist: {family!r}")
     if not all(n.replace("_", "").isalnum() for n in item_names):
         raise ValueError("nomes de item devem ser alfanuméricos")
@@ -95,4 +98,41 @@ def dif_mirt(X: np.ndarray, item_names: list[str], group: np.ndarray, anchors: l
         (td / "anchors.txt").write_text("\n".join(anchors), encoding="utf-8")
         _run("dif", [str(td / "X.csv"), str(td / "g.csv"), str(td / "anchors.txt"), str(td / "out.json")],
              timeout=1800)
+        return json.loads((td / "out.json").read_text(encoding="utf-8"))
+
+
+def _names_ok(item_names: list[str]) -> None:
+    if not all(n.replace("_", "").isalnum() for n in item_names):
+        raise ValueError("nomes de item devem ser alfanuméricos")
+
+
+def cfa_ordinal(X: np.ndarray, item_names: list[str]) -> dict:
+    """CFA de 1 fator com itens ordinais (lavaan, WLSMV)."""
+    _names_ok(item_names)
+    with tempfile.TemporaryDirectory(prefix="edumetria-r-") as td:
+        td = Path(td)
+        pd.DataFrame(np.asarray(X, dtype=float), columns=item_names).to_csv(td / "X.csv", index=False, na_rep="NA")
+        _run("cfa", [str(td / "X.csv"), str(td / "out.json")])
+        return json.loads((td / "out.json").read_text(encoding="utf-8"))
+
+
+def invariance(X: np.ndarray, item_names: list[str], group: np.ndarray) -> dict:
+    """Configural → limiares → limiares+cargas (itens ordinais, WLSMV)."""
+    _names_ok(item_names)
+    with tempfile.TemporaryDirectory(prefix="edumetria-r-") as td:
+        td = Path(td)
+        pd.DataFrame(np.asarray(X, dtype=float), columns=item_names).to_csv(td / "X.csv", index=False, na_rep="NA")
+        pd.DataFrame({"group": np.asarray(group)}).to_csv(td / "g.csv", index=False)
+        _run("invariance", [str(td / "X.csv"), str(td / "g.csv"), str(td / "out.json")], timeout=1800)
+        return json.loads((td / "out.json").read_text(encoding="utf-8"))
+
+
+def bifactor(X: np.ndarray, item_names: list[str], specific: list[int | None]) -> dict:
+    """Bifator/testlet (mirt::bfactor) comparado ao unidimensional."""
+    _names_ok(item_names)
+    with tempfile.TemporaryDirectory(prefix="edumetria-r-") as td:
+        td = Path(td)
+        pd.DataFrame(np.asarray(X, dtype=float), columns=item_names).to_csv(td / "X.csv", index=False, na_rep="NA")
+        pd.DataFrame({"factor": specific}).to_csv(td / "s.csv", index=False, na_rep="NA")
+        _run("bifactor", [str(td / "X.csv"), str(td / "s.csv"), str(td / "out.json")], timeout=1800)
         return json.loads((td / "out.json").read_text(encoding="utf-8"))

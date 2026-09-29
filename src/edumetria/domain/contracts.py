@@ -103,6 +103,7 @@ class PsychometricEvidenceReport(BaseModel):
     precision: EvidenceSection
     dif: EvidenceSection
     external_relations: EvidenceSection
+    structure_invariance: EvidenceSection | None = None  # 1.1.0: CFA ordinal + invariância (R/lavaan)
     limitations: list[str]
     prohibited_uses: list[str]
     approval_state: str

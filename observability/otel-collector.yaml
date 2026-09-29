@@ -1,0 +1,22 @@
+receivers:
+  otlp:
+    protocols:
+      http: {endpoint: 0.0.0.0:4318}
+processors:
+  batch: {}
+  attributes/pii:            # defesa em profundidade: remove atributos sensíveis se algum escapar
+    actions:
+      - {key: student_ref, action: delete}
+      - {key: subject_ref, action: delete}
+      - {key: raw_response, action: delete}
+exporters:
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls: {insecure: true}
+  debug: {verbosity: basic}
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [attributes/pii, batch]
+      exporters: [otlp/jaeger, debug]

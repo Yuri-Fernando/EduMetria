@@ -1,0 +1,149 @@
+{
+  "linking": {
+    "unlinked_growth": 0.0004140673992582897,
+    "flagged": [
+      "I00"
+    ],
+    "best_error_all_anchors": 0.05486597589123493,
+    "stocking_lord_error_after_removal": -0.005794183495261007
+  },
+  "cat": {
+    "cat": {
+      "rmse": 0.3548811730146928,
+      "bias": 0.006596207907650942,
+      "mean_items": 13.868333333333334,
+      "corr": 0.9294629838242153,
+      "by_band": [
+        {
+          "band": "θ<−1",
+          "rmse": 0.4347133393248022,
+          "mean_items": 17.49514563106796,
+          "n": 103
+        },
+        {
+          "band": "−1≤θ≤1",
+          "rmse": 0.3151947197703401,
+          "mean_items": 12.779904306220097,
+          "n": 418
+        },
+        {
+          "band": "θ>1",
+          "rmse": 0.4294911475811695,
+          "mean_items": 14.89873417721519,
+          "n": 79
+        }
+      ]
+    },
+    "fixed_24": {
+      "rmse": 0.3438107644968396,
+      "bias": 0.024680176388143002,
+      "mean_items": 24.0,
+      "corr": 0.934418288141466,
+      "by_band": [
+        {
+          "band": "θ<−1",
+          "rmse": 0.381749017135564,
+          "mean_items": 24.0,
+          "n": 103
+        },
+        {
+          "band": "−1≤θ≤1",
+          "rmse": 0.32310519673792415,
+          "mean_items": 24.0,
+          "n": 418
+        },
+        {
+          "band": "θ>1",
+          "rmse": 0.3941846935099951,
+          "mean_items": 24.0,
+          "n": 79
+        }
+      ]
+    },
+    "bank_size": 120,
+    "max_exposure_rate": 0.9,
+    "items_never_used": 49
+  },
+  "r_models": {
+    "bifactor_s5": {
+      "lr_p": 0,
+      "bic": {
+        "unidimensional": 53590.1493834052,
+        "bifactor": 53305.0142990702
+      },
+      "aic": {
+        "unidimensional": 53321.3060653472,
+        "bifactor": 53019.3682736336
+      },
+      "testlet_items": [
+        "A15",
+        "A19",
+        "A24"
+      ]
+    },
+    "comparators_s0_math": {
+      "2pl": {
+        "loglik": -26390.7811257315,
+        "converged": true
+      },
+      "3pl": {
+        "loglik": -26383.546254862,
+        "converged": true,
+        "iterations": 29
+      },
+      "bic_2pl": 53146.40556952102,
+      "bic_3pl": 53314.35748681103,
+      "note": "dados gerados por 2PL: 3PL não deve ser preferido; c sem prior é instável"
+    },
+    "comparators_s0_belong": {
+      "grm": {
+        "loglik": -28637.4340322578,
+        "converged": true
+      },
+      "gpcm": {
+        "loglik": -28690.8125322208,
+        "converged": true
+      },
+      "note": "dados gerados por GRM; GPCM é comparador, não escolha por nome"
+    }
+  },
+  "multilevel": {
+    "recovery": {
+      "true_icc_population": 0.15,
+      "realized_icc_sample": 0.19594294402644294,
+      "estimated_icc_reml": 0.2038047955323632,
+      "estimated_icc_anova": 0.2037592635824437,
+      "n_schools": 40,
+      "per_school": 60
+    },
+    "synthetic_outcome_icc": 0.011940892241452766,
+    "boundary": false,
+    "theta_icc_note": "no gerador, θ não tem efeito de escola (ICC verdadeiro = 0)"
+  },
+  "impact": {
+    "assumed_icc_for_planning": 0.05,
+    "mdes_20_schools_100_students": 0.3232219446018546,
+    "schools_needed_es_0_20": 50,
+    "schools_needed_es_0_10": 190,
+    "simulated_power_rd_3pp_20_schools": {
+      "n_schools": 20,
+      "n_students": 2000,
+      "effect_rd_planted": 0.03,
+      "power": 0.5566666666666666,
+      "mean_estimate": 0.029321872130154397,
+      "sd_estimate": 0.01731553419420662,
+      "n_reps": 300,
+      "analysis": "médias por escola, t de Student com gl = J − 2"
+    },
+    "note": "efeito plantado é premissa; o estudo real exige pré-registro e parceria"
+  },
+  "copilot": {
+    "n_cases": 20,
+    "accuracy": 1.0,
+    "attack_refusal_rate": 1.0,
+    "false_refusal_rate": 0.0,
+    "abstention_correct": 1.0,
+    "caveat": "dataset escrito pelo mesmo autor do copiloto: mede conformidade à especificação, não robustez adversarial real"
+  },
+  "elapsed_seconds": 59.7
+}

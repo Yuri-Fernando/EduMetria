@@ -1,6 +1,8 @@
 """API EduMetria (FastAPI) — casos de uso são a autoridade de escrita (seção 16).
 
-- Identidade: ``Authorization: Bearer <token>`` → Actor (configs/demo_users.yaml).
+- Identidade: ``Authorization: Bearer <token>`` → Actor. Modo demo (configs/demo_users.yaml) ou
+  OIDC (``EDUMETRIA_AUTH_MODE=oidc``: JWT RS256 validado contra JWKS — ver apps/api/auth.py).
+- Tracing OpenTelemetry por requisição (apps/api/tracing.py); OTLP se configurado.
   tenant/role/confirmed no corpo são rejeitados pelo contrato (422).
 - Cálculo nunca roda dentro da requisição: POST /v1/calibrations → 202 + job.
 - Objeto de outra escola/tenant → 404 (não vaza existência).
@@ -27,35 +29,44 @@ from edumetria.irt import r_engine
 from edumetria.observability.telemetry import (METRICS, child_traceparent, get_logger, log_event,
                                                parse_traceparent)
 from edumetria.registry.store import Actor, Conflict, NotFound, PermissionDenied, Store
+from edumetria.copilot.copilot import Copilot
+from edumetria.integrations.verify import status_report
+
+from apps.api.auth import AuthError, authenticate
+from apps.api.tracing import build_provider, start_server_span, traceparent_of
 
 ROOT = Path(__file__).resolve().parents[2]
 USERS_FILE = ROOT / "configs" / "demo_users.yaml"
 
 
-def create_app(db_path: str | None = None, runs_root: str | None = None) -> FastAPI:
+def create_app(db_path: str | None = None, runs_root: str | None = None, span_exporter=None) -> FastAPI:
     app = FastAPI(title="EduMetria API", version=__version__,
                   description="PoC autoral — dados sintéticos. Não é produto oficial de nenhuma instituição.")
     store = Store(db_path or os.environ.get("EDUMETRIA_DB", str(ROOT / "runs" / "edumetria.db")))
-    users = yaml.safe_load(USERS_FILE.read_text(encoding="utf-8"))["users"]
     logger = get_logger("edumetria.api")
     app.state.store = store
+    provider = build_provider(span_exporter)
+    tracer = provider.get_tracer("edumetria.api")
+    app.state.tracer_provider = provider
 
     def actor(authorization: str | None = Header(default=None)) -> Actor:
-        if not authorization or not authorization.startswith("Bearer "):
-            raise HTTPException(401, "não autenticado")
-        u = users.get(authorization.removeprefix("Bearer ").strip())
-        if not u:
-            raise HTTPException(401, "token inválido")
-        return Actor(u["user_id"], u["tenant"], u["role"], frozenset(u.get("schools", [])))
+        try:
+            return authenticate(authorization)
+        except AuthError as exc:
+            raise HTTPException(401, str(exc)) from exc
 
     @app.middleware("http")
     async def telemetry(request: Request, call_next):
-        tp = child_traceparent(request.headers.get("traceparent"))
-        request.state.traceparent = tp
         t0 = time.perf_counter()
-        response = await call_next(request)
-        route = request.scope.get("route")
-        path = getattr(route, "path", "other")
+        with start_server_span(tracer, request.method, request.url.path, request.headers) as span:
+            tp = traceparent_of(span)
+            request.state.traceparent = tp
+            response = await call_next(request)
+            route = request.scope.get("route")
+            path = getattr(route, "path", "other")
+            span.update_name(f"{request.method} {path}")
+            span.set_attribute("http.route", path)
+            span.set_attribute("http.response.status_code", response.status_code)
         status_class = f"{response.status_code // 100}xx"
         METRICS.inc("edumetria_http_requests_total", route=path, method=request.method, status_class=status_class)
         METRICS.observe("edumetria_http_request_duration_seconds", time.perf_counter() - t0, route=path,
@@ -197,11 +208,84 @@ def create_app(db_path: str | None = None, runs_root: str | None = None) -> Fast
     def transition(case_id: str, req: CaseTransition, a: Actor = Depends(actor)):
         return store.transition_case(a, case_id, req.to_status, req.note, req.expected_version)
 
+    # ------------------------------------------------------------ CRUD editorial
+    @app.post("/v1/items", status_code=201)
+    def create_item(body: dict, a: Actor = Depends(actor)):
+        _only(body, {"instrument_id", "code", "content"})
+        return store.create_item(a, str(body["instrument_id"]), str(body["code"]), dict(body["content"]))
+
+    @app.get("/v1/item-versions/{vid}")
+    def get_version(vid: str, a: Actor = Depends(actor)):
+        v = store.get_item_version(a, vid)
+        if a.role not in ("psychometrician", "author", "judge"):
+            v["content"].pop("key", None)  # gabarito só para perfis editoriais
+        return v
+
+    @app.patch("/v1/item-versions/{vid}")
+    def edit_version(vid: str, body: dict, a: Actor = Depends(actor)):
+        _only(body, {"content", "expected_row_version"})
+        return store.update_item_version(a, vid, dict(body["content"]), int(body["expected_row_version"]))
+
+    @app.post("/v1/item-versions/{vid}/new-version", status_code=201)
+    def new_version(vid: str, body: dict, a: Actor = Depends(actor)):
+        _only(body, {"content"})
+        return store.new_item_version(a, vid, dict(body["content"]))
+
+    @app.post("/v1/item-versions/{vid}/submit")
+    def submit_version(vid: str, a: Actor = Depends(actor)):
+        return store.submit_item_version(a, vid)
+
+    @app.post("/v1/item-versions/{vid}/reviews", status_code=201)
+    def review_version(vid: str, body: dict, a: Actor = Depends(actor)):
+        _only(body, {"ratings", "comment"})
+        try:
+            return store.review_item_version(a, vid, dict(body["ratings"]), str(body.get("comment", ""))[:2000])
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @app.post("/v1/item-versions/{vid}/approve")
+    def approve_version(vid: str, body: dict, a: Actor = Depends(actor)):
+        _only(body, {"rationale"})
+        return store.approve_item_version(a, vid, str(body["rationale"]))
+
+    @app.post("/v1/forms", status_code=201)
+    def create_form(body: dict, a: Actor = Depends(actor)):
+        _only(body, {"instrument_id", "label", "version_ids"})
+        try:
+            return store.create_form(a, str(body["instrument_id"]), str(body["label"]), list(body["version_ids"]))
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    # ------------------------------------------------------------ copiloto e integrações
+    @app.post("/v1/copilot/ask")
+    def copilot_ask(body: dict, a: Actor = Depends(actor)):
+        _only(body, {"calibration_id", "question"})
+        cal = store.get_calibration(a, str(body.get("calibration_id")))
+        ans = Copilot(_run_dir(cal)).ask(str(body.get("question", ""))[:1000], a)
+        return {"status": ans.status, "answer": ans.text, "tool": ans.tool, "citations": ans.citations,
+                "llm": "disabled" if not os.environ.get("EDUMETRIA_COPILOT_LLM") else "local-optional"}
+
+    @app.get("/v1/integrations/status")
+    def integrations(a: Actor = Depends(actor)):
+        if a.role not in ("psychometrician", "auditor"):
+            raise HTTPException(403, "restrito")
+        return status_report()
+
     @app.get("/v1/audit")
     def audit(a: Actor = Depends(actor)):
         return {"chain_valid": store.verify_audit_chain(), "events": store.list_audit(a)}
 
     return app
+
+
+def _only(body: dict, allowed: set[str]) -> None:
+    """Corpo com campos fora do contrato → 422 (inclui tenant/role/confirmed)."""
+    extra = set(body) - allowed
+    if extra:
+        raise HTTPException(422, f"campos não permitidos: {sorted(extra)}")
+    missing = {k for k in allowed if k not in body and k != "comment"}
+    if missing:
+        raise HTTPException(422, f"campos obrigatórios ausentes: {sorted(missing)}")
 
 
 def cid_short(cal: dict) -> str:

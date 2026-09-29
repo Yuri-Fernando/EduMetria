@@ -1,0 +1,17 @@
+{
+  "assumed_icc_for_planning": 0.05,
+  "mdes_20_schools_100_students": 0.3232219446018546,
+  "schools_needed_es_0_20": 50,
+  "schools_needed_es_0_10": 190,
+  "simulated_power_rd_3pp_20_schools": {
+    "n_schools": 20,
+    "n_students": 2000,
+    "effect_rd_planted": 0.03,
+    "power": 0.5566666666666666,
+    "mean_estimate": 0.029321872130154397,
+    "sd_estimate": 0.01731553419420662,
+    "n_reps": 300,
+    "analysis": "médias por escola, t de Student com gl = J − 2"
+  },
+  "note": "efeito plantado é premissa; o estudo real exige pré-registro e parceria"
+}

@@ -36,3 +36,26 @@ Windows 11, Python 3.10.8. R 3.5.1 local não tinha mirt; foi instalado R 4.6.1 
 - Detectado ao revisar o log do GitHub Actions: o job "Paridade com R/mirt" terminava verde com os 3 testes pulados (`mirt` não instalou no R 4.4 do runner: dependência `Deriv` indisponível).
 - Correção: `r-version: release`, instalação explícita de `Deriv`, passo que falha se `mirt` não carregar e teste `test_r_required_when_flagged` (`EDUMETRIA_REQUIRE_R=1`).
 - Local: `EDUMETRIA_REQUIRE_R=1 pytest -m r_parity` → 4 passed com R; 1 failed sem R (comportamento desejado). Suíte total: 59 testes.
+
+## 2026-09-29 — v0.2.0 (P1) + v0.3.0 (P2 sem parceria) + notebook
+
+### Ambiente
+Docker Desktop 29.8 (PostgreSQL 16, OTel Collector, Jaeger, Prometheus, Grafana). O Docker Desktop não monta arquivos da
+pasta do Google Drive — o compose foi executado a partir de uma cópia em `C:\tmp\edumetria-compose`. Após reinício do
+Windows, a porta 55432 caiu numa faixa reservada (Hyper-V) → porta padrão passou a 15432 (`EDUMETRIA_PG_PORT`).
+
+### Feito (execuções reais)
+- `pytest -q` com R e PostgreSQL → 105 passed.
+- ENEM 2023 (620 MB, lido do zip): θ 3PL × nota oficial r = 0,994; b × b oficial r = 0,981 (sem MT147) — 97 s com cache.
+- `scripts/p2_studies.py` → linking, CAT, bifator, 3PL/GPCM, ICC, impacto, copiloto (`reports/p2/`).
+- Perfil observability: trace no Jaeger, alvo `edumetria-api` up no Prometheus, dashboard provisionado no Grafana.
+- `scripts/build_notebook.py` → notebook executado, 0 erros.
+
+### Bugs encontrados e corrigidos
+- MixedLM com `lbfgs` preso na fronteira (ICC 0,15 → 0,0).
+- `KeyError` no risco quando o GRM falha; `%` literal no psycopg2; nomes perdidos no JSON do bifator.
+
+### Achados
+- Themis (policy engine real) nega uso com menores sem consentimento do responsável (POL-003) — pré-condição do piloto.
+- CAT: exposição máxima de 90% e 49/120 itens sem uso — randomesque insuficiente.
+- Com 20 escolas, poder de 56% para −3 p.p. no desfecho — piloto pequeno não detectaria efeito realista.

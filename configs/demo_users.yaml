@@ -35,3 +35,19 @@ users:
     user_id: psi-gil
     tenant: other-tenant
     role: psychometrician
+  demo-token-autora:
+    user_id: autora-helena
+    tenant: demo-tenant
+    role: author
+  demo-token-juiz-1:
+    user_id: juiz-igor
+    tenant: demo-tenant
+    role: judge
+  demo-token-juiz-2:
+    user_id: juiza-joana
+    tenant: demo-tenant
+    role: judge
+  demo-token-juiz-3:
+    user_id: juiz-kaio
+    tenant: demo-tenant
+    role: judge

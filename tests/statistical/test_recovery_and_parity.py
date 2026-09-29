@@ -132,3 +132,22 @@ def test_parity_grm_with_mirt():
 def test_r_engine_rejects_non_allowlisted_family():
     with pytest.raises(ValueError):
         r_engine.fit_mirt(np.zeros((3, 2)), ["a", "b"], "3pl; system('x')")
+
+
+@pytest.mark.r_parity
+@r_available
+def test_r_structure_models_run():
+    """CFA ordinal, invariância, bifator e comparadores 3PL/GPCM executam no worker R."""
+    Y, *_ = _sim_grm(n=800, seed=5)
+    names = [f"b{j + 1:02d}" for j in range(Y.shape[1])]
+    cfa = r_engine.cfa_ordinal(Y, names)
+    assert cfa["fit_measures"]["cfi.scaled"] > 0.95
+    grp = np.where(np.arange(len(Y)) % 2 == 0, "A", "B")
+    inv = r_engine.invariance(Y, names, grp)
+    assert {"configural", "thresholds", "thresholds_loadings"} <= set(inv)
+    X, *_ = _sim_2pl(n=800, J=12, seed=6)
+    xn = [f"i{j + 1:02d}" for j in range(12)]
+    bf = r_engine.bifactor(X, xn, [1, 1, 1] + [None] * 9)
+    assert set(bf["loglik"]) == {"unidimensional", "bifactor"}
+    g = r_engine.fit_mirt(Y, names, "gpcm")
+    assert g["family"] == "gpcm" and np.isfinite(g["loglik"])

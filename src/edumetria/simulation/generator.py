@@ -135,6 +135,13 @@ def generate(scenario: dict | str) -> SyntheticDataset:
     dif_items = {d["item"]: d for d in mcfg.get("dif", [])}
 
     th_eff = np.repeat(theta_math[:, None], J, axis=1)
+    sd2 = mcfg.get("second_dimension")
+    if sd2:  # S6: parte dos itens mede outra dimensão correlacionada
+        z2 = rng.normal(0, 1, n)
+        theta2 = sd2["corr"] * (theta_math - theta_math.mean()) / theta_math.std() + np.sqrt(1 - sd2["corr"] ** 2) * z2
+        for it in sd2["items"]:
+            th_eff[:, idx[it]] = theta2
+        students["true_theta_dim2"] = theta2
     tl = mcfg.get("testlet")
     if tl:
         gamma = rng.normal(0, tl["sd"], n)
@@ -316,6 +323,7 @@ def generate(scenario: dict | str) -> SyntheticDataset:
         "belong_params": {"item": bids, "a": ab, "b1": Bb[:, 0], "b2": Bb[:, 1], "b3": Bb[:, 2]},
         "dif_items": list(dif_items),
         "testlet_items": (tl or {}).get("items", []),
+        "second_dimension_items": (sd2 or {}).get("items", []),
         "leakage": bool(cfg["leakage"]["inject_future_feature"]),
     }
     return SyntheticDataset(cfg, items, students, responses, attendance, judge_reviews, truth)

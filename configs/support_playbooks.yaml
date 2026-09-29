@@ -1,0 +1,24 @@
+# Playbooks de apoio — ILUSTRATIVOS. Em uso real, só condutas aprovadas pela
+# rede/escola entram aqui; o sistema nunca inventa conduta social ou clínica.
+status: ilustrativo — requer aprovação institucional
+playbooks:
+  - id: PB-01
+    nome: Checagem da qualidade do registro de frequência
+    quando: aumento de faltas sem justificativa registrada
+    responsavel: secretaria escolar
+  - id: PB-02
+    nome: Conversa acolhedora com o estudante
+    quando: sinal de afastamento confirmado pela coordenação
+    responsavel: coordenação pedagógica
+  - id: PB-03
+    nome: Apoio pedagógico direcionado
+    quando: baixa proficiência com incerteza baixa (posterior_sd pequeno)
+    responsavel: docente de referência
+  - id: PB-04
+    nome: Articulação com serviços já existentes da rede
+    quando: barreira identificada fora do alcance da escola
+    responsavel: coordenação + gestão municipal
+  - id: PB-05
+    nome: Avaliação de barreira de transporte
+    quando: faltas concentradas em dias/rotas específicos
+    responsavel: gestão escolar

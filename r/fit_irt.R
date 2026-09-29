@@ -1,5 +1,5 @@
 # EduMetria — worker psicométrico de referência (R + mirt).
-# Uso: Rscript fit_irt.R <input.csv> <output.json> <family: 2pl|1pl|grm> <seed>
+# Uso: Rscript fit_irt.R <input.csv> <output.json> <family: 2pl|1pl|grm|3pl|gpcm> <seed>
 # Entrada: matriz pessoa x item (NA = não observado). Saída: JSON com
 # parâmetros slope-intercept (a, d) e tradicionais (a, b), logLik, convergência
 # e EAP. Nenhum comando/caminho arbitrário do cliente chega aqui: o adapter
@@ -8,10 +8,10 @@ suppressPackageStartupMessages({ library(mirt); library(jsonlite) })
 args <- commandArgs(trailingOnly = TRUE)
 stopifnot(length(args) == 4)
 inp <- args[1]; out <- args[2]; family <- args[3]; seed <- as.integer(args[4])
-stopifnot(family %in% c("2pl", "1pl", "grm"))
+stopifnot(family %in% c("2pl", "1pl", "grm", "3pl", "gpcm"))
 set.seed(seed)
 X <- read.csv(inp, check.names = FALSE)
-itemtype <- switch(family, "2pl" = "2PL", "1pl" = "2PL", "grm" = "graded")
+itemtype <- switch(family, "2pl" = "2PL", "1pl" = "2PL", "grm" = "graded", "3pl" = "3PL", "gpcm" = "gpcm")
 model <- if (family == "1pl") {
   mirt.model(sprintf("F = 1-%d\nCONSTRAIN = (1-%d, a1)", ncol(X), ncol(X)))
 } else 1

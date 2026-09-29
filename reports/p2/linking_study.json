@@ -1,0 +1,107 @@
+{
+  "design": {
+    "n_per_wave": 2000,
+    "n_anchors": 12,
+    "n_unique_per_form": 12,
+    "growth": 0.4,
+    "drift_item": "I00",
+    "drift_delta_b": -0.8,
+    "seed": 11
+  },
+  "unlinked_growth": 0.0004140673992582897,
+  "flagged_anchors": [
+    "I00"
+  ],
+  "note": "sem linking, cada onda fica centrada em 0 e o crescimento desaparece; a âncora com drift puxa a transformação e é sinalizada para decisão humana",
+  "drift": null,
+  "table": [
+    {
+      "anchors": "todas as âncoras",
+      "method": "mean_mean",
+      "A": 0.959,
+      "B": 0.4722,
+      "B_se": 0.0839,
+      "estimated_growth": 0.4726,
+      "true_growth": 0.4,
+      "error": 0.0726,
+      "n_anchors": 12
+    },
+    {
+      "anchors": "todas as âncoras",
+      "method": "mean_sigma",
+      "A": 0.9326,
+      "B": 0.4545,
+      "B_se": 0.122,
+      "estimated_growth": 0.4549,
+      "true_growth": 0.4,
+      "error": 0.0549,
+      "n_anchors": 12
+    },
+    {
+      "anchors": "todas as âncoras",
+      "method": "stocking_lord",
+      "A": 0.9796,
+      "B": 0.4797,
+      "B_se": 0.0917,
+      "estimated_growth": 0.4801,
+      "true_growth": 0.4,
+      "error": 0.0801,
+      "n_anchors": 12
+    },
+    {
+      "anchors": "todas as âncoras",
+      "method": "haebara",
+      "A": 0.9555,
+      "B": 0.4629,
+      "B_se": 0.0897,
+      "estimated_growth": 0.4633,
+      "true_growth": 0.4,
+      "error": 0.0633,
+      "n_anchors": 12
+    },
+    {
+      "anchors": "sem âncora instável",
+      "method": "mean_mean",
+      "A": 0.9513,
+      "B": 0.3951,
+      "B_se": 0.0274,
+      "estimated_growth": 0.3955,
+      "true_growth": 0.4,
+      "error": -0.0045,
+      "n_anchors": 11
+    },
+    {
+      "anchors": "sem âncora instável",
+      "method": "mean_sigma",
+      "A": 0.8914,
+      "B": 0.3546,
+      "B_se": 0.0327,
+      "estimated_growth": 0.355,
+      "true_growth": 0.4,
+      "error": -0.045,
+      "n_anchors": 11
+    },
+    {
+      "anchors": "sem âncora instável",
+      "method": "stocking_lord",
+      "A": 0.9611,
+      "B": 0.3938,
+      "B_se": 0.0243,
+      "estimated_growth": 0.3942,
+      "true_growth": 0.4,
+      "error": -0.0058,
+      "n_anchors": 11
+    },
+    {
+      "anchors": "sem âncora instável",
+      "method": "haebara",
+      "A": 0.9431,
+      "B": 0.3836,
+      "B_se": 0.025,
+      "estimated_growth": 0.384,
+      "true_growth": 0.4,
+      "error": -0.016,
+      "n_anchors": 11
+    }
+  ]
+}

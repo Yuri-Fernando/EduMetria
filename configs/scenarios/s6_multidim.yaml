@@ -1,0 +1,5 @@
+extends: base.yaml
+scenario_id: s6
+description: "S6 — multidimensionalidade gerada (itens de dados/gráficos medem outra dimensão, r=0,3); ajuste unidimensional inadequado"
+math:
+  second_dimension: {items: [A02, A08, A12, A15, A19, A24], corr: 0.30}

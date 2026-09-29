@@ -189,6 +189,8 @@ def run_analysis(scenario: str = "s0", runs_dir: Path | None = None, resolve_qua
             "belong6": fit_b.to_dict() if grm_ok else {"status": "failed", "error": grm_err},
             "fit_seconds": fit_seconds,
         }
+        diagnostics["structure"] = _structure_block(Xm, item_labels, Xb, blabels,
+                                                    students.loc[persons_b, "audit_group"].to_numpy())
         _json(out / "fit_diagnostics.json", diagnostics)
         extremes = sc[(sc["n_answered_math"] > 0)]
         pair = _uncertainty_pair(sc)
@@ -245,6 +247,8 @@ def run_analysis(scenario: str = "s0", runs_dir: Path | None = None, resolve_qua
                    "n_insufficient": int((sc["status_math"] != "computed").sum())}
         report.write_reports(out, context)
         report.write_cards(out, context, bank)
+        from edumetria.reporting.pdf import write_pdf
+        write_pdf(out, context)
 
         elapsed = time.perf_counter() - t_start
         _json(out / "run_status.json", {"status": "succeeded", "run_id": run_id, "elapsed_seconds": elapsed,
@@ -278,6 +282,25 @@ def run_analysis(scenario: str = "s0", runs_dir: Path | None = None, resolve_qua
         fh.close()
 
 
+def _structure_block(Xm, mnames, Xb, bnames, group) -> dict:
+    """CFA ordinal (lavaan WLSMV) e invariância por grupo de auditoria — só se
+    R + lavaan estiverem disponíveis; caso contrário, status explícito."""
+    from edumetria.irt import r_engine
+    if not r_engine.available():
+        return {"status": "not_assessed", "reason": "Rscript + lavaan indisponíveis (parte bloqueada, não substituída)"}
+    out = {"status": "computed"}
+    for key, X, names in (("cfa_math6", Xm, mnames), ("cfa_belong6", Xb, bnames)):
+        try:
+            out[key] = r_engine.cfa_ordinal(X, names)
+        except Exception as exc:  # falha registrada, nunca mascarada
+            out[key] = {"status": "failed", "error": type(exc).__name__}
+    try:
+        out["invariance_belong6"] = r_engine.invariance(Xb, bnames, group)
+    except Exception as exc:
+        out["invariance_belong6"] = {"status": "failed", "error": type(exc).__name__}
+    return out
+
+
 def _uncertainty_pair(sc: pd.DataFrame) -> dict:
     """Dois estudantes artificiais com estimativas parecidas e incertezas
     diferentes (roteiro de demo, 2:30–4:00). Selecionados dos dados do run."""
@@ -299,8 +322,12 @@ def _uncertainty_pair(sc: pd.DataFrame) -> dict:
 
 
 def _risk_block(ds, sc: pd.DataFrame, cfg: dict) -> dict:
-    scores = sc.rename(columns={"subject_ref": "student_ref"})[
-        ["student_ref", "theta_math", "psd_math", "theta_belong", "psd_belong", "available_at"]]
+    scores = sc.rename(columns={"subject_ref": "student_ref"}).copy()
+    psy = ["theta_math", "psd_math"] + (["theta_belong", "psd_belong"] if "theta_belong" in scores else [])
+    for col in ("theta_belong", "psd_belong"):
+        if col not in scores:
+            scores[col] = np.nan  # GRM não ajustado: coluna ausente explicitamente, fora do modelo B2
+    scores = scores[["student_ref", "theta_math", "psd_math", "theta_belong", "psd_belong", "available_at"]]
     leak = bool(cfg["leakage"]["inject_future_feature"])
     try:
         if leak:
@@ -315,7 +342,8 @@ def _risk_block(ds, sc: pd.DataFrame, cfg: dict) -> dict:
     train = train[train["school_id"].isin(train_s)]
     test = snaps[40][snaps[40]["school_id"].isin(test_s)]
     groups = ds.students.set_index("student_ref").loc[test["student_ref"], "audit_group"].to_numpy()
-    ev = evaluate_baselines(train, test, groups_test=groups)
+    ev = evaluate_baselines(train, test, groups_test=groups, psycho_features=psy)
+    ev["b2_psycho_features"] = psy
     ev["split"] = {"train_t0_days": [20, 30], "test_t0_days": [40], "train_schools": train_s, "test_schools": test_s,
                    "horizon_days": 20, "embargo": "escolas de teste disjuntas do treino; sem estudante em comum"}
     ev["censored_example"] = {"t0_day": 45, "n": int(len(snaps[45])),
@@ -347,7 +375,7 @@ def _evidence_report(run_id, cfg, cv, ctt_test, ctt_items, fit_m, fit_b, grm_ok,
         dimensionality=EvidenceSection(
             status=S.EXPLORATORY, run_id=run_id,
             summary=(f"Triagem por autovalores (razão 1º/2º={diag['math6']['dimensionality'].get('ratio_first_second', float('nan')):.2f}) "
-                     f"e Q3 ({len(diag['math6']['q3_flags'])} pares sinalizados). CFA ordinal não executada."),
+                     f"e Q3 ({len(diag['math6']['q3_flags'])} pares sinalizados). CFA ordinal: ver seção structure_invariance."),
             details={"q3_flags": diag["math6"]["q3_flags"][:10]}),
         ctt=EvidenceSection(
             status=S.SUPPORTED if alpha.get("alpha") else S.INSUFFICIENT, run_id=run_id,
@@ -374,12 +402,14 @@ def _evidence_report(run_id, cfg, cv, ctt_test, ctt_items, fit_m, fit_b, grm_ok,
         external_relations=EvidenceSection(
             status=S.EXPLORATORY, run_id=run_id,
             summary=(f"AUC B2−B1 (escolas externas, t0=40) = {b2b1.get('mean', float('nan')):.3f} "
-                     f"IC95% {b2b1.get('ci95', ['?', '?'])}. Relação gerada pela simulação — não prova ganho real."),
+                     f"IC95% [{b2b1.get('ci95', [float('nan')] * 2)[0]:.3f}; {b2b1.get('ci95', [float('nan')] * 2)[1]:.3f}]. "
+                     "Relação gerada pela simulação — não prova ganho real."),
         ),
+        structure_invariance=_structure_section(run_id, diag.get("structure", {})),
         limitations=[
             "Todos os dados são sintéticos; nenhuma conclusão sobre estudantes, escolas ou redes reais.",
             "Pareceres de juízes são simulados; nenhuma revisão humana real ocorreu.",
-            "Sem entrevistas cognitivas, CFA ordinal, invariância ou linking entre versões.",
+            "Sem entrevistas cognitivas; linking entre versões só em estudo simulado (scripts/p2_studies.py).",
             "Escala interna (θ ~ N(0,1)) não é comparável a SAEB, ENEM ou PISA.",
             "Alvo preditivo é proxy demonstrativo, não definição de evasão.",
         ],
@@ -394,3 +424,26 @@ def _evidence_report(run_id, cfg, cv, ctt_test, ctt_items, fit_m, fit_b, grm_ok,
                                          cfg["belonging"]["instrument_version_id"]],
                  "item_bank": "configs/item_bank.yaml", "schema_version": SCHEMA_VERSION},
     )
+
+
+def _structure_section(run_id: str, st: dict) -> EvidenceSection:
+    S = EvidenceStatus
+    if st.get("status") != "computed":
+        return EvidenceSection(status=S.NOT_ASSESSED, run_id=run_id, summary=st.get("reason", "não avaliado"))
+    parts, ok = [], True
+    for key, label in (("cfa_math6", "matemática"), ("cfa_belong6", "pertencimento")):
+        fm = st.get(key, {}).get("fit_measures")
+        if fm:
+            parts.append(f"CFA 1 fator {label}: CFI={fm['cfi.scaled']:.3f}, RMSEA={fm['rmsea.scaled']:.3f}, "
+                         f"SRMR={fm['srmr']:.3f}")
+        else:
+            ok = False
+            parts.append(f"CFA {label}: falhou")
+    inv = st.get("invariance_belong6", {})
+    lrt = inv.get("lrt")
+    if lrt:
+        p_thr, p_load = lrt[1].get("Pr(>Chisq)"), lrt[2].get("Pr(>Chisq)")
+        parts.append(f"invariância pertencimento (A×B): limiares p={p_thr:.3f}, +cargas p={p_load:.3f}")
+    return EvidenceSection(status=S.EXPLORATORY if ok else S.INSUFFICIENT, run_id=run_id,
+                           summary="; ".join(parts) + ". Índices descritivos — nenhum limiar isolado autoriza uso.",
+                           details={"evidence_basis": "synthetic_simulation", "engine": "R/lavaan WLSMV"})

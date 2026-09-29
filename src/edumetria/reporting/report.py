@@ -54,7 +54,7 @@ def write_reports(out: Path, ctx: dict) -> None:
     alpha = ctx["ctt_test"]["math6"]["alpha"]
     b2b1 = risk["bootstrap"].get("B2_minus_B1_auc", {})
     sections = ["content_review", "response_process", "dimensionality", "ctt", "irt", "precision", "dif",
-                "external_relations"]
+                "external_relations"] + (["structure_invariance"] if getattr(ev, "structure_invariance", None) else [])
     ev_rows = "".join(
         f"<tr><td>{s}</td><td class='status {getattr(ev, s).status.value}'>{getattr(ev, s).status.value}</td>"
         f"<td style='white-space:normal'>{html.escape(getattr(ev, s).summary)}</td></tr>" for s in sections)

@@ -1,0 +1,17 @@
+groups:
+  - name: edumetria
+    rules:
+      - alert: EduMetriaApi5xx            # RED: erros
+        expr: sum(rate(edumetria_http_requests_total{status_class="5xx"}[5m])) > 0
+        for: 5m
+        labels: {severity: page}
+        annotations: {runbook: "docs/runbooks/alertas.md", summary: "API retornando 5xx"}
+      - alert: EduMetriaJobFailures       # A3/A1: calibração falhando
+        expr: increase(edumetria_jobs_total{status="failed"}[30m]) > 2
+        labels: {severity: ticket}
+        annotations: {runbook: "docs/runbooks/alertas.md", summary: "jobs de calibração falhando"}
+      - alert: EduMetriaSlowRequests      # SLO p95 leitura ≤ 1 s (média como proxy sem histograma)
+        expr: sum(rate(edumetria_http_request_duration_seconds_sum[5m])) / sum(rate(edumetria_http_request_duration_seconds_count[5m])) > 0.5
+        for: 10m
+        labels: {severity: ticket}
+        annotations: {runbook: "docs/runbooks/alertas.md", summary: "latência média acima de 500 ms"}

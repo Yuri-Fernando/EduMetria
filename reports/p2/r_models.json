@@ -1,0 +1,43 @@
+{
+  "bifactor_s5": {
+    "lr_p": 0,
+    "bic": {
+      "unidimensional": 53590.1493834052,
+      "bifactor": 53305.0142990702
+    },
+    "aic": {
+      "unidimensional": 53321.3060653472,
+      "bifactor": 53019.3682736336
+    },
+    "testlet_items": [
+      "A15",
+      "A19",
+      "A24"
+    ]
+  },
+  "comparators_s0_math": {
+    "2pl": {
+      "loglik": -26390.7811257315,
+      "converged": true
+    },
+    "3pl": {
+      "loglik": -26383.546254862,
+      "converged": true,
+      "iterations": 29
+    },
+    "bic_2pl": 53146.40556952102,
+    "bic_3pl": 53314.35748681103,
+    "note": "dados gerados por 2PL: 3PL não deve ser preferido; c sem prior é instável"
+  },
+  "comparators_s0_belong": {
+    "grm": {
+      "loglik": -28637.4340322578,
+      "converged": true
+    },
+    "gpcm": {
+      "loglik": -28690.8125322208,
+      "converged": true
+    },
+    "note": "dados gerados por GRM; GPCM é comparador, não escolha por nome"
+  }
+}

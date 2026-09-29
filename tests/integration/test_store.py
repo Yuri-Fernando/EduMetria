@@ -1,11 +1,53 @@
 """T18, T20–T23 — isolamento, conflito de versão, persistência, outbox, replay."""
 
+import os
 import sqlite3
-from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from edumetria.registry.store import Actor, Conflict, NotFound, PermissionDenied, Store
+from edumetria.registry.store import TENANT_TABLES, Actor, Conflict, NotFound, PermissionDenied, Store
+
+PG_ADMIN = os.environ.get("EDUMETRIA_PG_ADMIN_DSN", "postgresql://edumetria_admin:admin_local_only@localhost:15432/edumetria")
+PG_APP = os.environ.get("EDUMETRIA_PG_DSN", "postgresql://edumetria_app:app_local_only@localhost:15432/edumetria")
+
+
+def _pg_up() -> bool:
+    try:
+        import psycopg2
+        psycopg2.connect(PG_ADMIN, connect_timeout=2).close()
+        return True
+    except Exception:
+        return False
+
+
+PG_UP = _pg_up()
+
+
+def test_postgres_required_when_flagged():
+    """Na CI (EDUMETRIA_REQUIRE_PG=1), ausência do PostgreSQL é falha — não skip silencioso."""
+    if os.environ.get("EDUMETRIA_REQUIRE_PG") == "1":
+        assert PG_UP, "EDUMETRIA_REQUIRE_PG=1 mas o PostgreSQL não respondeu"
+BACKENDS = ["sqlite", pytest.param("postgres", marks=pytest.mark.skipif(not PG_UP, reason="PostgreSQL local indisponível"))]
+
+
+def _pg_reset():
+    import psycopg2
+    conn = psycopg2.connect(PG_ADMIN)
+    with conn, conn.cursor() as cur:
+        cur.execute("TRUNCATE " + ", ".join(TENANT_TABLES + ["processed_events"]) + " RESTART IDENTITY")
+    conn.close()
+
+
+def _tamper(store, sql):
+    if store.is_pg:
+        import psycopg2
+        conn = psycopg2.connect(PG_ADMIN)
+        with conn, conn.cursor() as cur:
+            cur.execute(sql)
+        conn.close()
+    else:
+        with sqlite3.connect(store.path) as c:
+            c.execute(sql)
 
 PSI = Actor("psi-ana", "t1", "psychometrician")
 COORD_A = Actor("coord-a", "t1", "coordinator", frozenset({"SCH01"}))
@@ -14,8 +56,12 @@ COORD_B = Actor("coord-b", "t1", "coordinator", frozenset({"SCH05"}))
 OTHER_TENANT = Actor("psi-x", "t2", "psychometrician")
 
 
-@pytest.fixture
-def store(tmp_path):
+@pytest.fixture(params=BACKENDS)
+def store(request, tmp_path):
+    if request.param == "postgres":
+        st = Store(PG_APP, admin_dsn=PG_ADMIN)
+        _pg_reset()
+        return st
     return Store(tmp_path / "db.sqlite")
 
 
@@ -120,9 +166,7 @@ def test_expired_lease_is_reclaimed(store):
     j, _ = store.enqueue_job(PSI, "calibration", {"x": 1}, None)
     claimed = store.claim_job("w1")
     assert claimed["job_id"] == j["job_id"] and store.claim_job("w2") is None
-    past = (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat()
-    with sqlite3.connect(store.path) as c:
-        c.execute("UPDATE jobs SET lease_until=? WHERE job_id=?", (past, j["job_id"]))
+    store.expire_lease(j["job_id"])
     again = store.claim_job("w2")  # worker 1 "morreu"
     assert again["job_id"] == j["job_id"] and again["attempts"] == 2
 
@@ -130,6 +174,43 @@ def test_expired_lease_is_reclaimed(store):
 def test_audit_chain_detects_tampering(store):
     _case(store)
     assert store.verify_audit_chain()
-    with sqlite3.connect(store.path) as c:
-        c.execute("UPDATE audit_events SET actor='intruso' WHERE seq=1")
+    _tamper(store, "UPDATE audit_events SET actor='intruso' WHERE seq=1")
     assert store.verify_audit_chain() is False
+
+
+@pytest.mark.skipif(not PG_UP, reason="PostgreSQL local indisponível")
+def test_postgres_rls_blocks_cross_tenant_even_without_where():
+    """Prova de RLS: a aplicação (papel sem BYPASSRLS) faz SELECT sem filtro de tenant."""
+    st = Store(PG_APP, admin_dsn=PG_ADMIN)
+    _pg_reset()
+    st.create_case(COORD_A, "SCH01", "s-1", "caso do tenant t1", [])
+    st.create_case(Actor("coord-z", "t2", "coordinator", frozenset({"SCH09"})), "SCH09", "s-2", "caso do tenant t2", [])
+    rows_t1 = st.raw_query("SELECT tenant, subject_ref FROM support_cases", tenant="t1")
+    rows_t2 = st.raw_query("SELECT tenant, subject_ref FROM support_cases", tenant="t2")
+    rows_none = st.raw_query("SELECT tenant FROM support_cases", tenant=None)
+    assert {r["tenant"] for r in rows_t1} == {"t1"} and len(rows_t1) == 1
+    assert {r["tenant"] for r in rows_t2} == {"t2"} and len(rows_t2) == 1
+    assert rows_none == []  # sem contexto de tenant, nada é visível
+    import psycopg2
+    with pytest.raises(psycopg2.errors.InsufficientPrivilege):  # WITH CHECK impede gravar em outro tenant
+        with st.session("t1", write=True) as c:
+            c.execute("INSERT INTO followups (followup_id, tenant, case_id, source_event_id, due_in_days, created_at) "
+                      "VALUES ('x','t2','c','e',1,'now')")
+
+
+@pytest.mark.skipif(not PG_UP, reason="PostgreSQL local indisponível")
+def test_postgres_app_role_has_no_bypassrls():
+    import psycopg2
+    conn = psycopg2.connect(PG_APP)
+    with conn.cursor() as cur:
+        cur.execute("SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname = current_user")
+        assert cur.fetchone() == (False, False)
+    conn.close()
+
+
+@pytest.mark.skipif(not PG_UP, reason="PostgreSQL local indisponível")
+def test_postgres_query_with_literal_percent():
+    st = Store(PG_APP, admin_dsn=PG_ADMIN)
+    _pg_reset()
+    st.create_case(COORD_A, "SCH01", "s-9", "caso com LIKE", [])
+    assert len(st.raw_query("SELECT case_id FROM support_cases WHERE case_id LIKE 'case-%'", tenant="t1")) == 1

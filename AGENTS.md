@@ -9,6 +9,9 @@ python -m pytest -q -m r_parity            # exige EDUMETRIA_RSCRIPT e EDUMETRIA
 python -m edumetria.cli analyze --scenario s2
 python -m edumetria.cli recovery-study --reps 100 --dif-reps 50
 python -m edumetria.cli benchmark
+python scripts/p2_studies.py
+python scripts/build_notebook.py          # regenera e executa o notebook end-to-end
+docker compose --profile core up -d       # PostgreSQL + RLS (testes de Store rodam nos dois backends)
 ```
 
 ## Limites inegociáveis (seção 31 do plano mestre)

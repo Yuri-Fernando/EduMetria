@@ -1,0 +1,3 @@
+apiVersion: 1
+providers:
+  - {name: edumetria, folder: EduMetria, type: file, options: {path: /var/lib/grafana/dashboards}}

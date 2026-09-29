@@ -1,0 +1,44 @@
+{
+  "source": "Inep — Microdados ENEM 2023 (download.inep.gov.br), Matemática",
+  "booklet_CO_PROVA_MT": 1213,
+  "n_present_math": 2692427,
+  "n_booklet": 674819,
+  "n_sample": 20000,
+  "n_items": 45,
+  "n_items_with_official_params": 43,
+  "blank_policy": "branco/dupla marcação = não observado; o Inep trata diferente — fonte de discrepância",
+  "python_2pl": {
+    "converged": true,
+    "iterations": 38,
+    "corr_b_vs_official": 0.6997188263326912,
+    "corr_a_vs_official": -0.09591339743575883,
+    "spearman_b_vs_official": 0.9799154334038055,
+    "note_a": "2PL sem assíntota inferior absorve o acerto casual nas inclinações — a não é comparável ao a do 3PL oficial",
+    "rmsd_b_after_mean_sigma": 0.5923388452318723,
+    "mean_sigma_A_B": [
+      0.22789393486864182,
+      1.217256011760396
+    ],
+    "corr_eap_vs_nota_oficial": 0.968680675046859,
+    "spearman_eap_vs_nota_oficial": 0.9818184739633168
+  },
+  "mirt_3pl": {
+    "engine": "mirt 1.47",
+    "converged": true,
+    "iterations": 556,
+    "corr_a_vs_official": 0.6482357276202821,
+    "corr_b_vs_official": 0.30017596094217736,
+    "corr_c_vs_official": 0.5973980844393124,
+    "rmsd_b_after_mean_sigma": 0.9042751373319077,
+    "corr_eap_vs_nota_oficial": 0.9935560274368609,
+    "spearman_b_vs_official": 0.9919963757173059,
+    "spearman_a_vs_official": 0.722440350347327,
+    "spearman_c_vs_official": 0.5969495620658412,
+    "degenerate_items_a_lt_0_2": [
+      "MT147"
+    ],
+    "corr_b_vs_official_excluding_degenerate": 0.980723835252097,
+    "corr_a_vs_official_excluding_degenerate": 0.7571902994838654
+  },
+  "elapsed_seconds": 97.4
+}

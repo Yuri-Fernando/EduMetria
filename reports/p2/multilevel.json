@@ -1,0 +1,13 @@
+{
+  "recovery": {
+    "true_icc_population": 0.15,
+    "realized_icc_sample": 0.19594294402644294,
+    "estimated_icc_reml": 0.2038047955323632,
+    "estimated_icc_anova": 0.2037592635824437,
+    "n_schools": 40,
+    "per_school": 60
+  },
+  "synthetic_outcome_icc": 0.011940892241452766,
+  "boundary": false,
+  "theta_icc_note": "no gerador, θ não tem efeito de escola (ICC verdadeiro = 0)"
+}

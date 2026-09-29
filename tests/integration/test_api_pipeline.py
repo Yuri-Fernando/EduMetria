@@ -133,3 +133,14 @@ def test_s11_leakage_blocked_and_reports_marked_synthetic(tmp_path):
     assert "DADOS SINTÉTICOS" in html and r["run_id"] in html  # T32
     manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["data_origin"] == "synthetic" and "technical_report.html" in manifest["artifacts"]
+
+
+def test_pipeline_degrades_when_grm_cannot_be_fitted(tmp_path):
+    """Regressão: com N=1000 em S2 a categoria 1 de B09 fica vazia → GRM falha explicitamente e o
+    risco B2 usa só os escores de matemática (antes quebrava com KeyError)."""
+    r = run_analysis("s2", runs_dir=tmp_path, overrides={"population": {"n_students": 1000}})
+    out = Path(r["run_dir"])
+    diag = json.loads((out / "fit_diagnostics.json").read_text(encoding="utf-8"))
+    risk = json.loads((out / "risk_evaluation.json").read_text(encoding="utf-8"))
+    assert diag["belong6"]["status"] == "failed" and "categoria vazia" in diag["belong6"]["error"]
+    assert risk["b2_psycho_features"] == ["theta_math", "psd_math"]

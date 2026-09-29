@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 import secrets
 import sys
@@ -32,7 +33,13 @@ ALLOWED_LABELS = {
     "route": {"/v1/calibrations", "/v1/jobs/{id}", "/v1/calibrations/{id}", "/v1/calibrations/{id}/release",
               "/v1/support-cases", "/v1/support-cases/{id}", "/v1/support-cases/{id}/submit",
               "/v1/support-cases/{id}/reviews", "/v1/support-cases/{id}/transition", "/v1/audit",
-              "/v1/evidence-reports/{id}", "/health/live", "/health/ready", "/metrics", "other"},
+              "/v1/evidence-reports/{id}", "/health/live", "/health/ready", "/metrics", "other",
+              "/v1/items", "/v1/item-versions/{vid}", "/v1/item-versions/{vid}/new-version",
+              "/v1/item-versions/{vid}/submit", "/v1/item-versions/{vid}/reviews", "/v1/item-versions/{vid}/approve",
+              "/v1/forms", "/v1/copilot/ask", "/v1/integrations/status", "/v1/scores", "/v1/jobs/{job_id}",
+              "/v1/calibrations/{cid}", "/v1/calibrations/{cid}/release", "/v1/calibrations/{cid}/diagnostics",
+              "/v1/evidence-reports/{cid}", "/v1/support-cases/{case_id}", "/v1/support-cases/{case_id}/submit",
+              "/v1/support-cases/{case_id}/reviews", "/v1/support-cases/{case_id}/transition"},
     "method": {"GET", "POST", "PUT", "DELETE", "PATCH"},
     "status_class": {"2xx", "3xx", "4xx", "5xx"},
     "job_type": {"calibration", "other"},
@@ -72,6 +79,8 @@ def get_logger(name: str = SERVICE, stream=None) -> logging.Logger:
     if not any(isinstance(h.formatter, JsonFormatter) for h in logger.handlers):
         h = logging.StreamHandler(stream or sys.stderr)
         h.setFormatter(JsonFormatter())
+        # nível do CONSOLE configurável (ex.: WARNING em notebooks); arquivos como run.log seguem em INFO
+        h.setLevel(os.environ.get("EDUMETRIA_LOG_LEVEL", "INFO").upper())
         logger.addHandler(h)
         logger.setLevel(logging.INFO)
         logger.propagate = False

@@ -1,11 +1,18 @@
 # 📐 EduMetria
 
-### Python · R/mirt · TRI (2PL/GRM) · TCT · DIF · FastAPI · Streamlit · Psicometria Educacional
+### Python · R/mirt · lavaan · TRI (2PL/GRM/3PL) · TCT · DIF · Linking · CAT · FastAPI · PostgreSQL/RLS · OpenTelemetry
 
 ## Status
 
-🟡 **PoC v0.1.0 — P0 implementado e testado localmente (59 testes, paridade com mirt verificada).
-Dados 100% sintéticos; piloto real, juízes reais e validação de campo ainda não realizados.**
+🟡 **v0.3.0 — P0, P1 e P2 (sem parceria) implementados e testados: 105 testes (R/mirt e PostgreSQL/RLS incluídos),
+notebook end-to-end executado e validação com dados públicos reais (ENEM 2023). Piloto com escolas, juízes reais e
+estudo de impacto dependem de parceria e ainda não foram realizados.**
+
+🆕 **O que há de novo** — v0.2.0 (P1): CFA ordinal e invariância no pipeline, PostgreSQL com Row Level Security, OIDC,
+tracing OpenTelemetry + Prometheus/Grafana/Jaeger, CRUD editorial com imutabilidade, copiloto restrito e integrações
+**verificadas** contra o código real do ThemisAI, AegisLLM e Argus, relatório PDF · v0.3.0 (P2): trilha B com microdados do
+ENEM, linking longitudinal, CAT, bifator/testlet, 3PL/GPCM, multinível, desenho de impacto e
+[notebook end-to-end](notebooks/edumetria_end_to_end.ipynb). Detalhes em [CHANGELOG.md](CHANGELOG.md).
 
 ## Descrição / Contexto
 
@@ -51,6 +58,10 @@ dados inválidos e vazamento temporal, e se os escores **agregam** valor prediti
 - Teoria Clássica dos Testes e evidências de validade (Standards AERA/APA/NCME);
 - Funcionamento diferencial do item (Mantel-Haenszel, regressão logística, BH);
 - Estudos Monte Carlo de recuperação de parâmetros e poder/falso positivo;
+- Estrutura interna (CFA ordinal WLSMV) e invariância de medida entre grupos;
+- Linking de escalas entre ondas (mean-mean, mean-sigma, Stocking-Lord, Haebara) e testagem adaptativa (CAT);
+- Validação externa com dados públicos reais (microdados do ENEM, parâmetros oficiais do Inep);
+- Desenho de estudos de impacto por clusters (MDES, poder, pré-registro);
 - Predição point-in-time com validação temporal e espacial externa;
 - Governança: revisão humana, auditoria com hash-chain, outbox transacional.
 
@@ -73,14 +84,18 @@ Risco point-in-time (B0–B3, escolas externas)  ← medida, sinal e risco em ca
         ↓
 PsychometricEvidenceReport (status por seção) · relatórios HTML · cards · manifest.json
         ↓
-API FastAPI ──► worker (lease/idempotência) ──► registry: candidate → released (revisão humana)
-        ↓                                         casos de apoio: proposed → under_review → approved → …
-Dashboard Streamlit (8 abas)                      auditoria hash-chain · outbox · /metrics · traceparent
-        ↓
-Adapters: ThemisAI (política, unverified) · Argus (data product, unverified) · AegisLLM (disabled)
+API FastAPI (demo ou OIDC/JWKS) ──► worker (lease/idempotência) ──► registry: candidate → released (revisão humana)
+   │  CRUD editorial: item → versão → 3 pareceres → aprovação → caderno (versão travada)
+   │  casos de apoio: proposed → under_review → approved → …   ·   copiloto restrito (/v1/copilot/ask)
+   ↓
+Persistência: SQLite  |  PostgreSQL + Row Level Security (papel da aplicação sem BYPASSRLS)
+Observabilidade: logs JSON redigidos · /metrics → Prometheus → Grafana · spans OTLP → Collector → Jaeger
+   ↓
+Integrações verificadas contra o código real: ThemisAI (policy engine + prompt security) ·
+AegisLLM (guardrails) · Argus (validador de contrato RFC-001) — status `verified_local` com commit registrado
 ```
 
-Decisões registradas em [`docs/adr/`](docs/adr/) (ADR-001 a ADR-011).
+Decisões registradas em [`docs/adr/`](docs/adr/) (ADR-001 a ADR-015).
 
 ---
 
@@ -123,7 +138,8 @@ Detalhes: [`docs/methodology/psicometria.md`](docs/methodology/psicometria.md) �
 | S2 | DIF uniforme em A05, A13, A21 | sensibilidade de DIF |
 | S3 | DIF não uniforme + grupos assimétricos | LR não uniforme |
 | S4 | MCAR + MNAR + não alcançados | missing ≠ zero |
-| S5 | testlet (dependência local) | Q3 |
+| S5 | testlet (dependência local) | Q3 · bifator |
+| S6 | 2ª dimensão em 6 itens (r = 0,3) | triagem dimensional · CFA |
 | S7 / S8 | mudança de θ / drift de parâmetro | ADR-008 |
 | S9 | categorias raras, padrões extremos | GRM e EAP |
 | S10 | duplicatas, versão inválida, categoria inválida, atraso | quarentena |
@@ -135,11 +151,12 @@ Detalhes: [`docs/methodology/psicometria.md`](docs/methodology/psicometria.md) �
 
 | Categoria | Ferramentas |
 |---|---|
-| Psicometria | NumPy/SciPy (motor nativo), R 4.6 + mirt 1.47 (referência), lavaan (CFA, roadmap) |
-| Dados/ML | pandas, scikit-learn, statsmodels |
-| Produto | FastAPI, Pydantic v2, SQLite, Streamlit, Matplotlib |
-| Qualidade | pytest (unit, statistical, integration, r_parity), GitHub Actions |
-| Observabilidade | logs JSON com redação, métricas RED, W3C traceparent |
+| Psicometria | NumPy/SciPy (motor nativo), R 4.6 + mirt 1.47 (referência, 3PL/GPCM/bifator), lavaan (CFA/invariância) |
+| Dados/ML | pandas, scikit-learn, statsmodels (MixedLM), pyarrow |
+| Produto | FastAPI, Pydantic v2, SQLite · PostgreSQL 16 + RLS, Streamlit, Matplotlib, ReportLab (PDF) |
+| Segurança | OIDC (PyJWT RS256 + JWKS), RBAC por escola, RLS, integrações ThemisAI/AegisLLM |
+| Qualidade | pytest (unit, statistical, integration, r_parity, PostgreSQL), GitHub Actions |
+| Observabilidade | OpenTelemetry → Collector → Jaeger · Prometheus + regras de alerta · Grafana provisionado |
 
 ---
 
@@ -183,6 +200,42 @@ confirmada** nesta simulação. Resultado mantido como está.
 
 **Benchmark:** 2PL 2000×24 em 0,30 s de parede (Intel x64 Family 6 Model 158, Python 3.10.8) — orçamento do plano: 10 min.
 
+### 🆕 Dados reais — ENEM 2023, Matemática (`reports/trilha_b_enem/`)
+
+Microdados públicos do Inep, caderno 1213 (674.819 presentes), amostra de 20 mil, 43 itens com parâmetro oficial:
+
+| Motor | corr(θ, nota oficial) | b × b oficial | observação |
+|---|---|---|---|
+| 2PL nativo EduMetria | 0,969 (Spearman 0,982) | Spearman 0,980 | 2PL absorve o acerto casual nas inclinações |
+| 3PL R/mirt | **0,994** | **r = 0,981** (Spearman 0,992) | item MT147 degenerou (a = 0,02) e foi sinalizado, não escondido |
+
+Não reproduz a nota oficial (procedimento, população e escala próprios do Inep) — mostra que o motor ordena
+itens e pessoas como o Inep em dados reais.
+
+### 🆕 Estudos P2 (`reports/p2/`, `python scripts/p2_studies.py`)
+
+| Estudo | Resultado |
+|---|---|
+| **Linking** (2 ondas, crescimento real 0,40, âncora com drift) | sem linking o crescimento some (0,000); Stocking-Lord com todas as âncoras: 0,480 (erro +0,080); âncora I00 sinalizada; sem ela: 0,394 (erro −0,006) |
+| **CAT** (banco de 120 itens) | 13,9 itens em média com RMSE 0,355 × forma fixa de 24 itens com RMSE 0,344; **exposição máx. 90% e 49 itens nunca usados** → controle Sympson-Hetter no roadmap |
+| **Bifator** (S5, testlet A15/A19/A24) | bifator preferido: BIC 53.305 × 53.590 (LR p < 0,001) |
+| **3PL × 2PL** (dados gerados por 2PL) | BIC favorece o 2PL (53.146 × 53.314) — como deveria |
+| **GRM × GPCM** (dados gerados por GRM) | logLik favorece o GRM (−28.637 × −28.691) |
+| **Multinível** (ICC conhecido) | ICC estimado 0,204 (REML) e 0,204 (ANOVA) × realizado 0,196 |
+| **Impacto** (ICC de planejamento 0,05) | MDES com 20 escolas × 100 alunos = 0,32 dp; 50 escolas para 0,20 dp; poder simulado para −3 p.p. com 20 escolas: 56% |
+| **CFA / invariância** (S0) | CFA 1 fator: matemática CFI 0,986, pertencimento CFI 0,996; invariância A×B: limiares p = 0,72, cargas p = 0,86 · no S6 a CFA de matemática cai para CFI 0,879 |
+
+### 🆕 Governança e plataforma (P1) — verificações executadas
+
+| Verificação | Resultado |
+|---|---|
+| PostgreSQL + RLS | `SELECT` sem filtro de tenant → só o tenant da sessão; `INSERT` em outro tenant bloqueado; papel sem `BYPASSRLS` |
+| OIDC | token válido aceito; expirado, audience/issuer errados, papel inválido, `alg=none` e outra chave → 401 |
+| Tracing | span por requisição continua o `traceparent`; atributos só rota/método/status; traces chegam ao Jaeger; Prometheus raspa `/metrics`; Grafana com dashboard RED |
+| CRUD editorial | 3 pareceres independentes para aprovar; autor não julga o próprio item; versão travada após caderno (409); nova versão com linhagem |
+| Integrações | ThemisAI `verified_local` (o policy engine real **nega** uso com menores sem consentimento do responsável — POL-003); AegisLLM `verified_local`; Argus: contrato validado pelo validador real, sem erros |
+| Copiloto | 20 casos: acurácia 100%, recusa de ataques 100%, falsa recusa 0% — dataset do próprio autor (mede conformidade, não robustez adversarial) |
+
 ---
 
 ## 🚀 Aplicações
@@ -206,17 +259,18 @@ impacto das intervenções — sem que nenhum modelo decida sozinho sobre um est
 Resumo — detalhes em [ROADMAP.md](ROADMAP.md):
 
 - **P0 ✅** matriz/itens, gerador, DQ, TCT, 2PL/GRM, EAP, DIF, registry com liberação manual, API, painel, testes.
-- **P1** CFA ordinal no pipeline, PostgreSQL + RLS, OIDC, perfil OTel/Grafana, CRUD de itens, adapters verificados, copiloto via Aegis.
-- **P2 🧪** piloto real, juízes reais, entrevistas cognitivas, linking longitudinal, estudos de impacto.
+- **P1 ✅** CFA ordinal e invariância no pipeline, PostgreSQL + RLS, OIDC, OTel/Prometheus/Grafana, CRUD editorial, integrações verificadas, copiloto, PDF.
+- **P2 ✅ (o que não depende de parceria)** dados públicos reais (ENEM), linking, CAT, bifator, 3PL/GPCM, multinível, desenho de impacto e pré-registro.
+- **P2 🧪 (depende de parceria)** piloto com escolas, juízes reais, entrevistas cognitivas, execução do estudo de impacto.
 
 ---
 
 ## 🔮 Próximos Passos
 
-1. Integrar `r/cfa_ordinal.R` ao pipeline e documentar invariância;
-2. Migrar persistência para PostgreSQL com RLS testada;
-3. Testar o adapter Themis contra o serviço real e só então marcá-lo como verificado;
-4. Buscar parceria para piloto com revisão ética e especialistas.
+1. Controle de exposição Sympson-Hetter no CAT e banco maior de itens;
+2. Migrations versionadas (Alembic) para o PostgreSQL;
+3. Linking com dados reais entre edições do ENEM (itens comuns publicados);
+4. Buscar parceria para piloto com revisão ética, juízes reais e o estudo de impacto pré-registrado.
 
 ---
 
@@ -231,12 +285,20 @@ python -m edumetria.cli analyze --scenario s10          # demonstra bloqueio (ex
 python -m edumetria.cli analyze --scenario s10 --resolve-quarantine
 python -m edumetria.cli recovery-study --reps 100 --dif-reps 50
 python -m edumetria.cli benchmark
-python -m pytest -q                                      # 59 testes
+python -m pytest -q                                      # 105 testes (R e PostgreSQL opcionais localmente)
+jupyter notebook notebooks/edumetria_end_to_end.ipynb     # notebook end-to-end (já executado)
+python scripts/build_notebook.py                         # regenera e reexecuta o notebook
+python scripts/p2_studies.py                             # linking, CAT, bifator, multinível, impacto, copiloto
+python scripts/trilha_b_enem.py --zip <microdados_enem_2023.zip>   # dados reais (download no site do Inep)
 
 python -m edumetria.cli demo-data --scenario s2          # snapshot p/ a API
 uvicorn apps.api.main:app --port 8000                    # API (tokens demo em configs/demo_users.yaml)
 python -m edumetria.worker --loop                        # worker de jobs
 streamlit run apps/dashboard/app.py                      # painel
+
+docker compose --profile core up -d                      # PostgreSQL + RLS (porta 15432)
+docker compose --profile observability up -d             # Collector + Jaeger (16686) + Prometheus (9090) + Grafana (3000)
+python scripts/dev_oidc.py init && EDUMETRIA_AUTH_MODE=oidc ...   # OIDC com emissor local (ver ADR-013)
 ```
 
 Paridade com R (opcional): `EDUMETRIA_RSCRIPT=<caminho do Rscript>`, `EDUMETRIA_R_LIBS=<lib com mirt>` e
@@ -250,12 +312,18 @@ Paridade com R (opcional): `EDUMETRIA_RSCRIPT=<caminho do Rscript>`, `EDUMETRIA_
 EduMetria/
 ├── src/edumetria/      domain · simulation · data_quality · ctt · irt · dif · validity · risk
 │                       registry · reporting · observability · integrations · pipeline · worker · cli
-├── apps/               api (FastAPI) · dashboard (Streamlit)
-├── r/                  fit_irt.R · dif.R · cfa_ordinal.R (mirt/lavaan)
-├── configs/            item_bank.yaml · scenarios/ · demo_users.yaml
+│                       copilot · impact · irt/linking · irt/cat · risk/multilevel · reporting/pdf
+├── apps/               api (FastAPI, auth OIDC, tracing OTel) · dashboard (Streamlit)
+├── r/                  fit_irt.R · dif.R · cfa_ordinal.R · invariance.R · bifactor.R
+├── notebooks/          edumetria_end_to_end.ipynb (executado)
+├── scripts/            build_notebook · p2_studies · trilha_b_enem · dev_oidc
+├── configs/            item_bank · scenarios/ (S0–S11) · demo_users · support_playbooks · copilot_eval
+├── infra/postgres/     papel da aplicação sem BYPASSRLS
+├── observability/      otel-collector · prometheus + alertas · grafana (datasources + dashboard)
+├── compose.yaml        perfis core e observability
 ├── tests/              unit · statistical · integration
-├── reports/            monte_carlo/ · demo_runs/ · benchmark.json
-└── docs/               adr/ · methodology/ · runbooks/ · presentation/ · plano/ (plano mestre)
+├── reports/            monte_carlo/ · demo_runs/ · p2/ · trilha_b_enem/ · benchmark.json
+└── docs/               adr/ · methodology/ · impact/ · runbooks/ · presentation/ · plano/
 ```
 
 Histórico: [CHANGELOG.md](CHANGELOG.md) (documento mestre) · [WORKLOG.md](WORKLOG.md) · [AGENTS.md](AGENTS.md).
@@ -266,16 +334,19 @@ Histórico: [CHANGELOG.md](CHANGELOG.md) (documento mestre) · [WORKLOG.md](WORK
 
 | Camada | Estado |
 |---|---|
-| Implementado e testado | TCT, 2PL/1PL/GRM, EAP, DIF, DQ, risco, registry, API, worker, relatórios |
-| Implementado, não integrado | CFA ordinal (script R) |
-| Planejado | PostgreSQL/RLS, OIDC, OTel, copiloto, CRUD editorial |
-| Depende de piloto | validade real, juízes reais, invariância empírica, impacto |
+| Implementado e testado | TCT, 2PL/1PL/GRM, EAP, DIF, DQ, risco, registry, API, worker, relatórios HTML/PDF, CFA/invariância, PostgreSQL/RLS, OIDC, OTel, CRUD editorial, copiloto, integrações verificadas, linking, CAT, bifator, 3PL/GPCM, multinível, desenho de impacto |
+| Validado com dados reais | motor de TRI × ENEM 2023 (parâmetros e notas oficiais do Inep) |
+| Planejado | Sympson-Hetter no CAT, Alembic, linking com dados reais entre edições |
+| Depende de parceria | piloto, juízes reais, entrevistas cognitivas, execução do estudo de impacto |
 
 ## Contexto / Observações
 
 - Código público, sem dados ou credenciais reais; tokens em `configs/demo_users.yaml` são fictícios.
 - Itens de `configs/item_bank.yaml` são ilustrativos e não revisados por especialistas.
-- A escala interna (θ~N(0,1)) não é comparável a SAEB, ENEM ou PISA.
+- A escala interna (θ~N(0,1)) não é comparável a SAEB, ENEM ou PISA; a comparação com o ENEM é de ordenação.
+- Microdados do ENEM não são versionados (download público no site do Inep); só resultados agregados.
+- `compose.yaml` usa credenciais **locais de demonstração**; em pastas sincronizadas (Google Drive) o Docker Desktop
+  não monta arquivos — rode o compose a partir de uma cópia local.
 - Referências normativas (LGPD, Enunciado ANPD 1/2023) orientam o desenho; não há parecer jurídico.
 
 ---

@@ -110,9 +110,10 @@ def group_fairness(y, p, groups, share: float = CAPACITY_SHARE) -> list[dict]:
 
 
 def evaluate_baselines(train: pd.DataFrame, test: pd.DataFrame, groups_test: np.ndarray | None = None,
-                       seed: int = 3) -> dict:
-    tr = train[train["target_status"] == "observed"].dropna(subset=ADMIN_FEATURES + PSYCHO_FEATURES)
-    te = test[test["target_status"] == "observed"].dropna(subset=ADMIN_FEATURES + PSYCHO_FEATURES)
+                       seed: int = 3, psycho_features: list[str] | None = None) -> dict:
+    psy = psycho_features or PSYCHO_FEATURES  # sem GRM ajustado, B2 usa só os escores disponíveis
+    tr = train[train["target_status"] == "observed"].dropna(subset=ADMIN_FEATURES + psy)
+    te = test[test["target_status"] == "observed"].dropna(subset=ADMIN_FEATURES + psy)
     ytr, yte = tr["target"].to_numpy(int), te["target"].to_numpy(int)
 
     scores, results = {}, {}
@@ -126,7 +127,7 @@ def evaluate_baselines(train: pd.DataFrame, test: pd.DataFrame, groups_test: np.
     results["B1"] = {**_metrics(yte, scores["B1"], prob=True),
                      "coefficients": dict(zip(ADMIN_FEATURES, b1[-1].coef_[0].round(4).tolist()))}
 
-    feats2 = ADMIN_FEATURES + PSYCHO_FEATURES
+    feats2 = ADMIN_FEATURES + psy
     b2 = make_pipeline(StandardScaler(), LogisticRegression(C=1.0, max_iter=1000))
     b2.fit(tr[feats2], ytr)
     scores["B2"] = b2.predict_proba(te[feats2])[:, 1]
