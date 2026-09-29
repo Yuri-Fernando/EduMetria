@@ -1,0 +1,52 @@
+{
+  "study": "DIF — Mantel-Haenszel (ETS B/C + BH) e regressão logística (não uniforme, BH)",
+  "design": {
+    "N": 2000,
+    "J": 24,
+    "group_share_b": 0.5,
+    "dif_items": {
+      "A05": 0.6,
+      "A13": 0.5,
+      "A21": -0.55
+    },
+    "anchors": "todos os outros itens",
+    "seed": 20260929
+  },
+  "elapsed_seconds": 25.6,
+  "results": {
+    "no_dif": {
+      "reps": 50,
+      "false_positive_rate_uniform_rule": 0.0,
+      "false_positive_rate_any_rule": 0.0,
+      "reps_with_any_false_positive": 0.0
+    },
+    "uniform_dif": {
+      "reps": 50,
+      "false_positive_rate_uniform_rule": 0.0009523809523809524,
+      "false_positive_rate_any_rule": 0.005714285714285714,
+      "reps_with_any_false_positive": 0.08,
+      "power_uniform_rule": 0.9733333333333334,
+      "power_per_item": {
+        "A05": 0.94,
+        "A13": 0.98,
+        "A21": 1.0
+      }
+    }
+  },
+  "summary": {
+    "no_dif": {
+      "reps": 50,
+      "false_positive_rate_uniform_rule": 0.0,
+      "false_positive_rate_any_rule": 0.0,
+      "reps_with_any_false_positive": 0.0
+    },
+    "uniform_dif": {
+      "reps": 50,
+      "false_positive_rate_uniform_rule": 0.0009523809523809524,
+      "false_positive_rate_any_rule": 0.005714285714285714,
+      "reps_with_any_false_positive": 0.08,
+      "power_uniform_rule": 0.9733333333333334
+    }
+  },
+  "note": "taxa por item×réplica; regra de sinalização definida antes do estudo e não ajustada depois"
+}

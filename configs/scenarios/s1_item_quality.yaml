@@ -1,0 +1,6 @@
+extends: base.yaml
+scenario_id: s1
+description: "S1 — itens com baixa discriminação e item muito fácil/difícil"
+math:
+  low_discrimination_items: [A11, A19]
+  extreme_items: {A22: -3.3, A23: 3.1}

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edumetria"
+version = "0.1.0"
+description = "EduMetria — psicometria, evidências e apoio à permanência escolar (PoC autoral, dados sintéticos)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Yuri Fernando Dubbern" }]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "statsmodels>=0.14",
+    "pydantic>=2.5",
+    "pyyaml>=6.0",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "httpx>=0.27", "uvicorn>=0.29"]
+dashboard = ["streamlit>=1.30", "plotly>=5.18"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+edumetria = "edumetria.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+markers = [
+    "statistical: testes de recuperação estatística (mais lentos)",
+    "r_parity: exige Rscript + mirt instalados (pulado se ausente)",
+]

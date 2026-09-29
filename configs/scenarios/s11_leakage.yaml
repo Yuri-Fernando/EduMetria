@@ -1,0 +1,5 @@
+extends: base.yaml
+scenario_id: s11
+description: "S11 — preditor com vazamento temporal injetado (deve ser bloqueado)"
+leakage:
+  inject_future_feature: true

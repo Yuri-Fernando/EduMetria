@@ -1,0 +1,37 @@
+# Usuários FICTÍCIOS do modo demonstração. Tokens são strings públicas de
+# demo — não são credenciais. No piloto, identidade vem de autenticação
+# institucional real (OIDC/SSO), fora do escopo da PoC.
+# A identidade SEMPRE vem daqui (via token), nunca do corpo da requisição.
+users:
+  demo-token-psicometrista:
+    user_id: psi-ana
+    tenant: demo-tenant
+    role: psychometrician
+  demo-token-coord-sch01:
+    user_id: coord-bruno
+    tenant: demo-tenant
+    role: coordinator
+    schools: [SCH01, SCH02]
+  demo-token-coord2-sch01:
+    user_id: coord-clara
+    tenant: demo-tenant
+    role: coordinator
+    schools: [SCH01]
+  demo-token-coord-sch05:
+    user_id: coord-davi
+    tenant: demo-tenant
+    role: coordinator
+    schools: [SCH05]
+  demo-token-docente-sch01:
+    user_id: prof-elis
+    tenant: demo-tenant
+    role: teacher
+    schools: [SCH01]
+  demo-token-auditor:
+    user_id: aud-fabio
+    tenant: demo-tenant
+    role: auditor
+  demo-token-outro-tenant:
+    user_id: psi-gil
+    tenant: other-tenant
+    role: psychometrician

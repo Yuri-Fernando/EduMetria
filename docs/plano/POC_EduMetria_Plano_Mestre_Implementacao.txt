@@ -1,0 +1,1299 @@
+EDUMETRIA — PSICOMETRIA, EVIDÊNCIAS E APOIO À PERMANÊNCIA ESCOLAR
+PLANO MESTRE DA PROVA DE CONCEITO
+Arquitetura, método científico, implementação, observabilidade e apresentação
+
+Autor do projeto: Yuri Fernando Dubbern
+Documento preparado em: 28/09/2026
+Versão: 1.0 — especificação para desenvolvimento
+Nome provisório: EduMetria. Disponibilidade de marca/domínio não verificada.
+Natureza: projeto autoral de portfólio e pesquisa aplicada, inspirado nos requisitos da oportunidade de Psicometrista Sênior do IA.Edu fornecidos pelo usuário.
+Não representa produto oficial do IA.Edu, NEES, UFAL ou SAP, nem parceria com essas organizações.
+
+ESTADO REAL DESTA ENTREGA
+Foi realizada pesquisa em fontes primárias e inspeção remota de documentação e arquivos de código selecionados do ecossistema GitHub de Yuri. Este TXT entrega a especificação completa da PoC, seus contratos, backlog, protocolo experimental, desenho das telas, roteiro de apresentação e instruções de implementação. Não constitui uma aplicação já implementada, executada ou implantada. Não foram calibrados instrumentos reais nem produzidas métricas experimentais nesta sessão. Metas, cenários, códigos ilustrativos e resultados esperados estão identificados como tal.
+
+LEITURA RECOMENDADA
+Decisão de integração: seções 1–3.
+Produto e psicometria: seções 4–13.
+Dados, arquitetura e implementação: seções 14–21.
+Observabilidade e qualidade: seções 22–26.
+Cronograma, demonstração e apresentação: seções 27–30.
+Prompt para agente de desenvolvimento e referências: seções 31–33.
+
+======================================================================
+1. DECISÃO EXECUTIVA: ATUALIZAÇÃO OU MÓDULO?
+======================================================================
+
+RECOMENDAÇÃO: NOVO MÓDULO DE DOMÍNIO, EM REPOSITÓRIO PRÓPRIO, INTEGRADO AO ECOSSISTEMA.
+
+O EduMetria deve possuir núcleo psicométrico independente, ciclo de releases próprio e contratos explícitos. O Argus é a referência de plataforma e um consumidor/integrador potencial. ThemisAI fornece componentes de governança; AegisLLM pode proteger a camada opcional de IA generativa. Projetos_Pessoais pode indexar o novo repositório como submodule, seguindo sua organização atual.
+
+Portanto, é um módulo no ecossistema, mas não uma simples atualização de modelo de churn. A nova competência central é medição educacional: especificar o que se pretende medir, construir itens, coletar respostas, estudar estrutura dimensional, estimar parâmetros, quantificar incerteza, investigar equidade e controlar usos das medidas.
+
+O domínio possui entidades ausentes dos modelos comerciais: construto, matriz de referência, item, versão de item, parecer de juiz, caderno, aplicação, resposta, calibração, escala, evidência de validade, estudante, escola e intervenção. Transformar customer_id em student_id e reaproveitar o classificador existente não resolve esse domínio.
+
+Decisões propostas:
+ADR-001: núcleo EduMetria independente e integração por contratos.
+ADR-002: R para calibração; Python para produto, dados e predição.
+ADR-003: aplicação modular com worker separado antes de microsserviços numerosos.
+ADR-004: dados sintéticos próprios no primeiro ciclo; piloto real em fase posterior.
+ADR-005: instrumentos de aprendizagem e de contexto separados.
+ADR-006: risco preditivo e estimativa de traço latente são saídas diferentes.
+ADR-007: revisão humana persistente para publicação e intervenções.
+ADR-008: nenhuma mudança automática de escala por gatilho de drift.
+ADR-009: modelos e estatísticas funcionam sem LLM.
+ADR-010: integrações corporativas são opcionais e não bloqueiam a demo.
+
+Alternativa se futuramente for exigido um único repositório: adicionar um bounded context educacional no Argus, com pastas, schema de banco, dependências R e testes próprios. Esse caminho demanda inspeção da árvore completa e dos AGENTS.md antes de editar. Os caminhos sugeridos neste documento são novos, não afirmações de que já existem.
+
+Não recomendamos colocar o núcleo em ThemisAI: psicometria é medição, enquanto Themis é governança. Também não recomendamos colocar tudo em AegisLLM: proteção de chamadas de IA não substitui calibração. RetentIQ e Churn_intelligence são referências para acompanhamento e avaliação preditiva, sem transferência de pesos, rótulos ou regras de retenção comercial.
+
+======================================================================
+2. O QUE FOI VERIFICADO NO SEU GITHUB
+======================================================================
+
+A consulta autenticada retornou 42 repositórios de Yuri-Fernando. Foram lidos os READMEs de Argus, ThemisAI, AegisLLM, RetentIQ, Churn_intelligence e Projetos_Pessoais, além dos arquivos de código e padrão mencionados abaixo. A análise é estática e focalizada; não houve clone completo, execução de testes ou auditoria de todos os serviços. Resultados declarados em README são relatos do repositório, não medições reproduzidas aqui.
+
+2.1 Argus — branch padrão observada: master
+Evidência: README.md; agents/recommendation/approval_queue.py; docs/standards/observability.md.
+O README descreve plataforma de dados e IA, contratos, MLOps, arquitetura de serviços, eventos, fila de aprovação e integração de avaliação adversarial com ThemisAI.
+O arquivo approval_queue.py confirma uma máquina de estados PENDING/APPROVED/REJECTED/EXECUTED, mas a persistência desse componente é em memória. O objeto usa master_customer_id e tem semântica comercial. O método get retorna objeto mutável; a fila por si só não é uma fronteira completa de segurança ou autorização. É necessário inspecionar os chamadores e proteger alterações no serviço de aplicação.
+Reaproveitamento: padrão de estados, rastreabilidade, contratos e instrumentação.
+Adaptação necessária: fila transacional PostgreSQL, autorização por escola, concorrência, idempotência, revisão com autor identificado e entidades educacionais.
+O padrão de observabilidade exige traceparent W3C, trace_id, logs JSON, métricas RED, SLOs e runbooks. É uma boa base para esta vertical.
+
+2.2 ThemisAI — branch padrão observada: main
+Evidência: README.md; shared/schemas.py.
+O arquivo define PolicyDecision, RIPDReport, OversightItem, TraceLink, FairnessAuditResult e outros contratos. SCHEMA_VERSION observado: 0.5.0. LegalBasis é explicitamente um subconjunto ilustrativo e não deve ser tratado como catálogo jurídico completo.
+Reaproveitamento: contrato de parecer de política, auditoria, revisão e estrutura de relatório.
+Adaptação necessária: política educacional específica, validação jurídica das regras e minimização de payloads. PIIFinding contém text_span; não enviar esse campo para logs gerais. DPQueryResult inclui true_value; não expor esse campo num endpoint que prometa divulgar apenas resultado protegido.
+Limite: fairness de predição não substitui DIF/invariância de medida. O módulo educacional deve implementar esses estudos separadamente.
+
+2.3 AegisLLM — branch padrão observada: main
+Evidência: README.md; aegis/models.py.
+Request contém tenant_id, user_id, role, trace_id, task e tool_arguments. O README informa que a API pública não aceita identidade diretamente do JSON e descreve integrações externas e telemetria ampliada como evoluções.
+Reaproveitamento: contrato e controles para o copiloto de educadores, após teste de integração.
+Adaptação necessária: ferramentas educacionais em allowlist, identidade derivada de autenticação, documentos filtrados por autorização e remoção de dados identificáveis antes de eventual chamada externa.
+Limite: confirmed=True não comprova aprovação humana. Aprovação deve ser consultada em registro persistente, vinculado à ação, versão, ator e escopo.
+
+2.4 RetentIQ
+Evidência: README.md.
+Plataforma de e-commerce com ETL, modelos, dashboard, Kanban, observabilidade e eventos. Serve como referência de UX de acompanhamento e de organização de aplicações.
+Não importar regras de oferta, desconto, receita, RFM ou win-back para alunos. O acompanhamento educacional precisa registrar apoio, barreiras, responsáveis e resultados observados.
+
+2.5 Churn_intelligence
+Evidência: README.md.
+Pipeline de churn, agentes, RAG, MLflow e API. A separação predição/decisão é aproveitável como padrão arquitetural. Os limiares comerciais descritos não são apropriados ao SAP e devem ser substituídos por política pedagógica deliberada.
+
+2.6 Projetos_Pessoais
+Evidência: README.md.
+Confirma hub de repositórios independentes por Git Submodules. Distingue Dubbern/ConectaAI, Dubbern/conectaAI_deploy e Dubbern/conecta-ai, mantidos separados. Não foi inspecionado o código desses três repositórios nesta análise; nenhuma decisão de alterar seu produto, deploy ou schema é apresentada como verificada.
+
+Conclusão fundamentada: novo repositório EduMetria + adapters para bases existentes + registro no hub. Evita acoplamento ao vocabulário comercial e preserva reaproveitamento técnico.
+
+======================================================================
+3. MAPA CONCRETO DE REUSO E MUDANÇAS
+======================================================================
+
+Componente atual | Uso proposto | O que precisa ser novo
+Argus / observabilidade | Seguir traceparent, logs e RED | Métricas psicométricas e runbooks específicos
+Argus / aprovação | Reusar desenho de transições | Persistência, tenant, escola, autorização e locks
+Argus / MLOps | Integrar manifesto e resultados | Registro de instrumento, escala e calibração
+Themis / contratos | Adapter de política e auditoria | Regras educacionais revisadas e payload mínimo
+Aegis / gateway | Copiloto com ferramentas limitadas | Authorization context e corpus educacional
+RetentIQ / Kanban | Referência visual | Gestão de apoio sem semântica comercial
+Churn / avaliação | Referência de pipeline | Alvos escolares, dados temporais e avaliação externa
+Projetos_Pessoais | Submodule e descrição | Entrada nova com pin revisável
+ConectaAI | Eventual entrada visual da vertical | Inspeção e contrato de integração em fase posterior
+
+Mínimo de integração demonstrável: o EduMetria exporta PsychometricEvidenceReport versionado e um adapter traduz metadados para uma política Themis de demonstração. Integração não validada deve aparecer como disabled/unverified. Nunca mostrar conexão verde porque um import funcionou ou porque uma resposta fake foi retornada.
+
+Não copiar diretórios inteiros dos projetos. Preferir dependência empacotada e fixada por versão/commit quando existente, ou adapter pequeno. Se houver extração de biblioteca compartilhada, fazê-la em PR próprio com testes de regressão. Verificar licenças antes de redistribuir componentes.
+
+======================================================================
+4. PRODUTO: PROBLEMA, USUÁRIOS E HIPÓTESES
+======================================================================
+
+Pergunta do produto:
+Como produzir medidas educacionais interpretáveis, com incerteza conhecida e evidências rastreáveis, e combiná-las com registros escolares para orientar apoio pedagógico e acompanhamento de permanência?
+
+Usuários:
+a) Psicometrista: define modelo, analisa qualidade e propõe liberação de calibração.
+b) Especialista pedagógico: define matriz, revisa itens e interpreta resultados.
+c) Juiz: registra avaliação independente de conteúdo e acessibilidade.
+d) Gestor municipal: acompanha cobertura, qualidade e capacidade de apoio da rede.
+e) Coordenador escolar: revisa casos, registra ações e monitora seguimento.
+f) Docente: visualiza informações pedagógicas da turma autorizada.
+g) Auditor/encarregado: consulta decisões, versões e acessos com escopo restrito.
+
+Hipóteses a testar:
+H1: o motor recupera parâmetros conhecidos em cenários sintéticos dentro de tolerâncias pré-definidas.
+H2: consegue detectar itens problemáticos e DIF introduzido em simulação, com controle de falsos alertas.
+H3: os escores contribuem para previsão fora da amostra além de um baseline de frequência, quando a geração de dados inclui essa relação; isso não prova ganho em escolas reais.
+H4: toda medida publicada é reproduzível a partir de versão de instrumento, resposta, calibração, configuração e código.
+H5: profissionais conseguem compreender incerteza, limitações e próximos passos em estudo de usabilidade.
+H6: no piloto real, o processo de apoio é executável dentro da capacidade das equipes. A redução de evasão exige avaliação posterior de impacto.
+
+Critério de valor: entregar evidência acionável e compreensível, com uso delimitado. Uma interface bonita com AUC alta em dados artificiais não confirma utilidade educacional.
+
+======================================================================
+5. ESCOPO DA POC E EVOLUÇÕES
+======================================================================
+
+P0 — demonstração técnica principal:
+• Cadastro de matriz, itens e versões.
+• Fluxo de juízes com registros demonstrativos explicitamente sintéticos.
+• Gerador reprodutível de respostas e eventos escolares.
+• TCT; TRI 2PL para teste cognitivo; GRM para escala ordinal.
+• Comparação com Rasch/1PL quando pertinente, sem equivalência indevida entre parametrizações.
+• Escores com incerteza, gráficos, qualidade, exportação e manifesto.
+• DIF em cenário controlado com âncoras conhecidas e estado de revisão.
+• Registro de calibração e liberação manual.
+• API, painel, auditoria, telemetria e testes essenciais.
+
+P1 — PoC completa de produto:
+• CFA ordinal; relatório de evidências; estudo de invariância planejado.
+• Previsão de evento de frequência com validação temporal e espacial.
+• Gestão de intervenções, revisão humana persistente, acompanhamento.
+• Adapter Themis e adapter Argus; copiloto restrito e opcional via Aegis.
+• Relatórios técnicos/executivos, roteiro de demo e monitoramento.
+
+P2 — após PoC:
+• Piloto com escolas e dados legitimamente disponibilizados.
+• Equalização longitudinal e estudo de estabilidade.
+• Teste adaptativo, somente com banco suficiente e calibrado.
+• Modelos multinível, modelos com testlets, bifator ou multidimensionais conforme evidências.
+• Estudos de impacto de intervenções e avaliação econômica institucional.
+• Uso em redes municipais distintas após validação externa.
+
+Fora da PoC: diagnóstico clínico; decisão automática de reprovação, transferência ou exclusão; ranking punitivo de alunos/professores; inferência de saúde mental; intervenção autônoma por WhatsApp; alegação de validação oficial; uso de instrumentos proprietários sem licença.
+
+======================================================================
+6. MATRIZ DE ADERÊNCIA À OPORTUNIDADE
+======================================================================
+
+Requisito | Artefato implementável | Evidência de conclusão
+Matriz de referência | blueprint.yaml + revisão | Cobertura por habilidade e versão aprovada
+Itens e banco | cadastro e item_versions | Histórico e impossibilidade de mutar versão aplicada
+Comitê de juízes | rubric + painel de avaliações | Pareceres independentes, divergências e ata
+TCT | módulo de análise | Estatísticas conferidas em fixtures conhecidas
+TRI | worker R / mirt | Ajuste, parâmetros, erros, informação e logs
+Modelagem avançada | CFA, DIF, modelos de desfecho | Relatório com pressupostos e limitações
+Tradução para sistemas | OpenAPI + JSON Schema + ADR | Contratos consumidos por API/worker/UI
+Equidade | DIF/invariância + fairness preditiva | Relatórios separados e revisão de efeitos
+Calibração contínua | registry + monitoramento | Candidato, comparação, aprovação e rollback
+Integração com IA | tools estruturadas + evidência | Resposta rastreável sem cálculo por LLM
+Notas técnicas | template + renderer | PDF/HTML futuro com valores do run real
+Visão de negócio | capacidade e fluxo de apoio | Métricas de operação e acompanhamento
+
+Este projeto demonstra construção técnica aplicada. Não converte experiência de engenharia em experiência profissional prévia com TRI, bancas e avaliações em larga escala. Na apresentação, distinguir explicitamente competência demonstrada, aprendizado em andamento e experiência ainda não exercida.
+
+======================================================================
+7. INSTRUMENTOS: O QUE MEDIR E O QUE NÃO MISTURAR
+======================================================================
+
+Escopo inicial sugerido: um único ano escolar, preferencialmente 6º ano do ensino fundamental, definido com equipe pedagógica no piloto. A escolha reduz heterogeneidade inicial; não autoriza extrapolação para todo o ensino fundamental.
+
+Instrumento A — aprendizagem em matemática:
+• 24 itens dicotômicos autorais, quatro alternativas, correção 0/1.
+• Três eixos ilustrativos: números/operações (10); resolução de problemas (8); leitura de dados/gráficos (6).
+• Demanda cognitiva planejada: 8 de reconhecimento/compreensão, 10 de aplicação e 6 de raciocínio.
+• Esses cruzamentos devem ser distribuídos numa matriz; as margens acima não são a distribuição completa.
+• Habilidade curricular com código BNCC somente após verificar fonte, ano e redação. Não inventar códigos.
+• Não somar Português e Matemática num único theta por conveniência.
+• Um fator geral é hipótese inicial a verificar. Se dimensionalidade/local dependence não sustentarem essa hipótese, revisar desenho ou ajustar modelo adequado.
+
+Instrumento B — percepção de pertencimento escolar:
+• 12 itens ordinais de quatro categorias de frequência.
+• Construto proposto: percepção de inclusão e vínculo com a escola, com linguagem revisada por educadores e estudantes.
+• Um fator inicial de demonstração. Não juntar construtos distintos para aumentar alfa.
+• Evitar múltiplas negações e inversões artificiais que introduzam confusão.
+• Recusa/não aplicável são códigos de ausência distintos; nunca categoria central da escala.
+• Não chamar o resultado de diagnóstico psicológico ou de prova de evasão futura.
+
+Formulário C — contexto e barreiras:
+• Questões factuais sobre transporte, acesso a materiais, mudança de escola e suporte disponível, escolhidas por finalidade concreta.
+• Cada variável pode ser um indicador ou preditor; não presumir que formem escala reflexiva ou que precisem de alfa/TRI.
+• Respostas livres não entram em LLM externo no padrão inicial.
+
+Exemplos de itens autorais, apenas para elaboração e revisão:
+A01: “Uma turma reuniu 36 livros. Eles serão distribuídos igualmente entre 4 grupos. Quantos livros cada grupo receberá?” Opções: 6, 8, 9, 12. Gabarito: 9. Exigir justificativa dos distratores e revisão da habilidade.
+A02: item de leitura de gráfico a ser criado a partir de gráfico autoral acessível; armazenar descrição alternativa e representação tabular.
+B01: “Nas últimas duas semanas, senti que fazia parte da minha turma.” Categorias: nunca, poucas vezes, muitas vezes, sempre. Aplicabilidade do período e compreensão precisam de estudo cognitivo.
+B02: “Nas últimas duas semanas, encontrei alguém na escola a quem pude pedir ajuda quando precisei.” Deve permitir “não precisei/não se aplica” fora da escala e exigir revisão conceitual, pois mede suporte e pode divergir de pertencimento.
+
+O exemplo B02 é intencionalmente útil para demonstrar revisão: o comitê pode rejeitá-lo por desalinhamento. O produto não deve incentivar aprovar todo item para completar um banco.
+
+======================================================================
+8. JUÍZES, VALIDADE DE CONTEÚDO E PROCESSO DE RESPOSTA
+======================================================================
+
+A validade diz respeito às interpretações e usos dos escores. Organizar evidências de conteúdo, processos de resposta, estrutura interna, relações com outras variáveis e consequências do uso; precisão e equidade também devem ser examinadas. Um coeficiente isolado não certifica o instrumento. Referência conceitual: Standards AERA/APA/NCME [S01].
+
+Fluxo proposto:
+1. Definir construto, população, propósito, interpretação e usos proibidos.
+2. Elaborar blueprint com cobertura e justificativa de cada célula.
+3. Convidar comitê diverso, por exemplo 5–8 profissionais com competências complementares; número é proposta de desenho, não regra universal.
+4. Registrar conflitos de interesse e critérios de participação.
+5. Treinar rubrica com exemplos sem induzir concordância.
+6. Coletar avaliações independentes antes da discussão conjunta.
+7. Consolidar divergências; revisar texto, gabarito, adequação e acessibilidade.
+8. Registrar ata com decisão e justificativa.
+9. Realizar entrevistas cognitivas e estudo de compreensão com público-alvo, mediante procedimentos aprovados.
+10. Pré-testar, analisar e retornar ao ciclo editorial.
+
+Rubrica ordinal de 1–4 para: relevância, clareza, alinhamento, adequação etária e acessibilidade. Adicionar campos de crítica e alternativa proposta. “Viés potencial” exige justificativa qualitativa, sem votação que silencie objeções minoritárias.
+
+Resumo implementável:
+• I-CVI descritivo = proporção de juízes que marcam 3 ou 4 em relevância, por item.
+• S-CVI/Ave = média dos I-CVIs; apresentar distribuição e não apenas média.
+• Aiken V pode ser extensão com intervalos e método especificado.
+• Mostrar número de juízes, notas, comentários e incerteza.
+• Limiar de revisão é configurável; não publicar “validado” por ultrapassar um número.
+• Concordância não garante cobertura curricular nem ausência de viés.
+
+Na demo, juízes fictícios demonstram o workflow. Esse registro nunca integra um relatório como parecer de especialistas reais. Campo evidence_origin distingue simulated_review de human_review.
+
+======================================================================
+9. TCT: ANÁLISE CLÁSSICA DOS TESTES
+======================================================================
+
+Entradas: matriz pessoa×item, gabarito/rubrica, status de resposta, caderno e dados mínimos de aplicação.
+
+Saídas para itens dicotômicos:
+• n aplicado, n respondido, proporção correta entre respostas válidas e taxa de omissão.
+• Correlação ponto-bisserial corrigida: item versus total sem aquele item.
+• Distribuição por alternativa, plausibilidade e funcionamento dos distratores.
+• Estatísticas por versão, caderno, turma e contexto, quando tamanho e autorização permitirem.
+
+Saídas para instrumento:
+• Distribuição do escore bruto e cobertura.
+• Alfa/KR-20 com intervalos quando aplicável; estabilidade e limitações.
+• Ômega baseado em modelo adequado como análise complementar.
+• Precisão por faixa e consistência de classificação, se classificações forem justificadas.
+
+Alfa = k/(k−1) × [1 − soma(var(X_j))/var(soma(X_j))]. Exige k>1, variância de total positiva e matriz tratada conforme protocolo. Não aplicar automaticamente a itens de construtos distintos nem ignorar padrões de missing.
+
+Erros que devem virar estados explícitos:
+• Item constante: discriminação indefinida, não retornar zero como resultado válido.
+• Teste sem variância: coeficiente não estimável.
+• Amostra pequena: resultado exploratório com incerteza.
+• Omissão por caderno: missing estrutural, não erro de resposta.
+• Não alcançado por tempo: investigar velocidade/condição de aplicação antes de imputar.
+
+Flags ilustrativas para triagem: item com menos de 5% ou mais de 95% de acerto, discriminação negativa e omissão elevada. São gatilhos investigativos para esta PoC, não padrões universais nem critérios automáticos de exclusão.
+
+======================================================================
+10. TRI: CALIBRAÇÃO, ESCORES E ESCALA
+======================================================================
+
+Motor proposto: R/mirt em worker isolado, com lockfile renv e imagem fixada. O pacote oferece modelos dicotômicos e politômicos, escores e diagnósticos [S02–S06]. R e Python se comunicam por arquivos estruturados/contratos, sem reimplementar todo estimador em Python.
+
+10.1 Dicotômicos
+Modelo 2PL, convenção logística D=1:
+P(X_ij=1 | theta_i) = logistic[a_j(theta_i−b_j)].
+a_j representa discriminação e b_j localização/dificuldade na escala definida.
+Se exportar parametrização intercepto d: d_j=−a_j b_j; b_j=−d_j/a_j apenas no caso unidimensional correspondente.
+Essa conversão não deve ser aplicada mecanicamente ao modelo multidimensional.
+
+Comparador simples: Rasch/1PL. Declarar diferenças de identificação e restrições de escala; mirt distingue configurações de Rasch e 1PL. Uma vantagem de ajuste do modelo mais flexível não basta para escolhê-lo: examinar identificação, estabilidade, interpretação e validação.
+
+3PL fica como extensão: pseudoacerto exige informação e tamanho de amostra adequados. Não adicionar parâmetro de acerto casual só porque há quatro alternativas. Fixar c=0,25 também é uma hipótese substantiva, não uma verdade do item.
+
+10.2 Ordinais
+GRM: P(X_ij≥k | theta_i) = logistic[a_j(theta_i−b_jk)].
+A probabilidade de cada categoria é a diferença entre cumulativas adjacentes; observar convenção de índice. Limiar deve ser ordenado. Categoria vazia ou quase vazia gera diagnóstico; colapsar categoria exige justificativa e nova versão de regra/instrumento.
+GPCM pode ser comparador quando a natureza da tarefa e rubrica sustentarem crédito parcial. Não escolher por nome do pacote.
+
+10.3 Protocolo de ajuste
+a) Validar schema, categorias, versões e padrão de aplicação.
+b) Conferir independência local e hipótese dimensional.
+c) Fixar identificação, população de referência e orientação da escala.
+d) Registrar seed, algoritmo, tolerância, quadratura e múltiplos inícios quando necessários.
+e) Ajustar modelo; registrar convergência, warnings e parâmetros na fronteira.
+f) Inspecionar Hessiana/informação, erros padrão e parâmetros implausíveis.
+g) Examinar ajuste por item, curvas e dependência residual; corrigir multiplicidade conforme plano.
+h) Comparar modelos e executar análises de sensibilidade.
+i) Produzir candidato de calibração; publicação exige revisão.
+
+10.4 Escores e incerteza
+Adotar EAP como padrão inicial com prior documentado. Guardar theta_hat e posterior_sd, método, quantidade de itens, cobertura de informação e warnings. posterior_sd não deve ser rotulado automaticamente como erro padrão frequentista.
+Intervalos posteriores por quantis são preferíveis quando disponíveis. Se usar theta±1,96×posterior_sd, rotular como aproximação normal e verificar especialmente extremos.
+MLE pode divergir em padrões todos corretos/incorretos; a demonstração deve mostrar esse problema e a escolha de EAP, inclusive o encolhimento ao prior.
+Sem respostas informativas, não reportar a média do prior como medida individual válida. Retornar insufficient_evidence com theta ausente.
+
+Informação no 2PL: I_j(theta)=a_j²P_j(theta)[1−P_j(theta)]. Sob independência local, somar por teste. A aproximação SE(theta)=1/sqrt(I_teste(theta)) é baseada na informação do teste e não é idêntica à incerteza posterior EAP.
+
+Escala de apresentação opcional: T=50+10 theta; propagar incerteza multiplicando por 10. Declarar escala interna. Não chamar de escala SAEB, ENEM ou PISA, nem comparar valores diretamente a elas.
+
+10.5 Linking, versões e recalibração
+Calibrações independentes não são automaticamente comparáveis. Comparar versões requer âncoras estáveis, desenho comum ou outra ligação defensável, com erro de linking e análise de sensibilidade.
+Preservar calibração usada originalmente. Reprocessamento gera novo score ligado ao anterior; não sobrescreve histórico silenciosamente.
+Mudanças de redação, tradução ou layout relevante criam nova versão do item e podem exigir novo estudo. Drift detectado cria candidato e tarefa de revisão, não troca o motor publicado automaticamente.
+
+======================================================================
+11. ESTRUTURA INTERNA, DIF E EQUIDADE
+======================================================================
+
+11.1 Estrutura interna
+Para respostas ordinais, especificar variáveis ordered e estimador compatível. No lavaan, ordered ativa WLSMV; tratar categorias como contínuas sem justificativa não é o padrão recomendado aqui [S07].
+Separar exploração e confirmação por amostra/coorte ou estratégia previamente definida. Não explorar e confirmar repetidamente no mesmo conjunto sem reconhecer o caráter exploratório.
+Registrar cargas, correlações, resíduos, intervalos, CFI/TLI, RMSEA e SRMR quando disponíveis e interpretáveis. Nenhum limiar isolado autoriza uso. Considerar tamanho de amostra, modelo, estimador e validade substantiva.
+Dependência local pode vir de texto compartilhado, ordem ou testlet. Modelar/revisar estrutura antes de inflar discriminações.
+
+11.2 DIF
+DIF avalia diferenças na função de resposta entre grupos condicionadas ao traço relevante; diferença de médias de escore bruto não é DIF.
+Definir grupos, hipótese, amostra mínima por cenário e itens âncora. Na simulação, as âncoras verdadeiras são conhecidas; em dados reais, seleção/purificação requer revisão e sensibilidade.
+O mirt disponibiliza multipleGroup e DIF com abordagens Wald/razão de verossimilhanças [S04]. Verificar nomes de parâmetros do modelo, especialmente limiares de itens ordinais.
+Relatório: item, contraste, parâmetro, teste, p ajustado, magnitude/curva, n por grupo, estabilidade e decisão humana.
+Examinar DIF uniforme e não uniforme. Ajustar multiplicidade por método previamente escolhido, por exemplo BH para exploração; registrar todas as comparações.
+Ausência de significância em grupo pequeno significa evidência insuficiente. Resultado de DIF não prova intenção discriminatória nem leva automaticamente à remoção do item.
+
+11.3 Invariância
+Estudar modelos por grupo/tempo com restrições coerentes para dados ordinais e identificação correta de limiares, cargas e escalas. Não copiar sequência de invariância contínua para categorias sem adaptar.
+Sem suporte para comparabilidade, suspender comparações agregadas entre grupos/ondas. Invariância parcial deve explicitar quais parâmetros variam e implicações.
+
+11.4 Equidade preditiva e de atendimento
+Avaliar separadamente sensibilidade, falsos positivos, precisão, calibração e cobertura de apoio por grupo, com intervalos e atenção a interseções pequenas.
+Atributos necessários à auditoria podem ficar num cofre analítico restrito, separados do conjunto de features operacional.
+Igualdade de uma métrica não garante equidade. Não ajustar limiares por grupo automaticamente; a política demanda discussão pedagógica, institucional e jurídica.
+Suprimir células pequenas na visualização pública, com parâmetro inicial ilustrativo k=10 e supressão complementar; isso não garante anonimização por si só.
+
+======================================================================
+12. DESFECHOS EDUCACIONAIS E PREVISÃO
+======================================================================
+
+Manter três conceitos separados:
+1. Medida psicométrica: estimativa de proficiência/traço com incerteza.
+2. Sinal de acompanhamento: ocorrência observada, como aumento de faltas.
+3. Risco preditivo: probabilidade de evento definido numa janela futura.
+
+Definições operacionais propostas, a confirmar com a rede:
+• Frequência: presença por dias letivos elegíveis, com calendário e matrícula vigente.
+• Alerta sintético da PoC: pelo menos cinco faltas não justificadas nos próximos vinte dias letivos elegíveis. É proxy demonstrativo, não definição oficial de abandono/evasão.
+• Abandono no ano: registro administrativo validado, conforme definição adotada.
+• Evasão/transição: trajetória entre períodos, distinguindo transferência, mudança de rede e impossibilidade de vinculação. Ausência de registro não basta para concluir evasão.
+
+Snapshot preditivo em t0:
+Features somente conhecidas até t0, inclusive available_at das avaliações. Desfecho calculado em t0+20 dias letivos. Se o seguimento não estiver completo, target=unknown/censored, nunca zero.
+Evitar sobreposição contaminante entre janelas de treino e avaliação. Escolher horizonte e embargo temporal conforme calendário. Um mesmo aluno em múltiplas janelas exige controle de correlação e split consistente com uso futuro.
+
+Baselines:
+B0: regra explícita de frequência recente.
+B1: regressão logística regularizada só com dados administrativos.
+B2: B1 + escores psicométricos e respectivas informações de precisão.
+B3: gradient boosting como challenger, se amostra e complexidade justificarem.
+
+Avaliação:
+• Divisão temporal e teste em escolas/municípios externos ao treinamento.
+• Pré-processamento e seleção ajustados só no treino.
+• Calibração de probabilidade numa partição adequada, sem usar teste final [S10].
+• PR-AUC, ROC-AUC, Brier, curva de calibração e recall/precision@capacidade.
+• Intervalos por bootstrap agrupado por escola/aluno conforme desenho; não fingir independência entre todas as linhas.
+• Comparação B1 versus B2 para quantificar valor incremental real.
+• Sensibilidade a missing e à incerteza do theta; se viável, repetir predição com amostras posteriores, declarando aproximações.
+• SHAP ou coeficientes são descrições do modelo, não causas individuais.
+
+Critério de encaminhamento: capacidade de apoio e custo de erros, definidos com profissionais. O modelo nunca decide quem merece apoio. Um caso pode entrar por solicitação humana mesmo com risco baixo; excluir aluno por score é proibido.
+
+======================================================================
+13. INTERVENÇÕES E AVALIAÇÃO DE IMPACTO
+======================================================================
+
+Fluxo: sinal → triagem contextual → profissional responsável → plano de apoio → execução registrada → acompanhamento → revisão do resultado.
+Estados propostos: proposed, under_review, approved, in_progress, completed, declined, cancelled. Conclusão não significa melhora; separar status operacional de outcome.
+Cada plano guarda objetivo, evidência, responsável, prazo, elegibilidade, preferência/necessidade contextual e motivo de decisão.
+
+Exemplos de ações a deliberar com equipe: checagem de qualidade do registro de frequência; conversa acolhedora; apoio pedagógico; articulação com serviços já existentes; avaliação de barreira de transporte. O sistema apresenta opções aprovadas institucionalmente e não inventa condutas sociais ou clínicas.
+
+Benefício não comprovado: não afirmar “reduz evasão em X%”. Pesquisa sobre EWIMS em escolas secundárias dos EUA encontrou efeitos em alguns indicadores e não em todos; não é validação para municípios brasileiros nem para este produto [S11].
+
+Piloto posterior:
+• Pré-registrar população, unidade de intervenção, desfechos e método.
+• Preferir desenho por escolas quando houver contaminação entre alunos.
+• Se possível, implantação aleatorizada por clusters com recursos e autorizações adequados.
+• Alternativa observacional: comparação justificada, análise de tendências e confundimento; não chamar associação de efeito causal.
+• Calcular tamanho amostral com taxa de evento, correlação intraclasse, efeito relevante, perdas e desenho.
+• Medir carga das equipes, adesão, cobertura, consequências adversas e desigualdade de atendimento.
+
+======================================================================
+14. DADOS SINTÉTICOS E DADOS PÚBLICOS
+======================================================================
+
+Três trilhas explicitamente separadas:
+A — simulação com ground truth: validação de software e recuperação de parâmetros.
+B — dados públicos: reprodução de análises possíveis com campos e licenças efetivamente disponíveis.
+C — piloto institucional: evidências de uso real, sujeito a desenho e governança próprios.
+
+O Inep publica matrizes, questionários e microdados do Saeb [S08–S09]. Antes de escolher edição, verificar dicionário, acesso, pesos, desenho amostral e disponibilidade de respostas a itens. Não prometer um banco completo de itens sigilosos nem vinculação longitudinal individual pública. Não unir bases por nomes, atributos frágeis ou tentativa de reidentificação.
+
+Dataset sintético padrão de demonstração:
+• 2 municípios fictícios, 20 escolas e 2.000 estudantes artificiais.
+• Um ano escolar, 24 itens cognitivos e 12 ordinais.
+• Grupo de auditoria artificial A/B, sem significados demográficos atribuídos.
+• 3 ondas opcionais de aplicação e 60 dias letivos de frequência, com horizonte suficiente para cada alvo.
+• Identificadores sintéticos; nenhum nome, CPF ou telefone real.
+• Seeds e parâmetros salvos em scenario.yaml.
+
+Esses números são escolhas de engenharia. Não constituem tamanho amostral suficiente universal para TRI, DIF ou piloto.
+
+Cenários:
+S0: ajuste ao modelo gerador, sem DIF e com missing baixo.
+S1: baixa discriminação e item muito fácil/difícil.
+S2: DIF uniforme em três itens cognitivos fora do conjunto âncora.
+S3: DIF não uniforme em dois itens e assimetria de grupos.
+S4: missing aleatório e missing dependente de theta; distinguir cenário MAR/MNAR conhecido na simulação.
+S5: dependência local/testlet, para detectar violação do modelo simples.
+S6: multidimensionalidade gerada e ajuste unidimensional inadequado.
+S7: mudança de distribuição de theta sem mudança de parâmetros de item.
+S8: mudança de parâmetros de item com população estável.
+S9: categorias ordinais raras e padrão todos corretos/incorretos.
+S10: dados atrasados, duplicados, aluno transferido e versão inválida.
+S11: preditor com vazamento temporal injetado para teste de bloqueio.
+
+Não gerar todos os cenários misturados e depois tentar atribuir cada falha a uma única causa. Executar baseline e intervenções controladas; depois combinação de fatores como teste de stress.
+
+Monte Carlo:
+• Smoke: poucas repetições para conferir integração; sem conclusão estatística.
+• Estudo de recuperação: grid N={500,1000,2000}, efeitos/missing/grupos configuráveis.
+• Planejar 100–200 repetições por condição conforme custo, registrando falhas; número inicial ajustável após estimar erro Monte Carlo.
+• Comparar bias, RMSE, cobertura, convergência, poder e falsos positivos.
+• Alinhar escala antes de comparar parâmetros; manter convenções e identificação iguais.
+• Não apagar runs falhos do denominador. Emitir status failed/nonconverged.
+
+======================================================================
+15. MODELO DE DADOS E LINEAGE
+======================================================================
+
+Tabelas centrais, todas com escopo de tenant quando aplicável:
+tenants; schools; classes; users; role_assignments.
+students_pseudonymous; enrollment_history; identity_mapping_restricted.
+constructs; blueprints; blueprint_cells.
+items; item_versions; item_assets; item_alignment.
+review_panels; reviewers; item_reviews; review_decisions.
+instruments; instrument_versions; forms; form_items.
+administrations; sessions; responses; attendance_events.
+datasets; dataset_snapshots; quality_findings.
+calibration_runs; item_parameters; scale_definitions; linking_runs.
+score_runs; scores; evidence_reports; dif_findings.
+risk_model_versions; feature_snapshots; risk_predictions.
+support_cases; interventions; intervention_reviews; followups.
+audit_events; outbox_events; processed_events; job_runs.
+
+Chaves/regras importantes:
+• item_versions imutável após aplicação; items mantém identidade conceitual.
+• forms referencia versões exatas; ordem e rubrica fazem parte do hash.
+• responses guarda raw_response, scored_value, response_status e scoring_rule_version.
+• response_status enum: answered, omitted, not_reached, not_administered, invalidated, declined, not_applicable.
+• Restrição única de resposta por tenant/sessão/item_version/tentativa conforme política.
+• Corrigir resposta gera evento de correção e nova versão, sem apagar evidência original indevidamente.
+• enrollment_history contém vigência e escola; não usar escola atual para reescrever autorização de fato histórico sem regra clara.
+• event_time, ingested_at e available_at distintos; treinamento faz joins point-in-time.
+• scores armazena instrument_version, calibration_id, scale_id e snapshot_id.
+• SQL com FK composta por tenant evita referências cruzadas.
+• Banco operacional e cofre identificável possuem acessos distintos.
+
+Manifesto de execução:
+run_id, created_at, purpose, data_origin, dataset_hash, item_bank_hash,
+instrument_version, code_commit, image_digest, python_lock_hash,
+renv_lock_hash, seed, method, fit_options, sample_design,
+split_manifest, warnings, artifacts, reviewer e release_status.
+
+Lineage mínimo navegável:
+relatório → score/modelo → calibração → snapshot de respostas → aplicação → caderno → item_version → matriz/revisões.
+O manifesto deve referenciar hashes; não incluir registros individuais num arquivo público.
+
+======================================================================
+16. ARQUITETURA TÉCNICA
+======================================================================
+
+Perfil local inicial:
+• Frontend: Streamlit multipágina para rapidez, com autenticação na borda/API.
+• API: FastAPI + Pydantic, único serviço de aplicação modular.
+• Banco: PostgreSQL, migrations Alembic, políticas de acesso testadas.
+• Worker psicométrico: R + mirt + lavaan, acionado por job validado.
+• Worker dados/ML: Python, pandas/Polars conforme necessidade, scikit-learn.
+• Artefatos: diretório local no modo dev; storage compatível com objetos no perfil integrado.
+• Jobs: tabela PostgreSQL com lease/heartbeat, retry e idempotência. Redis/filas especializadas opcionais posteriormente.
+• Experimentos: manifests obrigatórios; MLflow opcional no perfil de análise/integrado.
+• Observabilidade: logs JSON e métricas no perfil básico; OTel/Grafana/Prometheus no perfil observability.
+• LLM: feature flag desligada por padrão.
+
+Não exigir Kubernetes, Kafka, Spark, Databricks, Snowflake e LLM para rodar 2.000 estudantes sintéticos. O adapter Argus é o caminho de expansão, não pré-requisito para calcular TRI.
+
+Diagrama Mermaid de containers, para documentação futura:
+
+flowchart TD
+  U[Profissionais autorizados] --> UI[Painel EduMetria]
+  UI --> API[API e casos de uso]
+  API --> DB[(PostgreSQL)]
+  API --> J[Jobs e registro de modelos]
+  J --> R[Worker R psicometria]
+  J --> PY[Worker Python dados e risco]
+  R --> A[(Artefatos versionados)]
+  PY --> A
+  API --> GOV[Adapters de governança]
+  API --> TEL[Telemetria]
+
+Regra central: a UI não recalcula estatísticas, não acessa gabaritos restritos por atalhos e não aprova instrumentos apenas alterando session_state. Casos de uso da API são a autoridade para escrita.
+
+Interfaces de domínio:
+ItemRepository, ResponseRepository, CalibrationEngine, ScoreEngine,
+EvidenceRepository, RiskPredictor, ApprovalRepository, PolicyGateway,
+AuditSink, EventPublisher e ArtifactStore.
+Adaptadores implementam essas portas; o núcleo não importa frameworks externos de todo o ecossistema.
+
+======================================================================
+17. ORGANIZAÇÃO DO NOVO REPOSITÓRIO
+======================================================================
+
+Caminhos propostos, ainda a criar:
+README.md — propósito, limites, setup, demo e evidência real.
+AGENTS.md — comandos, limites, contratos e definição de pronto.
+pyproject.toml + lockfile — dependências Python fixadas.
+renv.lock — dependências R fixadas.
+Makefile — tarefas reproduzíveis, sem prometer comando inexistente.
+compose.yaml — perfis core, observability e integrations.
+.env.example — nomes de variáveis sem credenciais.
+apps/api/ — rotas, autenticação e DI.
+apps/dashboard/ — navegação, gráficos e estados vazios/erro.
+src/edumetria/domain/ — entidades e invariantes.
+src/edumetria/application/ — serviços e casos de uso.
+src/edumetria/infrastructure/ — banco, storage, jobs e telemetry.
+src/edumetria/ctt/ — estatísticas clássicas.
+src/edumetria/risk/ — features point-in-time e modelos.
+src/edumetria/simulation/ — geradores e cenários.
+src/edumetria/reporting/ — relatórios determinísticos.
+src/edumetria/integrations/ — argus, themis e aegis.
+r/fit_2pl.R; r/fit_grm.R; r/score.R; r/dif.R; r/cfa.R.
+contracts/ — JSON Schemas, OpenAPI e fixtures de paridade.
+migrations/ — schema e alterações.
+data/synthetic/ — somente dados artificiais pequenos ou script gerador.
+configs/ — cenários, thresholds e perfis de execução.
+tests/unit/; tests/statistical/; tests/contracts/; tests/integration/; tests/e2e/.
+observability/ — dashboards, alert rules e collector.
+docs/adr/; docs/methodology/; docs/runbooks/; docs/presentation/.
+reports/ — relatórios demonstrativos sanitizados, com manifesto.
+
+Não versionar respostas reais, modelos com dados identificáveis, .env, dumps, logs brutos ou artefatos grandes. Documentar licença de código separada da licença dos itens, datasets e assets.
+
+======================================================================
+18. CONTRATOS DE API E JOBS
+======================================================================
+
+Todas as rotas abaixo são propostas. Prefixo /v1. Contexto de tenant/usuário vem da autenticação, nunca é confiado porque apareceu no corpo.
+
+POST /instruments — criar rascunho.
+POST /instruments/{id}/versions — nova versão editorial.
+POST /items/{id}/reviews — parecer de juiz autorizado.
+POST /instrument-versions/{id}/submit — enviar para revisão.
+POST /instrument-versions/{id}/approve — ato autorizado, auditado.
+POST /datasets/import — upload validado e assíncrono.
+POST /calibrations — enfileirar ajuste, HTTP 202 com job_id.
+GET /jobs/{id} — estado, progresso, warnings e erro sanitizado.
+GET /calibrations/{id}/diagnostics — ajuste e artefatos.
+POST /calibrations/{id}/release — liberação com rationale/reviewer.
+POST /scores — pontuação usando calibração liberada.
+GET /evidence-reports/{id} — evidências e limitações.
+POST /risk-runs — execução opcional de predição.
+POST /support-cases — criar caso por profissional.
+POST /support-cases/{id}/reviews — deliberação.
+GET /audit — consulta restrita.
+GET /health/live; GET /health/ready; GET /metrics — superfícies operacionais apropriadas.
+
+Exemplo de solicitação de calibração:
+{
+  "instrument_version_id": "math6-v0.1",
+  "dataset_snapshot_id": "synthetic-s0-v1",
+  "model_family": "2pl",
+  "config_version": "calibration-v1",
+  "purpose": "simulation",
+  "seed": 20260928
+}
+
+Configuração de algoritmo é selecionada por allowlist/config versionada. Não aceitar comandos R, caminhos arbitrários, SQL ou código enviado pelo cliente.
+
+Resposta de score, exemplo de contrato, sem resultado medido:
+{
+  "schema_version": "1.0.0",
+  "score_id": "demo-score-001",
+  "subject_ref": "synthetic-student-001",
+  "instrument_version_id": "math6-v0.1",
+  "calibration_id": "demo-cal-001",
+  "scale_id": "math6-internal-v1",
+  "method": "EAP",
+  "estimate": null,
+  "posterior_sd": null,
+  "status": "not_computed",
+  "data_origin": "synthetic",
+  "warnings": [],
+  "trace_id": "generated-at-runtime"
+}
+
+PsychometricEvidenceReport:
+identidade/versões; população e propósito; origem dos dados;
+content_review; response_process; dimensionality;
+ctt; irt; precision; dif; external_relations;
+limitations; prohibited_uses; approval_state; artifacts; lineage.
+Cada seção possui status supported/exploratory/insufficient/not_assessed, evidências e run_id. Não converter tudo para um “score de validade” opaco.
+
+Idempotência:
+POST de importação/calibração aceita Idempotency-Key por tenant + digest do corpo. Mesma chave e corpo retorna mesmo job; mesma chave com corpo diferente retorna conflito. Repetir job não deve duplicar score publicado ou intervenção.
+
+Jobs:
+queued → running → succeeded/failed/cancelled.
+Lease expira se worker morrer; retomada respeita checkpoint e semântica de tarefa. Retentar erro transitório; não repetir indefinidamente erro de schema ou modelo não identificável. Failed armazena código técnico e diagnóstico, sem PII.
+
+Erros padronizados: 400 entrada malformada; 401 não autenticado; 403 escopo negado; 404 recurso ausente ou invisível conforme política; 409 versão/estado incompatível; 422 dado inválido; 429 limite; 503 dependência indisponível.
+
+======================================================================
+19. EVENTOS, AUDITORIA E INTEGRAÇÕES
+======================================================================
+
+Eventos propostos:
+item.version.created; item.review.submitted;
+instrument.version.approved; response.batch.accepted;
+calibration.completed; calibration.rejected; calibration.released;
+score.computed; evidence.report.generated; risk.flag.created;
+intervention.proposed; intervention.approved; intervention.completed;
+data.quality.failed; measurement.drift.flagged.
+
+Envelope: event_id, event_type, schema_version, occurred_at, tenant_ref,
+aggregate_id, aggregate_version, correlation_id, traceparent,
+producer_version e data minimizado.
+Não carregar resposta individual completa no evento distribuído. Usar referência a recurso protegido.
+
+Persistir alteração de domínio e outbox na mesma transação. Consumidor registra event_id processado e aplica efeito idempotente. Garantia prática: entrega ao menos uma vez com deduplicação; não anunciar “exactly once” universal.
+
+Audit trail de acesso e decisão é separado dos logs de diagnóstico. Registrar quem, o quê, quando, finalidade, versão e justificativa, com acesso restrito e política de retenção. Hash-chain ajuda a detectar alterações, mas não garante integridade contra administrador com controle total sem ancoragem/controle independente.
+
+Adapter Argus:
+exporta manifestos/contratos de data product e relatório de release. Não insere estudantes em golden records comerciais. Prefixo de domínio education em eventos e namespaces.
+
+Adapter Themis:
+envia metadados de finalidade, categorias, uso de dados e necessidade de revisão. Trata retorno como evidência auxiliar de governança. Falha ou ausência de política para uso real bloqueia liberação; demo sintética pode operar localmente com rótulo explícito de integração desligada.
+
+Adapter Aegis:
+recebe conteúdo agregado/sanitizado e ferramentas educacionais aprovadas. O aplicativo conserva decisão final de autorização, independentemente do gateway.
+
+======================================================================
+20. IA GENERATIVA, RAG E AGENTES
+======================================================================
+
+Usos permitidos na PoC:
+• Rascunhar itens candidatos a partir de habilidade e especificação aprovadas.
+• Sugerir melhoria de clareza sem publicar automaticamente.
+• Resumir relatório já calculado, citando evidence_id e seção.
+• Responder sobre metodologia com corpus autorizado e versionado.
+• Sugerir documentos/playbooks aprovados para revisão profissional.
+
+Não delegar à LLM: estimação de theta, p-valor, DIF, determinação de validade, aprovação de item, cálculo de risco, definição de base legal ou execução de intervenção.
+
+Ferramentas mínimas:
+get_instrument_metadata; get_calibration_summary;
+get_aggregate_precision; get_item_review_status;
+get_approved_support_playbooks; explain_report_section.
+Nenhuma ferramenta de consulta arbitrária ao banco ou execução de shell.
+
+RAG:
+• Corpus: metodologia própria, notas revisadas e materiais autorizados.
+• Chunk por seção com documento/versão/página/hash; evitar quebrar tabelas críticas.
+• Filtro de autorização antes da recuperação e antes de servir resultado.
+• Documentos recuperados são dados, não instruções.
+• Ausência de evidência produz resposta de insuficiência.
+• Itens sigilosos e gabaritos não entram no corpus acessível a estudantes.
+
+Avaliação do copiloto:
+dataset versionado com questões técnicas, perguntas sem suporte, erro de versão, ataque de prompt, pedido de dado de outra escola, tentativa de alterar estatística e atribuição causal indevida.
+Medir correção numérica versus JSON original, cobertura de citação, fidelidade ao contexto, abstenção, acesso indevido e custo/latência.
+LLM-as-judge pode ajudar na triagem, mas não substitui conferência determinística dos números e revisão de amostra por especialistas.
+Desligar o LLM mantém upload, análise, gráficos, decisão humana e relatório técnico funcionando.
+
+======================================================================
+21. TELAS E EXPERIÊNCIA DE USO
+======================================================================
+
+Navegação proposta:
+1. Visão geral.
+2. Matriz e banco de itens.
+3. Comitê de revisão.
+4. Aplicações e qualidade dos dados.
+5. Laboratório psicométrico.
+6. Equidade e comparabilidade.
+7. Acompanhamento escolar.
+8. Relatórios e evidências.
+9. Operação e auditoria.
+
+Visão geral:
+mostrar origem dos dados, versão do instrumento, cobertura de respostas, execuções pendentes e indicadores de qualidade. Evitar mostrar “número de alunos em risco” sem denominador, horizonte, data e definição.
+
+Banco:
+filtros por habilidade, versão, status e origem. Item mostra rubrica, histórico e vínculo ao blueprint. Conteúdo de aplicação restrita só para perfis autorizados.
+
+Laboratório:
+abas TCT, TRI, precisão e diagnósticos. Gráficos: distribuição de escores; curvas características; informação de item/teste; theta versus incerteza; observado versus esperado; residual/local dependence. Tooltips explicam o significado sem expor detalhes irrelevantes ao educador.
+
+Equidade:
+contrastes com n, intervalos, magnitude e status. Grupos pequenos mostram “evidência insuficiente”. Proibir ranking por atributo sensível.
+
+Acompanhamento:
+lista de casos autorizados, motivo, qualidade do dado, responsável, prazo e status. Medida psicométrica e risco aparecem em cartões diferentes. Ação exige justificativa profissional. No modo demo, estudante identificado como pessoa fictícia.
+
+Relatório:
+primeira página explica propósito, população, método, achados calculados e limites; apêndice técnico contém ajustes e manifestos. Exibir quem revisou e qual versão está em vigor.
+
+Estados obrigatórios em todas as telas: carregando, vazio, permissão negada, dados insuficientes, dependência indisponível, análise falhou e resultado desatualizado. Nunca desenhar valores fixos como se fossem resultados atuais.
+
+Acessibilidade e baixa conectividade:
+contraste adequado; teclado; rótulos; alternativa tabular para gráficos; não depender só de cores. Upload CSV com modelo simples e reconciliação de erros. Avaliação offline é extensão: se criada, requer criptografia local, conflito/sincronização e expiração; não usar cache público genérico para respostas pessoais.
+
+======================================================================
+22. OBSERVABILIDADE EM QUATRO CAMADAS
+======================================================================
+
+Base: seguir convenções do Argus e sinais OTel, preservando rastreamento entre API, jobs e relatórios [S12]. Evitar PII em atributos de spans e alta cardinalidade em métricas.
+
+22.1 Software e infraestrutura
+edumetria_http_requests_total{route,method,status_class}
+edumetria_http_request_duration_seconds{route,method}
+edumetria_jobs_total{job_type,status}
+edumetria_job_duration_seconds{job_type}
+edumetria_job_queue_age_seconds{job_type}
+edumetria_worker_heartbeat_age_seconds{worker_type}
+edumetria_outbox_oldest_age_seconds
+process_resident_memory_bytes; cpu; espaço em disco; conexões DB.
+
+Labels permitidos têm conjunto limitado. Nunca usar student_id, resposta, item_id ilimitado, trace_id ou email como label Prometheus. Detalhe de item fica no banco analítico restrito.
+
+22.2 Dados
+Volume esperado/recebido; duplicidade; categorias inválidas; taxa de omissão por motivo; freshness; quebra de FK; versões misturadas; cobertura por aplicação; variação de composição amostral.
+Um dado recusado deve gerar finding, contagem e caminho de correção. Zero erro técnico não significa dado confiável.
+
+22.3 Psicometria e modelos
+Convergência por família; parâmetros na fronteira; incerteza elevada; itens sem informação suficiente; dependência residual; categorias raras; DIF pendente; composição da amostra; distribuição de theta; estabilidade de âncoras; calibrações sem revisão.
+No risco: calibração com rótulos maduros, Brier, recall@capacidade, missing de features e cobertura do público-alvo.
+Drift de theta pode refletir aprendizagem ou composição. Não disparar recalibração por KS/PSI isolado. Distinguir mudança de população, aplicação e parâmetros.
+
+22.4 Operação e efeito educacional
+Tempo entre sinal e revisão; backlog por responsável; cobertura de apoio; taxa de execução; casos vencidos; motivos de rejeição; frequência após ação; percepção dos usuários; carga da equipe.
+Efeito causal e evolução descritiva aparecem em painéis diferentes. Queda de faltas após ação não prova que a ação causou a queda.
+
+Logs JSON mínimos:
+timestamp, level, service, environment, event, trace_id,
+job_id, run_id, error_code e duration_ms.
+subject_ref, quando estritamente necessário, usa referência pseudonimizada com acesso restrito; não registrar conteúdo de resposta, gabarito, prompt bruto ou segredo.
+
+Traço de exemplo: importação → validação → snapshot → ajuste R → diagnósticos → revisão → registro → score → relatório. Propagar traceparent; jobs longos podem usar span links quando o trabalho é desacoplado.
+
+======================================================================
+23. SLOS, ALERTAS E RUNBOOKS
+======================================================================
+
+Metas iniciais de engenharia, a medir em hardware documentado:
+• API de leitura: p95 ≤1 segundo em 20 usuários simultâneos, excluindo downloads pesados.
+• API de enqueue: p95 ≤500 ms; cálculo não acontece dentro da requisição.
+• Perfil leve: calibração de 2.000×24 em até 10 minutos como orçamento inicial de benchmark, não promessa.
+• Integridade: 100% dos escores publicados com manifesto e calibração identificáveis.
+• Segurança: nenhuma operação autorizada por identidade fornecida apenas no corpo.
+• Recuperação local: restaurar backup de demonstração em até 60 minutos como exercício; validar antes de declarar alcançado.
+• Piloto: definir disponibilidade mensal após conhecer ambiente; 99,5% pode ser meta inicial, não SLA assumido.
+
+Alertas com ação:
+A1: job sem heartbeat por tempo acima do lease → verificar worker, marcar tentativa e retomar com idempotência.
+A2: lote com versão desconhecida → quarentena, impedir score e acionar responsável por instrumento.
+A3: calibração não converge → impedir publicação; inspecionar dados/categorias/inícios/modelo; não substituir por números aleatórios.
+A4: aumento de missing → comparar aplicação/escolas/calendário; considerar falha de coleta antes de interpretação pedagógica.
+A5: DIF/âncora instável → abrir revisão, suspender comparação afetada, registrar decisão; não apagar item automaticamente.
+A6: vazamento de dados em log → restringir acesso, conter, seguir processo de incidente e corrigir coletor; registrar investigação.
+A7: dependência LLM falha → relatório determinístico continua; copiloto sinaliza indisponibilidade.
+A8: fila de intervenção excede capacidade → avisar coordenação, revisar fluxo e evitar acúmulo de alertas sem responsável.
+
+Runbook padrão: sintoma, impacto, consultas seguras, hipóteses, mitigação, critérios de recuperação, responsável e postmortem. Cada alerta precisa de destinatário operacional configurado; a PoC não envia mensagens reais automaticamente.
+
+======================================================================
+24. PRIVACIDADE, SEGURANÇA E GOVERNANÇA
+======================================================================
+
+Referências jurídicas verificadas: LGPD no Planalto e Enunciado CD/ANPD nº 1/2023. O tratamento de dados de crianças/adolescentes deve observar seu melhor interesse; a definição de hipótese legal depende da operação, finalidade e categoria de dado, não de checkbox universal de consentimento [S13–S14]. O projeto precisa mapear controlador, operador, finalidade, acesso e retenção, com revisão apropriada antes de uso real.
+
+Controles propostos de engenharia:
+• Demo usa apenas dados artificiais e ambientes separados.
+• Autenticação real no piloto; docente limitado às turmas autorizadas.
+• RBAC + atributos de município/escola/turma e vigência.
+• RLS como defesa adicional; backend não deve usar credencial que bypassa toda política no fluxo comum.
+• Criptografia em trânsito e proteção de storage/backups.
+• Segredos fora do Git, rotação e menor privilégio.
+• Identidade real separada de respostas e outputs analíticos.
+• Política de retenção por artefato, com expiração e tratamento de backups.
+• Exportações controladas, justificadas e auditadas.
+• Download de relatórios por autorização verificada; URLs temporárias quando adotadas.
+• Dados sensíveis não entram no telemetry backend ou prompt externo por padrão.
+• Dependências e imagens verificadas em CI; processo para vulnerabilidades.
+
+Banco de itens também é ativo restrito: separar acesso de autor, juiz, aplicador e estudante; impedir exfiltração do gabarito via RAG ou relatório público.
+
+Revisão humana é controle real:
+ator identificado; permissão; versão do objeto; motivo; transação; comparação de estado; aprovação não reutilizável para objeto alterado. Quando o caso mudar materialmente, pedir nova revisão no produto.
+
+Antes de coleta real: pactuar protocolo com instituição, profissionais, encarregado e instâncias éticas aplicáveis. Separar gestão educacional de pesquisa. Analisar informações a participantes e responsáveis, adequação etária e acesso a apoio. O software não resolve essas decisões apenas com um banner.
+
+======================================================================
+25. TESTES E CRITÉRIOS DE ACEITE
+======================================================================
+
+Não confundir testes de software com validação de instrumento.
+
+25.1 Matemática e estatística
+T01: 2PL com a=1,b=0,theta=0 retorna probabilidade 0,5.
+T02: probabilidades aumentam com theta para a>0; respeitam [0,1].
+T03: categorias GRM têm probabilidades não negativas e soma unitária.
+T04: parâmetro d exportado converte corretamente para b no caso aplicável.
+T05: alfa/ponto-bisserial conferem com fixture de referência independente.
+T06: item constante/missing estrutural recebe estado apropriado.
+T07: EAP concorda com referência R no mesmo prior, grid e tolerância.
+T08: todos corretos/incorretos não quebram pipeline; nenhum item informado gera abstenção.
+T09: recalibração preserva resultados históricos e versão.
+T10: cenário DIF tem avaliação de sensibilidade e falso positivo; não exigir detectar todo item em uma única realização aleatória.
+
+25.2 Dados e temporalidade
+T11: duplicata não vira duas respostas.
+T12: item de versão errada bloqueia lote.
+T13: feature posterior a t0 é recusada.
+T14: desfecho sem seguimento completo não vira negativo.
+T15: mudanças de escola e calendário são tratadas de modo consistente.
+T16: caderno incompleto por desenho não gera zero automático.
+
+25.3 Integração e segurança
+T17: importação → calibração → release → score → relatório funciona em ambiente limpo.
+T18: escola A não lê nem aprova objeto da escola B, inclusive em export/job/artifact.
+T19: confirmed/role/tenant no corpo não promovem privilégios.
+T20: aprovação sobre versão antiga retorna conflito.
+T21: reiniciar API preserva revisão e casos.
+T22: crash após commit e antes de publish não perde outbox.
+T23: replay de evento não duplica intervenção.
+T24: comando/caminho malicioso no job é rejeitado.
+T25: scanner de logs não encontra marcadores sensíveis plantados na fixture.
+
+25.4 Interface e relatórios
+T26: filtros reconciliam denominadores e totais.
+T27: gráfico e tabela usam o mesmo artefato.
+T28: relatório corresponde ao run selecionado, não ao último run global.
+T29: missing/falha/não avaliado não aparecem como zero ou verde.
+T30: navegação por teclado e labels cobrem fluxo crítico.
+T31: LLM desligado mantém fluxo principal.
+T32: fontes, versão e caráter sintético aparecem na demo e exportações.
+
+Gates de release da PoC:
+G1 contratos válidos e nenhum teste crítico quebrado.
+G2 pipeline reproduzível num ambiente documentado.
+G3 isolamento e revisão persistente demonstrados.
+G4 cálculos comparados a referência e diagnósticos armazenados.
+G5 relatório diferencia evidência sintética, empírica e não avaliada.
+G6 observabilidade registra sucesso e falha deliberada.
+G7 somente resultados medidos são publicados no README.
+
+Metas exploratórias para simulação, a pré-registrar após estudo de viabilidade:
+RMSE de b≤0,30 e de a≤0,30 no cenário S0 de N=2.000; recuperação de theta avaliada por RMSE e correlação por faixa; cobertura próxima à nominal com erro Monte Carlo relatado. Esses números são alvos de investigação, não validação universal ou compromisso de resultado. Se falhar, documentar diagnóstico e não modificar seed até passar.
+
+======================================================================
+26. ARTEFATOS E RELATÓRIOS DE SAÍDA
+======================================================================
+
+Cada execução gera:
+manifest.json — versões, hashes, origem e parâmetros.
+data_quality.json — aceitos, rejeitados e motivos.
+ctt_items.csv; ctt_test.json.
+item_parameters.csv — parametrização explícita e erros quando estimáveis.
+scores.parquet — acesso restrito; método e incerteza.
+fit_diagnostics.json — convergência, ajuste, warnings.
+dif_report.csv — contraste, estatística, efeito e decisão.
+precision_curves.json — curvas e grid.
+evidence_report.json — fonte única do relatório.
+technical_report.html — métodos, figuras e limitações.
+executive_report.html — leitura curta e operacional.
+model_card.md; instrument_card.md; dataset_card.md.
+run.log — sanitizado e vinculado ao trace.
+
+Instrument card: propósito; população; construto; matriz; itens/versões; aplicação; revisão; evidências; precisão; comparabilidade; usos permitidos/proibidos; responsáveis; estado de validação.
+Model card preditivo: alvo; janela; população; features; splits; métricas; calibração; limitações; política de uso; drift; revisão.
+Relatório executivo nunca interpreta um efeito sintético como realidade de rede escolar.
+
+======================================================================
+27. BACKLOG E PLANO DE EXECUÇÃO
+======================================================================
+
+Estimativa de esforço: 120–190 horas de engenharia para PoC integrada, variando com experiência em R, integração e acabamento; não inclui recrutamento, coleta real, revisão profissional ou validação de campo. Construção de evidências reais demanda calendário próprio e equipe multidisciplinar.
+
+Sprint 0 — diagnóstico e contratos, 8–12h
+E00: inspecionar repo alvo, AGENTS.md, licenças, stack e dependências.
+E01: registrar ADRs e limite de reuso.
+E02: schema inicial, contratos e configuração de cenários.
+Aceite: estrutura limpa e dados artificiais identificados.
+
+Sprint 1 — banco de itens e dados, 18–26h
+E03: blueprint e versionamento.
+E04: pareceres de juízes e workflow.
+E05: gerador S0–S4; importação e DQ.
+Aceite: edição não altera versão aplicada; lote inválido vai para quarentena.
+
+Sprint 2 — núcleo psicométrico, 26–40h
+E06: TCT com referência.
+E07: 2PL/GRM; diagnósticos; EAP.
+E08: registro de calibração; curvas; precisão.
+Aceite: execução reproduzível, falhas reais tratadas e comparação numérica.
+
+Sprint 3 — equidade e evidências, 18–30h
+E09: DIF e cenários de falsos positivos.
+E10: CFA ordinal e documento de invariância.
+E11: relatórios e instrument card.
+Aceite: explicitar comparabilidade e dados insuficientes.
+
+Sprint 4 — produto e integração, 24–38h
+E12: API/UI completas no fluxo crítico.
+E13: target/splits/baselines preditivos.
+E14: casos de apoio, aprovação persistente, adapters.
+Aceite: reinício não perde aprovação; isolamento entre escolas funciona.
+
+Sprint 5 — observabilidade e apresentação, 26–44h
+E15: métricas, traces, logs, alertas e runbooks.
+E16: testes E2E e falhas injetadas; benchmark.
+E17: demo de 8 minutos, material de apresentação e documentação final.
+Aceite: cada alegação tem comando/run/artefato verificável.
+
+Observação: a soma das faixas detalhadas é 120–190h; atividades podem se sobrepor, mas isso não elimina esforço. Se houver menos tempo, reduzir escopo explicitamente.
+
+RECORTE PARA O PRAZO DO EDITAL
+O texto fornecido informa inscrição até 01/10/2026 às 23h59 de Brasília. Esse prazo não foi confirmado independentemente na pesquisa.
+28/09: fechar especificação, repo e gerador.
+29/09: núcleo TCT/2PL e relatório real de execução.
+30/09: tela mínima, rastreabilidade e vídeo curto.
+01/10: revisar apresentação e candidatura com estado honesto do projeto.
+Esse recorte é P0 parcial; não cabe prometer todo o produto ou validação científica nesse intervalo.
+
+======================================================================
+28. DEPLOY, RECURSOS E CUSTOS
+======================================================================
+
+Desenvolvimento principal: Windows/WSL2, Docker, CPU para ajuste estatístico. GPU não é requisito para TCT/TRI; sua RTX pode ser útil apenas em experiências opcionais de embeddings/modelos locais.
+
+Na VPS ARM informada anteriormente, planejar benchmark antes de alocar todos os serviços. mirt/lavaan e bibliotecas nativas precisam de build/imagem compatível. Começar com um job pesado por vez e limites de memória. O estado atual e recursos livres da VPS não foram inspecionados aqui.
+
+Perfis:
+core: API, UI, PostgreSQL e worker.
+observability: acrescenta collector/Prometheus/Grafana, com retenção curta no ambiente de demonstração.
+integrations: adapters e serviços existentes, mediante disponibilidade.
+research: Monte Carlo executado offline, preferencialmente fora da VPS de produção.
+
+Custos a registrar em cada run: segundos de CPU, pico de RAM, bytes de artefatos, duração de armazenamento e tokens/custo de LLM quando habilitado. Sem cotação de provedor neste documento; não atribuir custo zero à operação apenas porque a VM não tem cobrança direta.
+
+Operação mínima: TLS; credenciais próprias; backup verificado; restore ensaiado; migrations com rollback/forward fix; limites de upload/job; quotas por tenant; retenção de logs; saúde do disco. Publicação externa é uma etapa posterior à implementação e revisão.
+
+======================================================================
+29. ROTEIRO DE DEMONSTRAÇÃO — 8 MINUTOS
+======================================================================
+
+0:00–0:45 — Problema
+“Uma avaliação precisa produzir medidas interpretáveis antes de alimentar decisões. Esta PoC integra construção de instrumentos, análise psicométrica e acompanhamento educacional.”
+Mostrar aviso de dados sintéticos e estado experimental.
+
+0:45–1:30 — Matriz e revisão
+Abrir blueprint, item B02 e parecer de desalinhamento. Mostrar revisão como decisão concreta, não apenas checklist.
+
+1:30–2:30 — Dados e qualidade
+Importar lote com duplicata/categoria inválida; ver quarentena. Executar lote corrigido e mostrar snapshot/hash.
+
+2:30–4:00 — Medição
+Abrir run real de TCT/TRI, curva de item e informação do teste. Comparar dois estudantes artificiais com estimativas parecidas e incertezas diferentes. Não inventar valores na tela.
+
+4:00–4:50 — Equidade
+Selecionar cenário DIF conhecido. Mostrar item sinalizado, magnitude, grupo e revisão. Mostrar cenário sem DIF para evidenciar controle de falsos positivos.
+
+4:50–5:50 — Relação com acompanhamento
+Mostrar separação entre medida, frequência observada e risco. Abrir um caso fictício e revisar plano de apoio. Demonstrar que não pode executar sem aprovação persistida.
+
+5:50–6:50 — Operação
+Abrir trace e painel de jobs. Demonstrar worker indisponível ou fit inválido e mensagem coerente. Recuperar execução sem duplicação.
+
+6:50–8:00 — Evidência e limites
+Exportar relatório ligado ao run. Mostrar o que foi executado, o que é simulação e o que exige piloto. Encerrar com proposta de validação institucional, sem prometer redução de evasão.
+
+Modo de apresentação: se ajuste levar minutos, usar run previamente executado e identificado, enquanto dispara um job pequeno ao vivo. Dizer claramente qual resultado é histórico. Não mascarar vídeo, screenshot ou mock como execução em tempo real.
+
+======================================================================
+30. APRESENTAÇÃO COMPLETA — CONTEÚDO DE 14 SLIDES
+======================================================================
+
+Este é o roteiro de apresentação dentro do TXT, não um PPTX gerado nesta entrega.
+
+SLIDE 1 — EduMetria
+Mensagem: infraestrutura de medição e evidências para apoiar trajetórias escolares.
+Visual: três blocos — instrumento, evidência, apoio.
+Fala: projeto autoral experimental inspirado no problema descrito na oportunidade.
+
+SLIDE 2 — O problema de decisão
+Mensagem: dados de frequência e questionários não se tornam evidência válida automaticamente.
+Conteúdo: definição do construto, qualidade da medida, interpretação e capacidade de ação.
+Visual: exemplo de mesma estimativa com incertezas diferentes.
+
+SLIDE 3 — O que a PoC testa
+Mensagem: recuperação de parâmetros, rastreabilidade, equidade e fluxo operacional.
+Conteúdo: hipóteses H1–H6; sintético versus real.
+Visual: tabela com hipótese, experimento e limite.
+
+SLIDE 4 — Encaixe no ecossistema
+Mensagem: novo núcleo educacional conectado a Argus, Themis e Aegis.
+Conteúdo: o que é reuso, adapter e construção nova.
+Visual: diagrama de dependências sem sugerir integrações já prontas.
+
+SLIDE 5 — Matriz e ciclo de itens
+Mensagem: cada item possui finalidade, versão, revisão e evidência.
+Conteúdo: blueprint; rubric; juiz; revisão; pré-teste.
+Visual: histórico de um item com decisão de revisão.
+
+SLIDE 6 — Motor de medição
+Mensagem: TCT e TRI se complementam.
+Conteúdo: acerto/distratores; 2PL; GRM; informação; EAP com incerteza.
+Visual: curva real produzida por run e tabela de parâmetros.
+
+SLIDE 7 — Validade e precisão
+Mensagem: qualidade exige conjunto de evidências e propósito definido.
+Conteúdo: conteúdo, processo de resposta, estrutura, relações externas e consequências.
+Visual: mapa de evidências supported/exploratory/not_assessed.
+
+SLIDE 8 — Equidade e comparabilidade
+Mensagem: diferença de média não basta para concluir DIF.
+Conteúdo: contraste condicionado, âncoras, tamanho de efeito e revisão.
+Visual: duas curvas do cenário artificial, com n e identificação.
+
+SLIDE 9 — Do escore ao acompanhamento
+Mensagem: medida, risco e intervenção são objetos distintos.
+Conteúdo: janela temporal; baseline; valor incremental; plano de apoio.
+Visual: tela de caso fictício com responsável e revisão.
+
+SLIDE 10 — Arquitetura e contratos
+Mensagem: núcleo R/Python reproduzível, API e versões.
+Conteúdo: workers, PostgreSQL, manifests, registry e adapters.
+Visual: diagrama de containers da seção 16.
+
+SLIDE 11 — Observabilidade
+Mensagem: observar software, dados, medição e operação educacional.
+Conteúdo: convergência, missing, incerteza, fila e trace.
+Visual: painel de execução com uma falha real tratada.
+
+SLIDE 12 — Demonstração e evidências
+Mensagem: resultados vêm de execuções identificáveis.
+Conteúdo: cenário, seed, ambiente, métricas calculadas, limitações.
+Visual: tabela de runs efetivamente realizados. Se ainda não houver, mostrar “execução pendente”, sem valores exemplificativos apresentados como resultados.
+
+SLIDE 13 — Piloto e governança
+Mensagem: validação em contexto exige especialistas e escolas.
+Conteúdo: coleta, entrevistas cognitivas, amostra, revisão, monitoramento e critérios de expansão.
+Visual: fases com gates científico, operacional e institucional.
+
+SLIDE 14 — Contribuição e próximos passos
+Mensagem: transformar método psicométrico em software verificável.
+Conteúdo: engenharia e integração demonstradas; evidências de campo ainda necessárias; proposta de colaboração multidisciplinar.
+Fala final: “O objetivo é que cada medida tenha origem, incerteza e uso explícitos, e que cada ação de apoio tenha responsável e acompanhamento.”
+
+Perguntas de banca a preparar:
+1. Por que 2PL e GRM? Responder pelo formato e pressupostos, não por sofisticação.
+2. Alfa alto prova validade? Não; explicar estrutura, redundância e usos.
+3. Como comparar escolas? Desenho, composição, invariância, incerteza e finalidade.
+4. Como escolher amostra? Simulação e precisão/poder no desenho real.
+5. Como evitar leakage? available_at, cortes temporais, maturidade do alvo e splits.
+6. Por que não reaproveitar churn treinado? Domínio, alvo, população e consequências diferentes.
+7. Como provar impacto? Estudo de intervenção; predição não é efeito.
+8. Qual é a atuação do LLM? Linguagem/rascunho; estatística e decisão seguem motores/atores próprios.
+9. O que já funciona? Citar somente comandos e artefatos realmente executados.
+10. Você tem experiência sênior em psicometria? Apresentar trajetória real e a contribuição desta PoC sem inflar experiência.
+
+======================================================================
+31. PROMPT MESTRE PARA CLAUDE/CODEX IMPLEMENTAR
+======================================================================
+
+INÍCIO DO PROMPT
+
+Você está implementando EduMetria, projeto autoral de psicometria educacional e apoio à permanência escolar. Use este documento como especificação. A entrega é aplicação executável, testes significativos, dados sintéticos, relatórios reproduzíveis e documentação honesta. Não transforme backlog em alegação de funcionalidade pronta.
+
+Antes de editar:
+1. Leia AGENTS.md e instruções locais aplicáveis.
+2. Inspecione status Git, árvore, dependências, contratos e testes existentes.
+3. Preserve alterações do usuário. Não force push, não reescreva histórico e não altere deploys privados ou submodules marcados intocados.
+4. Confirme caminhos reais dos adapters. Os caminhos propostos neste documento não são prova de existência.
+5. Escolha repo próprio EduMetria, salvo instrução explícita de integrar em Argus.
+
+Implemente por fatias verticais:
+A. Geração sintética → importação validada → snapshot → relatório de DQ.
+B. TCT e worker R 2PL → diagnósticos → escores EAP → relatório.
+C. GRM, DIF e evidências → UI com origem e incerteza.
+D. Banco/versionamento/revisões → publicação controlada.
+E. Features temporais e baselines → acompanhamento com aprovação persistente.
+F. Telemetria e adapters → testes de falha e documentação.
+
+Regras obrigatórias:
+• Sem respostas sintéticas apresentadas como dados escolares reais.
+• Sem métricas inventadas em README, dashboard ou apresentação.
+• Sem chamada LLM necessária para estatística ou demo principal.
+• Sem decisão de alto impacto automatizada.
+• Sem conversão de missing para zero por conveniência.
+• Sem calibração independente tratada como mesma escala.
+• Sem modelo de churn comercial reutilizado como risco educacional.
+• Sem body tenant_id/role/confirmed usado como autorização.
+• Sem scripts executados a partir de strings arbitrárias do usuário.
+• Sem hardcode de JSON de resultado no caminho principal.
+• Nenhum gráfico mostra sucesso quando o run falhou.
+• Nunca alterar limiar/seed apenas para produzir métrica mais bonita.
+
+Ao terminar cada fatia:
+execute os testes relevantes e registre comando, ambiente, código de saída, limitações e artefatos. Se R/Docker/dependência não estiver disponível, indique exatamente a parte bloqueada; não substitua TRI por regressão com outro nome.
+
+Comandos a implementar no Makefile:
+make setup; make demo-data; make up; make analyze;
+make test; make test-statistical; make test-integration;
+make report; make benchmark; make down.
+Documente equivalentes no Windows/WSL quando necessário. Os comandos só devem ser anunciados após existirem.
+
+Definição de pronto:
+em checkout limpo, usuário autorizado consegue gerar dados artificiais, importar, executar análise real em R, revisar calibração, pontuar, explorar gráficos, exportar relatório e rastrear versões. Uma tentativa entre tenants é bloqueada; um worker que falha deixa diagnóstico e pode ser retomado sem duplicação. README diferencia implementado, testado, planejado e dependente de piloto.
+
+Produza documentação da apresentação conforme seção 30. O README final deve ser entregue integralmente em um único bloco copiável quando apresentado no chat, sem alternância entre trechos de código e prosa fora do bloco.
+
+Não publique serviço, envie mensagens, crie credenciais externas ou faça ações fora do escopo de implementação sem autorização aplicável. Commits/PRs devem preservar contexto e não representar validação institucional inexistente.
+
+FIM DO PROMPT
+
+======================================================================
+32. RISCOS, DECISÕES PENDENTES E CHECKLIST FINAL
+======================================================================
+
+R01 — Confundir implementação com validação científica.
+Resposta: status por evidência, piloto e revisão especializada.
+R02 — Ajuste instável por amostra/categorias/desenho.
+Resposta: simulação, modelo parcimonioso, diagnóstico e abstenção.
+R03 — Escala muda entre versões.
+Resposta: linking, âncoras, manifests e histórico preservado.
+R04 — Alertas sem equipe para agir.
+Resposta: capacidade explícita e acompanhamento operacional.
+R05 — Dados atrasados geram falsas conclusões.
+Resposta: freshness, calendário e quality gate antes de score/risco.
+R06 — Generalizar simulação para município.
+Resposta: declarar população artificial e plano de validação externa.
+R07 — Acoplamento excessivo ao ecossistema.
+Resposta: adapters opcionais, contratos pequenos e núcleo autônomo.
+R08 — Governança nominal sem enforcement.
+Resposta: autorização no servidor, persistência e testes adversos.
+R09 — Sensação falsa de novidade científica.
+Resposta: posicionar como engenharia integrada aplicada; originalidade acadêmica exige revisão sistemática e comparação própria.
+
+Pendências científicas antes do piloto: construto exato; população; habilidades; condições de aplicação; amostra; referência curricular; itens autorais; revisão humana; desenho de comparabilidade; hipóteses externas; consequências e critérios de expansão.
+Pendências técnicas: repo de destino; empacotamento dos adapters; contratos reais adicionais; escolha final de UI; recursos atuais da VPS; autenticação institucional; retenção e mecanismo de storage.
+
+Checklist de saída:
+[ ] Repositório e licenças inspecionados integralmente antes da implementação.
+[ ] Instrumento e propósito definidos.
+[ ] Dados e pareceres sintéticos rotulados.
+[ ] TCT/TRI realmente executados e conferidos.
+[ ] Precisão e insuficiência de evidência visíveis.
+[ ] DIF e invariância não confundidos com fairness preditiva.
+[ ] Split temporal e alvo maduros verificados.
+[ ] Intervenção com revisão e persistência.
+[ ] Telemetria sem PII e com falha demonstrada.
+[ ] Relatório e apresentação com resultados reais do run.
+[ ] Integrações classificadas como verificadas, não verificadas ou desligadas.
+[ ] Piloto real separado da entrega de engenharia.
+
+======================================================================
+33. FONTES, EVIDÊNCIAS E LIMITES DA PESQUISA
+======================================================================
+
+Fontes consultadas em 28/09/2026. URLs oficiais/técnicas abaixo fundamentam os conceitos indicados. Arquitetura, backlog, números de amostra, SLOs e metas são propostas deste documento, não exigências impostas por essas fontes.
+
+S01 — AERA, APA, NCME. Standards for Educational and Psychological Testing, edição 2014; portal oficial informa acesso aberto e processo de revisão.
+https://www.testingstandards.net/
+https://www.testingstandards.net/uploads/7/6/6/4/76643089/standards_2014edition.pdf
+Uso: referência de validade, precisão, equidade e interpretação de resultados. Não foi feita leitura integral de todas as 240 páginas nesta sessão.
+
+S02 — Chalmers, R. P. (2012). mirt: A Multidimensional Item Response Theory Package for the R Environment. Journal of Statistical Software, 48(6).
+https://www.jstatsoft.org/article/view/v048i06
+Uso: referência primária do pacote e modelagem TRI.
+
+S03 — mirt, documentação oficial de modelos.
+https://philchalmers.github.io/mirt/reference/mirt.html
+Uso: famílias de itens, identificação/parametrização, algoritmo e configuração.
+
+S04 — mirt, multipleGroup e DIF.
+https://philchalmers.github.io/mirt/reference/multipleGroup.html
+https://philchalmers.github.io/mirt/reference/DIF.html
+Uso: modelos de grupos, âncoras e testes de funcionamento diferencial.
+
+S05 — mirt, fscores.
+https://philchalmers.github.io/mirt/reference/fscores.html
+Uso: estimativa de escores e opções do motor.
+
+S06 — mirt, itemfit.
+https://philchalmers.github.io/mirt/reference/itemfit.html
+Uso: diagnósticos de ajuste e limitações por configuração.
+
+S07 — lavaan, tutorial oficial de dados categóricos.
+https://lavaan.ugent.be/tutorial/cat.html
+Uso: tratamento ordinal e WLSMV; confirmar funcionalidades na versão fixada.
+
+S08 — Inep, Matrizes e Escalas e Questionários do Saeb.
+https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/saeb/matrizes-e-escalas
+https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/saeb/questionarios
+Uso: referência de avaliação educacional brasileira e desenho de instrumentos; não implica equivalência da PoC ao Saeb.
+
+S09 — Inep, microdados do Saeb.
+https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/saeb
+Uso: catálogo de dados a verificar por edição/dicionário. Nenhum microdado foi baixado ou analisado nesta entrega.
+
+S10 — scikit-learn, Probability calibration.
+https://scikit-learn.org/stable/modules/calibration.html
+Uso: calibração de probabilidades preditivas. Distinguir de calibração psicométrica.
+
+S11 — Faria et al. (2017). Getting students on track for graduation: Impacts of the Early Warning Intervention and Monitoring System after one year. IES/REL Midwest.
+https://ies.ed.gov/use-work/resource-library/report/impact-study/getting-students-track-graduation-impacts-early-warning-intervention-and-monitoring-system-after-one
+Uso: exemplo primário de avaliação experimental de sistema de alerta e intervenção; contexto estrangeiro não transferível automaticamente.
+
+S12 — OpenTelemetry, Signals.
+https://opentelemetry.io/docs/concepts/signals/
+Uso: sinais de observabilidade; desenho de métricas deste documento é proposta própria.
+
+S13 — Brasil, Lei nº 13.709/2018, texto no Planalto.
+https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm
+Uso: referência legal para proteção de dados. Políticas de uso real precisam considerar normas e contexto vigentes.
+
+S14 — ANPD, Enunciado nº 1/2023.
+https://www.gov.br/anpd/pt-br/assuntos/noticias/anpd-divulga-enunciado-sobre-o-tratamento-de-dados-pessoais-de-criancas-e-adolescentes
+https://www.gov.br/anpd/pt-br/assuntos/noticias/anpd-divulga-enunciado-sobre-o-tratamento-de-dados-pessoais-de-criancas-e-adolescentes/Enunciado1ANPD.pdf/@@display-file/file
+Uso: hipóteses legais e melhor interesse. O resultado oficial foi localizado na busca; abertura direta da notícia retornou erro de acesso na ferramenta, sem impedir a consulta ao texto legal da LGPD.
+
+GITHUB — ARQUIVOS INSPECIONADOS
+G01 https://github.com/Yuri-Fernando/Argus/blob/master/README.md
+G02 https://github.com/Yuri-Fernando/Argus/blob/master/agents/recommendation/approval_queue.py
+Blob SHA observado de G02: 7a6826498547aa6849816b9d3cd18a5abeb60808
+G03 https://github.com/Yuri-Fernando/Argus/blob/master/docs/standards/observability.md
+Blob SHA observado de G03: 6d4fcf532fb088dd92114c058e3c4d9f8379818e
+G04 https://github.com/Yuri-Fernando/ThemisAI/blob/main/README.md
+Blob SHA observado de G04: a7df145ac77ef3be82f4657aa807174b0dab0cab
+G05 https://github.com/Yuri-Fernando/ThemisAI/blob/main/shared/schemas.py
+Blob SHA observado de G05: 8fad3393daa4c95d24093e44f5c7a11bd9785f59
+G06 https://github.com/Yuri-Fernando/AegisLLM/blob/main/README.md
+Blob SHA observado de G06: ce4bfb19e83a7b5f16710fb1a161ab52018a1130
+G07 https://github.com/Yuri-Fernando/AegisLLM/blob/main/aegis/models.py
+Blob SHA observado de G07: e3d4f98e46bb451c5156180ebc15b404936db9c2
+G08 https://github.com/Yuri-Fernando/RetentIQ/blob/main/README.md
+Blob SHA observado de G08: bd3d4fd79a912a50490ddf356db0ca99f68e4374
+G09 https://github.com/Yuri-Fernando/Churn_intelligence/blob/main/README.md
+G10 https://github.com/Yuri-Fernando/Projetos_Pessoais/blob/main/README.md
+Blob SHA observado de G10: 3b90fcd6d4c19efa18c9d4a23e33e93c05ec6fd3
+
+Os SHAs acima identificam blobs de arquivo, não commits de release. As URLs de branch podem mudar depois desta data; para implementação, registrar commit completo de cada dependência.
+
+EDITAL E CONTEXTO INSTITUCIONAL
+Fonte primária disponível nesta conversa: texto integral da oportunidade fornecido pelo usuário. As buscas realizadas não localizaram página oficial inequívoca para verificar independentemente o processo 06.2026 e o SAP descrito. Não se usaram iniciativas de nome parecido como se fossem esse programa. Escopo, função e prazo mencionados vêm do texto fornecido.
+
+DECISÃO FINAL DO PROJETO
+EduMetria deve acrescentar uma competência nova ao ecossistema: medição educacional rastreável, com motor psicométrico real e governança de uso. Argus, Themis e Aegis fornecem pontos de reaproveitamento, mas o instrumento, a escala, as evidências e a política de apoio precisam de desenho próprio. A primeira entrega comprova engenharia e comportamento estatístico em simulação; a etapa seguinte constrói evidências com profissionais e escolas.
+
+FIM DO DOCUMENTO

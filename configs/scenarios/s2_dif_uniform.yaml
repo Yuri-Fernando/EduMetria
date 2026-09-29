@@ -1,0 +1,8 @@
+extends: base.yaml
+scenario_id: s2
+description: "S2 — DIF uniforme em três itens cognitivos fora do conjunto âncora"
+math:
+  dif:
+    - {item: A05, type: uniform, delta_b: 0.60}
+    - {item: A13, type: uniform, delta_b: 0.50}
+    - {item: A21, type: uniform, delta_b: -0.55}

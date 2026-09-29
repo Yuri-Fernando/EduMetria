@@ -1,0 +1,7 @@
+extends: base.yaml
+scenario_id: s4
+description: "S4 — missing MCAR + MNAR dependente de θ + não alcançados (conhecido na simulação)"
+missing:
+  mcar_omit_rate: 0.03
+  mnar_strength: 1.2
+  not_reached_rate: 0.06

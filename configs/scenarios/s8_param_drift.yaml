@@ -1,0 +1,7 @@
+extends: base.yaml
+scenario_id: s8
+description: "S8 — mudança de parâmetros de item com população estável"
+math:
+  param_drift:
+    - {item: A04, delta_b: -0.7}
+    - {item: A17, delta_b: 0.6}

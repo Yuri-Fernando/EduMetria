@@ -1,0 +1,11 @@
+{
+  "task": "2PL MML-EM 2000x24",
+  "wall_seconds": 0.296,
+  "cpu_seconds": 0.344,
+  "peak_python_alloc_mb": 7.5,
+  "iterations": 34,
+  "converged": true,
+  "hardware": "Intel64 Family 6 Model 158 Stepping 10, GenuineIntel",
+  "python": "3.10.8",
+  "budget_seconds": 600
+}

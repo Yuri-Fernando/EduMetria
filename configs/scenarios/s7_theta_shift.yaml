@@ -1,0 +1,5 @@
+extends: base.yaml
+scenario_id: s7
+description: "S7 — mudança de distribuição de θ sem mudança de parâmetros de item"
+population:
+  theta_mean_shift: 0.40

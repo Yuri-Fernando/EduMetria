@@ -1,0 +1,5 @@
+extends: base.yaml
+scenario_id: s5
+description: "S5 — dependência local (testlet) em itens de dados/gráficos"
+math:
+  testlet: {items: [A15, A19, A24], sd: 1.3}

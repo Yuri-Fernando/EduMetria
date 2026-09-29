@@ -1,0 +1,7 @@
+extends: base.yaml
+scenario_id: s9
+description: "S9 — categorias ordinais raras e padrões todos corretos/incorretos"
+belonging:
+  rare_top_category_items: [B06, B12]
+missing:
+  extreme_patterns: 20

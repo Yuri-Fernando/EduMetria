@@ -1,0 +1,8 @@
+extends: base.yaml
+scenario_id: s10
+description: "S10 — dados atrasados, duplicados, versão inválida e categoria inválida"
+admin_anomalies:
+  duplicate_rows: 40
+  unknown_version_rows: 25
+  invalid_category_rows: 15
+  late_rows: 30

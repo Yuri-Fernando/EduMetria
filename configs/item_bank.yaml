@@ -1,0 +1,83 @@
+# Banco de itens autorais da PoC — EduMetria
+# ---------------------------------------------------------------------------
+# Itens ILUSTRATIVOS, escritos para demonstrar o fluxo editorial. Não foram
+# revisados por especialistas reais, não passaram por entrevista cognitiva e
+# não têm validade estabelecida. Códigos BNCC ficam null até verificação da
+# fonte oficial (regra "não inventar códigos", seção 7 do plano mestre).
+# Licença dos itens: CC BY 4.0 (separada da licença MIT do código).
+
+instruments:
+  - instrument_id: math6
+    version: "0.1"
+    construct: "Proficiência em matemática — 6º ano (recorte ilustrativo)"
+    population: "Estudantes artificiais do 6º ano do EF (dados sintéticos)"
+    purpose: "Demonstrar calibração 2PL, precisão e rastreabilidade — sem uso decisório"
+    item_type: dichotomous
+    scoring_rule_version: "math6-key-v1"
+    prohibited_uses:
+      - "Classificar, reprovar ou transferir estudantes"
+      - "Ranquear escolas ou docentes"
+      - "Comparar diretamente com escalas SAEB, ENEM ou PISA"
+  - instrument_id: belong6
+    version: "0.1"
+    construct: "Percepção de pertencimento escolar (inclusão e vínculo com a escola)"
+    population: "Estudantes artificiais do 6º ano do EF (dados sintéticos)"
+    purpose: "Demonstrar GRM ordinal e tratamento de ausências — sem diagnóstico psicológico"
+    item_type: ordinal
+    categories: ["nunca", "poucas vezes", "muitas vezes", "sempre"]
+    out_of_scale_codes: ["não se aplica", "recusa"]
+    scoring_rule_version: "belong6-ord-v1"
+    prohibited_uses:
+      - "Diagnóstico psicológico ou de saúde mental"
+      - "Prova de evasão futura"
+
+blueprint:
+  instrument_id: math6
+  axes:
+    numeros_operacoes: 10
+    resolucao_problemas: 8
+    dados_graficos: 6
+  cognitive_demand:
+    reconhecimento_compreensao: 8
+    aplicacao: 10
+    raciocinio: 6
+
+math_items:
+  - {id: A01, axis: numeros_operacoes, demand: aplicacao, key: C, stem: "Uma turma reuniu 36 livros. Eles serão distribuídos igualmente entre 4 grupos. Quantos livros cada grupo receberá?", options: {A: "6", B: "8", C: "9", D: "12"}, distractor_rationale: {A: "divide por 6", B: "erro de tabuada", D: "divide por 3"}}
+  - {id: A02, axis: dados_graficos, demand: reconhecimento_compreensao, key: B, stem: "O gráfico de barras (descrição alternativa: segunda-feira 12, terça 18, quarta 9 livros emprestados) mostra os empréstimos da biblioteca. Em qual dia houve mais empréstimos?", options: {A: "segunda", B: "terça", C: "quarta", D: "todos iguais"}}
+  - {id: A03, axis: numeros_operacoes, demand: reconhecimento_compreensao, key: A, stem: "Qual número é maior: 0,7 ou 0,65?", options: {A: "0,7", B: "0,65", C: "são iguais", D: "não é possível comparar"}}
+  - {id: A04, axis: numeros_operacoes, demand: aplicacao, key: D, stem: "Quanto é 125 + 378?", options: {A: "493", B: "403", C: "513", D: "503"}}
+  - {id: A05, axis: resolucao_problemas, demand: aplicacao, key: B, stem: "Ana comprou 3 cadernos de R$ 7,50. Quanto ela gastou?", options: {A: "R$ 21,50", B: "R$ 22,50", C: "R$ 10,50", D: "R$ 24,00"}}
+  - {id: A06, axis: numeros_operacoes, demand: reconhecimento_compreensao, key: C, stem: "Qual fração representa a metade de uma pizza?", options: {A: "1/3", B: "2/3", C: "1/2", D: "1/4"}}
+  - {id: A07, axis: resolucao_problemas, demand: raciocinio, key: A, stem: "Um ônibus sai a cada 15 minutos a partir das 7h. A que horas sai o quinto ônibus?", options: {A: "8h00", B: "8h15", C: "7h45", D: "8h30"}}
+  - {id: A08, axis: dados_graficos, demand: aplicacao, key: C, stem: "Numa tabela, a turma A tem 28 estudantes e a turma B tem 31. Quantos estudantes há nas duas turmas?", options: {A: "57", B: "58", C: "59", D: "60"}}
+  - {id: A09, axis: numeros_operacoes, demand: reconhecimento_compreensao, key: B, stem: "Quanto é 7 × 8?", options: {A: "54", B: "56", C: "58", D: "64"}}
+  - {id: A10, axis: resolucao_problemas, demand: aplicacao, key: D, stem: "Uma corda de 2 metros foi cortada em pedaços de 25 cm. Quantos pedaços foram obtidos?", options: {A: "4", B: "6", C: "10", D: "8"}}
+  - {id: A11, axis: numeros_operacoes, demand: raciocinio, key: A, stem: "Qual é o próximo número da sequência 3, 7, 11, 15, ...?", options: {A: "19", B: "18", C: "20", D: "21"}}
+  - {id: A12, axis: dados_graficos, demand: reconhecimento_compreensao, key: B, stem: "Em uma tabela de temperaturas (seg 21 °C, ter 24 °C, qua 19 °C), qual foi a menor temperatura?", options: {A: "21 °C", B: "19 °C", C: "24 °C", D: "20 °C"}}
+  - {id: A13, axis: resolucao_problemas, demand: raciocinio, key: C, stem: "Pedro tem o dobro da idade de Lia. Juntos somam 18 anos. Quantos anos tem Lia?", options: {A: "9", B: "12", C: "6", D: "3"}}
+  - {id: A14, axis: numeros_operacoes, demand: aplicacao, key: A, stem: "Quanto é 1000 − 457?", options: {A: "543", B: "553", C: "457", D: "643"}}
+  - {id: A15, axis: dados_graficos, demand: aplicacao, key: D, stem: "Um gráfico de setores (descrição alternativa: esporte 50%, música 25%, leitura 25%) mostra preferências de 40 estudantes. Quantos preferem música?", options: {A: "25", B: "20", C: "5", D: "10"}}
+  - {id: A16, axis: resolucao_problemas, demand: aplicacao, key: B, stem: "Uma receita usa 2 ovos para 5 pessoas. Quantos ovos são necessários para 15 pessoas?", options: {A: "5", B: "6", C: "8", D: "10"}}
+  - {id: A17, axis: numeros_operacoes, demand: reconhecimento_compreensao, key: C, stem: "Como se escreve o número duzentos e seis?", options: {A: "2006", B: "260", C: "206", D: "26"}}
+  - {id: A18, axis: resolucao_problemas, demand: raciocinio, key: A, stem: "Um retângulo tem perímetro 20 cm e um lado de 6 cm. Quanto mede o outro lado?", options: {A: "4 cm", B: "14 cm", C: "8 cm", D: "7 cm"}}
+  - {id: A19, axis: dados_graficos, demand: raciocinio, key: B, stem: "Numa tabela de vendas (jan 40, fev 55, mar 70), se o padrão continuar, quanto se espera em abril?", options: {A: "80", B: "85", C: "90", D: "75"}}
+  - {id: A20, axis: numeros_operacoes, demand: aplicacao, key: D, stem: "Quanto é 3/4 de 20?", options: {A: "5", B: "12", C: "16", D: "15"}}
+  - {id: A21, axis: resolucao_problemas, demand: aplicacao, key: C, stem: "Um livro tem 120 páginas. Júlia leu 1/3 dele. Quantas páginas faltam?", options: {A: "40", B: "60", C: "80", D: "90"}}
+  - {id: A22, axis: numeros_operacoes, demand: reconhecimento_compreensao, key: A, stem: "Qual número é par?", options: {A: "48", B: "35", C: "17", D: "91"}}
+  - {id: A23, axis: resolucao_problemas, demand: raciocinio, key: B, stem: "Três amigos dividiram uma conta de R$ 45,00 igualmente e deram 10% de gorjeta sobre o total. Quanto cada um pagou?", options: {A: "R$ 15,00", B: "R$ 16,50", C: "R$ 18,00", D: "R$ 14,50"}}
+  - {id: A24, axis: dados_graficos, demand: reconhecimento_compreensao, key: C, stem: "Num quadro de frequência (azul 7, verde 4, vermelho 9), qual cor foi a mais escolhida?", options: {A: "azul", B: "verde", C: "vermelho", D: "empate"}}
+
+belonging_items:
+  - {id: B01, stem: "Nas últimas duas semanas, senti que fazia parte da minha turma."}
+  - {id: B02, stem: "Nas últimas duas semanas, encontrei alguém na escola a quem pude pedir ajuda quando precisei.", allows_not_applicable: true, review_note: "Pode medir suporte social, não pertencimento — exemplo intencional de desalinhamento para o comitê avaliar."}
+  - {id: B03, stem: "Nas últimas duas semanas, me senti bem-vindo(a) quando cheguei à escola."}
+  - {id: B04, stem: "Nas últimas duas semanas, senti que colegas se importavam comigo."}
+  - {id: B05, stem: "Nas últimas duas semanas, senti que minhas opiniões eram ouvidas em sala."}
+  - {id: B06, stem: "Nas últimas duas semanas, tive vontade de participar das atividades da escola."}
+  - {id: B07, stem: "Nas últimas duas semanas, senti que professores(as) me tratavam com respeito."}
+  - {id: B08, stem: "Nas últimas duas semanas, me senti à vontade para ser quem eu sou na escola."}
+  - {id: B09, stem: "Nas últimas duas semanas, tive com quem conversar nos intervalos."}
+  - {id: B10, stem: "Nas últimas duas semanas, senti orgulho de estudar nesta escola."}
+  - {id: B11, stem: "Nas últimas duas semanas, senti que a escola é um lugar para pessoas como eu."}
+  - {id: B12, stem: "Nas últimas duas semanas, me senti parte das decisões da minha turma."}

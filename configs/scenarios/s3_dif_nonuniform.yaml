@@ -1,0 +1,10 @@
+extends: base.yaml
+scenario_id: s3
+description: "S3 — DIF não uniforme em dois itens e assimetria de grupos"
+population:
+  audit_group_share_b: 0.25
+  theta_mean_shift_group_b: -0.30
+math:
+  dif:
+    - {item: A08, type: nonuniform, a_ratio: 0.45}
+    - {item: A16, type: nonuniform, a_ratio: 1.9}

@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.env
+*.egg-info/
+# runs locais (artefatos completos, incluindo restricted/) — demos sanitizadas ficam em reports/demo_runs
+runs/
+data/snapshots/
+*.db
+*.sqlite
+*.db-wal
+*.db-shm
+.claude/
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

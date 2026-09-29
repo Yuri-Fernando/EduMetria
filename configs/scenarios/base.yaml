@@ -1,0 +1,57 @@
+# Cenário base S0 — ajuste ao modelo gerador, sem DIF, missing baixo.
+# Números são escolhas de engenharia da PoC, não tamanho amostral suficiente
+# universal para TRI, DIF ou piloto (seção 14 do plano mestre).
+scenario_id: s0
+description: "S0 — ajuste ao modelo gerador, sem DIF, missing MCAR baixo"
+seed: 20260928
+data_origin: synthetic
+population:
+  n_students: 2000
+  n_municipalities: 2
+  n_schools: 20
+  audit_group_share_b: 0.5        # grupo artificial A/B, sem significado demográfico
+  theta_corr_math_belong: 0.30
+  theta_mean_shift_group_b: 0.0
+  theta_mean_shift: 0.0           # S7: mudança de distribuição de θ
+math:
+  instrument_version_id: math6-v0.1
+  a_lognormal: {meanlog: 0.10, sdlog: 0.30}
+  b_normal: {mean: 0.0, sd: 1.0}
+  low_discrimination_items: []    # S1
+  extreme_items: {}               # S1: {A22: -3.2}
+  dif: []                         # S2/S3: [{item: A05, type: uniform, delta_b: 0.6}]
+  param_drift: []                 # S8
+  testlet: null                   # S5: {items: [A20, A21, A23], sd: 1.0}
+  second_dimension: null          # S6: {items: [...], corr: 0.2}
+belonging:
+  instrument_version_id: belong6-v0.1
+  a_lognormal: {meanlog: 0.30, sdlog: 0.25}
+  thresholds_base: [-1.3, -0.1, 1.1]
+  thresholds_jitter_sd: 0.30
+  rare_top_category_items: []     # S9
+  b02_not_applicable_rate: 0.08
+missing:
+  mcar_omit_rate: 0.02
+  mnar_strength: 0.0              # S4: omissão aumenta com θ baixo
+  not_reached_rate: 0.0           # S4: fração com fim do caderno não alcançado
+  extreme_patterns: 0             # S9: nº de padrões todos-corretos/incorretos injetados
+attendance:
+  n_days: 60
+  assessment_day: 10
+  scores_available_day: 12
+  base_logit: -3.1
+  school_sd: 0.35
+  person_sd: 0.60
+  beta_belong: -0.55
+  beta_math: -0.25
+  deterioration_share: 0.12
+  deterioration_start_day: 28
+  deterioration_logit: 1.6
+  justified_share: 0.30
+admin_anomalies:                  # S10
+  duplicate_rows: 0
+  unknown_version_rows: 0
+  invalid_category_rows: 0
+  late_rows: 0
+leakage:
+  inject_future_feature: false    # S11
