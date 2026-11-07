@@ -109,6 +109,13 @@ def generate(scenario: dict | str) -> SyntheticDataset:
     theta_math = z[:, 0] + pop.get("theta_mean_shift", 0.0) + np.where(
         group == "B", pop.get("theta_mean_shift_group_b", 0.0), 0.0)
     theta_belong = z[:, 1]
+    # S12: efeito de escola em θ (ICC planejado). Sorteio só quando ativo, para
+    # não deslocar o fluxo aleatório dos cenários existentes (reprodutibilidade).
+    school_theta_sd = float(pop.get("theta_school_sd", 0.0) or 0.0)
+    school_theta_eff = {}
+    if school_theta_sd > 0:
+        school_theta_eff = {s: float(rng.normal(0, school_theta_sd)) for s in school_ids}
+        theta_math = theta_math + np.array([school_theta_eff[s] for s in school])
     students = pd.DataFrame({
         "student_ref": [f"synthetic-student-{i + 1:05d}" for i in range(n)],
         "school_id": school,
@@ -156,6 +163,14 @@ def generate(scenario: dict | str) -> SyntheticDataset:
             Bm[isB, j] += float(d["delta_b"])
         else:
             A[isB, j] *= float(d["a_ratio"])
+    # S12: dificuldade localizada — itens de um eixo ficam mais difíceis só em
+    # algumas escolas (ex.: conteúdo ainda não trabalhado). Gabarito em truth.
+    axis_effects = list(mcfg.get("school_axis_effects") or [])
+    for eff in axis_effects:
+        in_school = school == eff["school_id"]
+        for j, it in enumerate(math_items):
+            if it["axis"] == eff["axis"]:
+                Bm[in_school, j] += float(eff["delta_b"])
     P = logistic(A * (th_eff - Bm))
     correct = rng.random((n, J)) < P
 
@@ -325,6 +340,8 @@ def generate(scenario: dict | str) -> SyntheticDataset:
         "testlet_items": (tl or {}).get("items", []),
         "second_dimension_items": (sd2 or {}).get("items", []),
         "leakage": bool(cfg["leakage"]["inject_future_feature"]),
+        "school_theta_effects": school_theta_eff,
+        "school_axis_effects": axis_effects,
     }
     return SyntheticDataset(cfg, items, students, responses, attendance, judge_reviews, truth)
 

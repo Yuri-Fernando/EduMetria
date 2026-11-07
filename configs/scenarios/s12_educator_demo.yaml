@@ -1,0 +1,23 @@
+extends: base.yaml
+scenario_id: s12
+description: >-
+  S12 — demonstração da Visão do Educador (EduMetria Social): efeito de escola em θ,
+  dificuldade localizada plantada em dois eixos de duas escolas e omissão MNAR leve.
+  Tudo sintético, com gabarito conhecido — serve para verificar se o painel encontra
+  o que foi plantado e não inventa sinal onde não há.
+# Escolhas de engenharia (não calibradas em dados reais):
+# - theta_school_sd 0,30 → ICC ≈ 0,08 entre escolas (ordem de grandeza modesta);
+# - delta_b +0,70 (SCH01, dados e gráficos) e +0,50 (SCH07, resolução de problemas):
+#   itens do eixo mais difíceis só nessas escolas, como se o conteúdo ainda não
+#   tivesse sido trabalhado. SCH01 é a escola usada no roteiro (usuários de demo
+#   coord-bruno e coord-clara têm acesso a ela).
+population:
+  theta_school_sd: 0.30
+math:
+  school_axis_effects:
+    - {school_id: SCH01, axis: dados_graficos, delta_b: 0.70}
+    - {school_id: SCH07, axis: resolucao_problemas, delta_b: 0.50}
+missing:
+  mcar_omit_rate: 0.02
+  mnar_strength: 1.0
+  not_reached_rate: 0.03

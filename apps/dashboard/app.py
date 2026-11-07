@@ -1,5 +1,8 @@
 """Painel EduMetria (Streamlit) — lê SOMENTE artefatos de runs reais.
 
+Dois modos: Educador (EduMetria Social, jornada guiada em ``educator_page.py``)
+e Pesquisador (abas técnicas abaixo, preservadas).
+
 A UI não recalcula estatísticas nem aprova nada (seção 16): escrita é da API.
 Estados obrigatórios: vazio, falha, bloqueado, dados insuficientes e aviso de
 dados sintéticos em todas as páginas.
@@ -18,6 +21,7 @@ import streamlit as st
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT))  # permite importar apps.dashboard.* ao rodar via `streamlit run`
 
 from edumetria.integrations.adapters import INTEGRATIONS  # noqa: E402
 from edumetria.registry.store import Actor, Store  # noqa: E402
@@ -41,7 +45,22 @@ def _read_json(p: Path):
 
 runs = _runs()
 if not runs:
-    st.info("Nenhum run encontrado. Execute `edumetria analyze --scenario s2` para gerar um run real.")
+    st.info("Nenhum run encontrado. Execute `edumetria analyze --scenario s12` para gerar um run real.")
+    st.stop()
+
+mode = st.sidebar.radio("Modo", ["Educador — EduMetria Social", "Pesquisador — painel técnico"],
+                        help="O modo educador é uma jornada guiada; o modo pesquisador mantém as abas técnicas.")
+if mode.startswith("Educador"):
+    from apps.dashboard.educator_page import render as render_educator  # noqa: E402
+
+    edu_runs = [p for p in runs if (p / "educator_view.json").exists()]
+    if not edu_runs:
+        st.info("Nenhum run com visão do educador. Execute `python -m edumetria.cli analyze --scenario s12`.")
+        st.stop()
+    s12 = [p for p in edu_runs if p.name.startswith("run-s12-")]
+    edu_dir = st.sidebar.selectbox("Run", edu_runs, index=edu_runs.index(s12[0]) if s12 else 0,
+                                   format_func=lambda p: p.name)
+    render_educator(edu_dir, ROOT)
     st.stop()
 
 run_dir = st.sidebar.selectbox("Run", runs, format_func=lambda p: p.name)

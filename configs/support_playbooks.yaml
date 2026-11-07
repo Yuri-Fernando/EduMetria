@@ -22,3 +22,7 @@ playbooks:
     nome: Avaliação de barreira de transporte
     quando: faltas concentradas em dias/rotas específicos
     responsavel: gestão escolar
+  - id: PB-06
+    nome: Verificação da aplicação da avaliação
+    quando: estudantes sem resposta informativa (sem medida — não é nota zero)
+    responsavel: coordenação pedagógica

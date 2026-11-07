@@ -1,0 +1,29 @@
+# Visão do Educador (EduMetria Social) — parâmetros de EXIBIÇÃO, não de decisão.
+# Mudar estes valores muda o que é mostrado, nunca o que é estimado. Toda alteração
+# deve ser registrada no CHANGELOG; nunca ajustar para "melhorar" um resultado.
+version: "1.0"
+
+proficiency:
+  # Corte ILUSTRATIVO na escala interna θ~N(0,1) da população simulada.
+  # Não é padrão de desempenho, não equivale a SAEB/ENEM/PISA e não define
+  # aprovação, reprovação ou direito a atendimento.
+  reference_cut: -1.0
+  reference_cut_label: "1 desvio-padrão abaixo da média da população simulada (corte ilustrativo)"
+
+axis_signal:
+  interval_level: 0.90      # intervalo mostrado ao educador
+  fdr_alpha: 0.05           # Benjamini-Hochberg sobre todas as escolas × eixos do run
+  min_responses: 100        # abaixo disso o eixo aparece como "dados insuficientes"
+
+attendance:
+  t0_day: 40                # mesmo t0 da avaliação do risco (point-in-time)
+  window_days: 10
+  unjustified_threshold: 3  # ≥3 faltas não justificadas na janela → sinal observado
+
+privacy:
+  small_cell: 5             # contagens < 5 aparecem como "menos de 5" (supressão de célula pequena)
+
+axis_labels:
+  numeros_operacoes: "Números e operações"
+  resolucao_problemas: "Resolução de problemas"
+  dados_graficos: "Dados e gráficos"

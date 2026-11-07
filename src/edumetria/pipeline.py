@@ -223,6 +223,12 @@ def run_analysis(scenario: str = "s0", runs_dir: Path | None = None, resolve_qua
         risk = _risk_block(ds, sc, cfg)
         _json(out / "risk_evaluation.json", risk)
 
+        # ---------------------------------------------------- visão do educador (agregados por escola)
+        from edumetria.reporting.educator import build_educator_view
+        _json(out / "educator_view.json", build_educator_view(
+            run_id=run_id, scenario=cfg, X=Xm, persons=persons, item_cols=mcols, items=items, a=a, b=b,
+            scores=sc, attendance=ds.attendance, risk=risk, converged=bool(fit_m.converged)))
+
         # ---------------------------------------------------- figuras
         flagged = dif_all.loc[dif_all.get("flagged", pd.Series(False)).fillna(False).astype(bool), "item"].tolist()
         figures.icc_plot(fit_m.params, out / "figures" / "icc_math6.png", highlight=flagged[:4] or None)
