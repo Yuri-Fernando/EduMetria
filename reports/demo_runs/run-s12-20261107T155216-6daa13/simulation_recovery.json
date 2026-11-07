@@ -1,0 +1,6 @@
+{
+  "rmse_a": 0.10232220617541914,
+  "rmse_b": 0.14112597004332267,
+  "corr_theta": 0.9176508571181404,
+  "note": "verificação de software em simulação — não é evidência de validade; DIF/testlet no gerador tornam o modelo 2PL propositalmente mal especificado"
+}

@@ -1,0 +1,269 @@
+{
+  "n_train": 2794,
+  "n_test": 603,
+  "train_t0": [
+    20,
+    30
+  ],
+  "test_t0": [
+    40
+  ],
+  "train_schools": [
+    "SCH01",
+    "SCH04",
+    "SCH05",
+    "SCH06",
+    "SCH07",
+    "SCH08",
+    "SCH11",
+    "SCH12",
+    "SCH13",
+    "SCH14",
+    "SCH15",
+    "SCH17",
+    "SCH18",
+    "SCH20"
+  ],
+  "test_schools": [
+    "SCH02",
+    "SCH03",
+    "SCH09",
+    "SCH10",
+    "SCH16",
+    "SCH19"
+  ],
+  "models": {
+    "B0": {
+      "n": 603,
+      "prevalence": 0.05804311774461028,
+      "roc_auc": 0.9032696177062375,
+      "pr_auc": 0.5506490817782687,
+      "brier": null,
+      "k": 61,
+      "precision_at_capacity": 0.3770491803278688,
+      "recall_at_capacity": 0.6571428571428571,
+      "definition": "regra: faltas não justificadas nos últimos 20 dias (desempate por taxa 10d)"
+    },
+    "B1": {
+      "n": 603,
+      "prevalence": 0.05804311774461028,
+      "roc_auc": 0.9271629778672033,
+      "pr_auc": 0.6045968302621649,
+      "brier": 0.035339556376224074,
+      "k": 61,
+      "precision_at_capacity": 0.39344262295081966,
+      "recall_at_capacity": 0.6857142857142857,
+      "coefficients": {
+        "unjust_abs_20d": 0.2,
+        "abs_rate_10d": 1.0542,
+        "abs_trend": -0.4037
+      }
+    },
+    "B2": {
+      "n": 603,
+      "prevalence": 0.05804311774461028,
+      "roc_auc": 0.9179577464788733,
+      "pr_auc": 0.6121992618915857,
+      "brier": 0.034538369413192285,
+      "k": 61,
+      "precision_at_capacity": 0.4098360655737705,
+      "recall_at_capacity": 0.7142857142857143,
+      "coefficients": {
+        "unjust_abs_20d": 0.2142,
+        "abs_rate_10d": 0.7826,
+        "abs_trend": -0.264,
+        "theta_math": -0.4554,
+        "psd_math": -0.0785,
+        "theta_belong": -0.6877,
+        "psd_belong": -0.1511
+      }
+    },
+    "B3": {
+      "n": 603,
+      "prevalence": 0.05804311774461028,
+      "roc_auc": 0.8916247484909456,
+      "pr_auc": 0.4455395184254965,
+      "brier": 0.041634092483638425,
+      "k": 61,
+      "precision_at_capacity": 0.3442622950819672,
+      "recall_at_capacity": 0.6
+    }
+  },
+  "bootstrap": {
+    "B0": {
+      "auc_ci95": [
+        0.8409445827881652,
+        0.9484390810145121
+      ]
+    },
+    "B1": {
+      "auc_ci95": [
+        0.873665657377172,
+        0.9668792058956704
+      ]
+    },
+    "B2": {
+      "auc_ci95": [
+        0.8498934185984546,
+        0.9646874774092133
+      ]
+    },
+    "B3": {
+      "auc_ci95": [
+        0.834648579772433,
+        0.9426807785134127
+      ]
+    },
+    "B2_minus_B1_auc": {
+      "mean": -0.009450216920819099,
+      "ci95": [
+        -0.03253781950965051,
+        0.0041102103293838566
+      ]
+    },
+    "n_boot_effective": 300,
+    "cluster": "school_id"
+  },
+  "calibration_B2": [
+    {
+      "bin": 0,
+      "n": 61,
+      "mean_pred": 0.003357998532905334,
+      "observed": 0.0
+    },
+    {
+      "bin": 1,
+      "n": 60,
+      "mean_pred": 0.007241813550709239,
+      "observed": 0.0
+    },
+    {
+      "bin": 2,
+      "n": 60,
+      "mean_pred": 0.011182146257661691,
+      "observed": 0.0
+    },
+    {
+      "bin": 3,
+      "n": 60,
+      "mean_pred": 0.01585275432367553,
+      "observed": 0.016666666666666666
+    },
+    {
+      "bin": 4,
+      "n": 61,
+      "mean_pred": 0.021221459840511377,
+      "observed": 0.01639344262295082
+    },
+    {
+      "bin": 5,
+      "n": 60,
+      "mean_pred": 0.029695151492497438,
+      "observed": 0.0
+    },
+    {
+      "bin": 6,
+      "n": 60,
+      "mean_pred": 0.041947378937815534,
+      "observed": 0.016666666666666666
+    },
+    {
+      "bin": 7,
+      "n": 60,
+      "mean_pred": 0.06602710919013959,
+      "observed": 0.03333333333333333
+    },
+    {
+      "bin": 8,
+      "n": 60,
+      "mean_pred": 0.1360166742178675,
+      "observed": 0.08333333333333333
+    },
+    {
+      "bin": 9,
+      "n": 61,
+      "mean_pred": 0.434804142921061,
+      "observed": 0.4098360655737705
+    }
+  ],
+  "capacity_share": 0.1,
+  "note": "coeficientes descrevem o modelo, não causas individuais; ganho B2−B1 em dados sintéticos não prova ganho em escolas reais",
+  "fairness_B2": [
+    {
+      "group": "A",
+      "n": 300,
+      "n_positive": 16,
+      "status": "computed",
+      "flag_rate": 0.08333333333333333,
+      "recall": 0.75,
+      "fpr": 0.045774647887323945,
+      "precision": 0.48,
+      "calibration_in_the_large": 0.012052944915502899
+    },
+    {
+      "group": "B",
+      "n": 303,
+      "n_positive": 19,
+      "status": "computed",
+      "flag_rate": 0.1188118811881188,
+      "recall": 0.6842105263157895,
+      "fpr": 0.08098591549295775,
+      "precision": 0.3611111111111111,
+      "calibration_in_the_large": 0.026020785090872134
+    }
+  ],
+  "b2_psycho_features": [
+    "theta_math",
+    "psd_math",
+    "theta_belong",
+    "psd_belong"
+  ],
+  "split": {
+    "train_t0_days": [
+      20,
+      30
+    ],
+    "test_t0_days": [
+      40
+    ],
+    "train_schools": [
+      "SCH01",
+      "SCH04",
+      "SCH05",
+      "SCH06",
+      "SCH07",
+      "SCH08",
+      "SCH11",
+      "SCH12",
+      "SCH13",
+      "SCH14",
+      "SCH15",
+      "SCH17",
+      "SCH18",
+      "SCH20"
+    ],
+    "test_schools": [
+      "SCH02",
+      "SCH03",
+      "SCH09",
+      "SCH10",
+      "SCH16",
+      "SCH19"
+    ],
+    "horizon_days": 20,
+    "embargo": "escolas de teste disjuntas do treino; sem estudante em comum"
+  },
+  "censored_example": {
+    "t0_day": 45,
+    "n": 2000,
+    "target_status": [
+      "censored"
+    ]
+  },
+  "leakage_check": {
+    "injected": false,
+    "blocked": false,
+    "message": null
+  },
+  "target_definition": "proxy sintético: ≥5 faltas não justificadas nos 20 dias letivos seguintes a t0; não é definição oficial de abandono/evasão"
+}

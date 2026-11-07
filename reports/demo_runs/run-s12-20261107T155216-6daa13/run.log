@@ -1,0 +1,3 @@
+{"timestamp": "2026-11-07T15:52:16.557855+00:00", "level": "INFO", "service": "edumetria", "environment": "demo-synthetic", "event": "run.started", "run_id": "run-s12-20261107T155216-6daa13", "scenario": "s12"}
+{"timestamp": "2026-11-07T15:52:18.527651+00:00", "level": "INFO", "service": "edumetria", "environment": "demo-synthetic", "event": "dq.validated", "run_id": "run-s12-20261107T155216-6daa13", "accepted": 72000, "quarantined": 0, "blocking": false}
+{"timestamp": "2026-11-07T15:52:49.831145+00:00", "level": "INFO", "service": "edumetria", "environment": "demo-synthetic", "event": "run.succeeded", "run_id": "run-s12-20261107T155216-6daa13", "elapsed_seconds": 31.37}

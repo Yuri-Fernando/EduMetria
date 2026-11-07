@@ -10,6 +10,43 @@ Ver também: [ROADMAP.md](ROADMAP.md) (escopo/fases), [WORKLOG.md](WORKLOG.md) (
 
 Nada ainda.
 
+## [0.4.0] — 2026-11-07 — EduMetria Social: Visão do Educador (AI4Good 2027)
+
+### Added
+- **Modo Educador no painel** (`apps/dashboard/educator_page.py`): jornada guiada em 6 passos — problema e caso
+  fictício (antes/durante/depois), escola fictícia com medida × sinal × risco e incerteza, pontos consultivos,
+  encaminhamento para revisão pedagógica **pela API real** (`/v1/support-cases`), revisão por outra pessoa com
+  checklist de interpretação, "Como o modelo chegou aqui?" e transparência com exportação de resumo de uma página.
+  O modo Pesquisador mantém as 8 abas técnicas sem alteração.
+- **Artefato `educator_view.json`** em todo run (`src/edumetria/reporting/educator.py`, `configs/educator_view.yaml`):
+  agregados por escola, sem identificador de estudante, supressão de células < 5, missing ≠ zero, cartões sempre
+  `requires_human_review`, risco preditivo nunca gera prioridade.
+- **Sinal por eixo**: acertos do eixo × esperado pela proficiência da própria escola nos outros eixos (leave-axis-out),
+  com prior da escola por verossimilhança marginal, variância preditiva posterior, purificação iterativa e BH.
+- **Cenário S12** (`configs/scenarios/s12_educator_demo.yaml`): efeito de escola em θ e dificuldade localizada plantada
+  (SCH01 × dados e gráficos; SCH07 × resolução de problemas). Gerador ganhou `population.theta_school_sd` e
+  `math.school_axis_effects`, desligados por padrão — o S0 reproduz o mesmo hash de dados da v0.3.0 (teste de regressão).
+- **Estudo Monte Carlo do sinal** (`scripts/educator_signal_study.py` → `reports/ai4good2027/`).
+- Playbook ilustrativo PB-06 (verificação da aplicação da avaliação).
+- `docs/ai4good2027/`: matriz do plano, matriz de evidências, roteiro de 3 min, pitch de 60 s, plano de piloto,
+  como foi feito; `scripts/capture_ai4good_screens.py` (capturas reais da jornada).
+- Testes: `tests/unit/test_educator_view.py`, `tests/statistical/test_educator_signal.py`,
+  `tests/integration/test_educator_flow.py` (inclui smoke test do painel nos dois modos com `streamlit.testing`).
+
+### Fixed (encontrado pelo próprio estudo antes da publicação)
+- Primeira versão do sinal por eixo tinha dois vieses: **contaminação** (o eixo difícil puxava a proficiência de
+  referência e fazia os outros eixos da escola parecerem "acima do esperado") e **encolhimento do prior** N(0,1)
+  (escolas com média diferente puxadas para a média geral). Corrigidos com prior por escola e purificação.
+  O resultado da versão sem correção foi mantido em `reports/ai4good2027/educator_signal_study_v1_sem_correcao.json`.
+  Antes → depois (100 réplicas, mesmas seeds e limiares): falso positivo no S12 3,93% → 0,38% por teste; réplicas com
+  ≥1 sinal falso 89% → 15%; poder 99,5% → 98%.
+- Painel: gráfico de eixos sem pontos (nome de campo com "." interpretado como acesso aninhado pelo Altair).
+
+### Results
+- `pytest -q` → 103 passed, 16 skipped (R/mirt e PostgreSQL ausentes no ambiente local; pulados e reportados).
+- Estudo do sinal: poder 98% no S12; 21,5% para efeito fraco (Δb = 0,25); falso positivo 0,10% por teste no S0.
+- Run de demonstração `run-s12-20261107T155216-6daa13` (commit `f0f1d8f`).
+
 ## [0.3.1] — 2026-09-29 — galeria de telas reais e correções de observabilidade
 
 ### Added

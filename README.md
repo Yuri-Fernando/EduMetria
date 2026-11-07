@@ -4,11 +4,15 @@
 
 ## Status
 
-🟡 **v0.3.1 — P0, P1 e P2 (sem parceria) implementados e testados: 106 testes (R/mirt e PostgreSQL/RLS incluídos),
-notebook end-to-end executado, [galeria de telas reais](#️-galeria--telas-reais-do-sistema-rodando) e validação com dados públicos reais (ENEM 2023). Piloto com escolas, juízes reais e
-estudo de impacto dependem de parceria e ainda não foram realizados.**
+🟡 **v0.4.0 — P0, P1, P2 (sem parceria) e a [Visão do Educador · EduMetria Social](#-edumetria-social--ai4good-2027)
+implementados e testados: 119 testes (R/mirt e PostgreSQL/RLS incluídos; pulados e reportados quando o ambiente não
+os tem), notebook end-to-end executado, [galeria de telas reais](#️-galeria--telas-reais-do-sistema-rodando) e
+validação com dados públicos reais (ENEM 2023). Piloto com escolas, educadores e juízes reais e estudo de impacto
+dependem de parceria e ainda não foram realizados.**
 
-🆕 **O que há de novo** — v0.2.0 (P1): CFA ordinal e invariância no pipeline, PostgreSQL com Row Level Security, OIDC,
+🆕 **O que há de novo** — v0.4.0: **EduMetria Social**, jornada guiada para educadores com medida, sinal e incerteza,
+encaminhamento para revisão humana pela API real, estudo Monte Carlo do sinal e documentação para o AI4Good 2027 ·
+v0.2.0 (P1): CFA ordinal e invariância no pipeline, PostgreSQL com Row Level Security, OIDC,
 tracing OpenTelemetry + Prometheus/Grafana/Jaeger, CRUD editorial com imutabilidade, copiloto restrito e integrações
 **verificadas** contra o código real do ThemisAI, AegisLLM e Argus, relatório PDF · v0.3.0 (P2): trilha B com microdados do
 ENEM, linking longitudinal, CAT, bifator/testlet, 3PL/GPCM, multinível, desenho de impacto e
@@ -38,6 +42,102 @@ dados inválidos e vazamento temporal, e se os escores **agregam** valor prediti
 > com resultados reproduzíveis por manifesto. **O que ainda não mostra:** validade do instrumento em
 > contexto real ou efeito sobre permanência — isso exige dados reais, especialistas e estudo de impacto.
 > Itens autorais e ilustrativos; pareceres de juízes simulados; nenhum dado de estudante real.
+
+---
+
+## 🌱 EduMetria Social — AI4Good 2027
+
+> **O EduMetria ajuda educadores a interpretar sinais de aprendizagem e decidir onde oferecer apoio,
+> mostrando a incerteza dos modelos e exigindo revisão humana.**
+
+**Problema.** Educadores com pouco tempo e poucos recursos precisam decidir onde oferecer apoio pedagógico em
+matemática. Nota média e lista de faltas, isoladas, escondem o quanto a medida é incerta e qual parte do conteúdo
+concentra a dificuldade — e induzem conclusões erradas, para mais ou para menos.
+
+**Para quem.** Professores e coordenação pedagógica da rede pública; estudantes são beneficiários indiretos.
+Ainda **não há escola parceira nem usuário final real validado**.
+
+**ODS.** 4 — Educação de Qualidade (principal) · 10 — Redução das Desigualdades (complementar, só com evidência e
+plano de equidade).
+
+**Hipótese testável (ainda não testada com educadores).** Um painel que junta medidas psicométricas interpretáveis,
+seus intervalos de incerteza, indicadores de qualidade e revisão humana melhora a identificação de prioridades
+pedagógicas com transparência e sem automatizar decisões de alto impacto.
+
+### O que a Visão do Educador faz — e o que não faz
+
+| Faz | Não faz |
+|---|---|
+| Estima a proficiência em matemática com **intervalo de incerteza** e mostra quantos estudantes ficam claramente abaixo, claramente acima ou **sem conclusão possível** frente a um corte ilustrativo | Não classifica, pune nem ranqueia estudantes, turmas, escolas ou docentes |
+| Aponta eixos em que a escola acertou **menos do que ela mesma faria esperar** (comparação com a própria escola, não com outras) | Não decide aprovação, reprovação, encaminhamento ou direito a atendimento |
+| Mostra faltas não justificadas como **registro observado**, não como previsão | Não usa o risco preditivo para priorizar (na simulação ele não superou a frequência sozinha) |
+| Gera pontos consultivos com "por quê", margem de erro e **o que pode estar errado** | Não transforma ausência de resposta em nota zero |
+| Leva cada ponto a uma **revisão por outra pessoa**, com checklist, pela API real e com auditoria | Não usa dados reais de menores nesta demonstração |
+
+### Telas reais (jornada executada no navegador contra API e painel em execução)
+
+Capturas feitas com `scripts/capture_ai4good_screens.py` (Playwright), clicando nos mesmos botões que uma pessoa
+clicaria. **Dados sintéticos** (run `run-s12-20261107T155216-6daa13`).
+
+| 1 · O problema e o caso fictício | 2 · Escola fictícia: medida, sinal, frequência e risco |
+|---|---|
+| ![Problema](docs/images/ai4good_1_problema.png) | ![Escola](docs/images/ai4good_2_escola.png) |
+| **3 · Pontos para revisão — encaminhado (coord-bruno)** | **4 · Revisão por outra pessoa com checklist (coord-clara)** |
+| ![Pontos](docs/images/ai4good_3_pontos_encaminhado.png) | ![Revisão](docs/images/ai4good_4_revisao_checklist.png) |
+| **5 · Como o modelo chegou aqui (com o estudo do sinal)** | **6 · Transparência, equidade e exportação** |
+| ![Como](docs/images/ai4good_5_como_chegamos.png) | ![Transparência](docs/images/ai4good_6_transparencia.png) |
+
+Caso aprovado e registrado: [captura](docs/images/ai4good_4b_revisao_aprovada.png) · resumo de uma página exportado
+pelo painel: [`exemplo_resumo_SCH01_SINTETICO.html`](docs/ai4good2027/exemplo_resumo_SCH01_SINTETICO.html).
+
+### Executar o MVP localmente (sem serviço pago, sem dado real)
+
+```bash
+pip install -r requirements.txt
+export PYTHONPATH=src                                    # PowerShell: $env:PYTHONPATH="src"
+python -m edumetria.cli analyze --scenario s12           # run com educator_view.json (~30 s) — ou use o de reports/demo_runs
+uvicorn apps.api.main:app --port 8000                    # terminal 2: API em modo demo (encaminhar/revisar)
+streamlit run apps/dashboard/app.py                      # terminal 3: painel → modo "Educador — EduMetria Social"
+python scripts/educator_signal_study.py --reps 100       # opcional: estudo Monte Carlo do sinal (~40 min)
+```
+
+Sem a API, o painel mostra tudo e avisa que nada pode ser encaminhado — ele não grava nada sozinho.
+
+### Resultados experimentais × impacto social
+
+| Camada | Estado | Evidência |
+|---|---|---|
+| Validação técnica (métodos, pipeline, segurança, testes) | ✅ existe | 119 testes; paridade com mirt; Monte Carlo de TRI e DIF; RLS, OIDC, auditoria |
+| Sinal por eixo da Visão do Educador | ✅ validado em simulação | 100 réplicas por condição: efeito plantado detectado em 98%; falso positivo 0,38% por teste (0,10% sem efeito plantado); efeito fraco (Δb = 0,25) detectado em só 21,5% — limite real com ~100 estudantes por escola |
+| Dados públicos reais (ENEM 2023) | ✅ validação externa do **motor** | θ 3PL × nota oficial r = 0,994 — ordenação, não reprodução da escala do Inep |
+| Simulação educacional | ✅ | população artificial; **não** é estudo com participantes |
+| Usabilidade com educadores reais | 🧪 não realizada | [plano_piloto.md](docs/ai4good2027/plano_piloto.md) |
+| Resultado social causal (aprendizagem, permanência) | 🧪 **não demonstrado** | exige parceria, ética, LGPD e estudo pré-registrado |
+
+Matriz completa, afirmação por afirmação: [evidence_matrix.md](docs/ai4good2027/evidence_matrix.md) ·
+roteiro de 3 minutos: [roteiro_demo_3min.md](docs/ai4good2027/roteiro_demo_3min.md) ·
+pitch de 60 segundos: [pitch_60seg.md](docs/ai4good2027/pitch_60seg.md) ·
+plano × repositório: [matriz_plano.md](docs/ai4good2027/matriz_plano.md).
+
+### Como foi feito
+
+1. **Leitura e matriz.** O plano de melhorias foi comparado item a item com o repositório
+   ([matriz](docs/ai4good2027/matriz_plano.md)). O achado que mudou o desenho: o gerador não tinha efeito de
+   escola nem dificuldade por eixo — mostrar "turma com dificuldade" seria exibir ruído como sinal.
+2. **Desenho dentro da arquitetura.** A estatística ficou no domínio (`src/edumetria/reporting/educator.py`) e o
+   painel só lê o artefato `educator_view.json`, que entra no manifesto do run com hash. Nenhum framework, banco
+   ou motor novo. O encaminhamento usa a API e as proteções que já existiam (RBAC, segregação de funções,
+   auditoria encadeada).
+3. **Gabarito conhecido.** O cenário S12 planta dificuldade em dois eixos de duas escolas; os efeitos ficam
+   desligados por padrão, e o S0 reproduz o mesmo hash de dados da v0.3.0 (teste de regressão).
+4. **Estudo que encontrou um erro.** A primeira versão do sinal acendia onde não devia (3,9% de falso positivo por
+   teste no S12, com 89% das réplicas tendo algum sinal falso) por contaminação entre eixos e encolhimento do prior.
+   Corrigido com prior por escola e purificação iterativa, **sem mexer em limiar nem seed**: o falso positivo caiu
+   para 0,38% por teste (15% das réplicas), com poder de 99,5% → 98%. A versão errada continua publicada.
+5. **Validação de ponta a ponta.** Suíte completa, run de demonstração ligado ao commit e jornada clicada no
+   navegador contra API e painel reais.
+
+Processo completo, com as decisões e o porquê de cada uma: [como_foi_feito.md](docs/ai4good2027/como_foi_feito.md).
 
 ---
 
@@ -144,6 +244,7 @@ Detalhes: [`docs/methodology/psicometria.md`](docs/methodology/psicometria.md) �
 | S9 | categorias raras, padrões extremos | GRM e EAP |
 | S10 | duplicatas, versão inválida, categoria inválida, atraso | quarentena |
 | S11 | feature com vazamento temporal | bloqueio point-in-time |
+| 🆕 S12 | efeito de escola em θ + dificuldade localizada (SCH01 × dados e gráficos, SCH07 × resolução de problemas) + MNAR leve | Visão do Educador (sinal por eixo com gabarito) |
 
 ---
 
@@ -322,7 +423,9 @@ python -m edumetria.cli analyze --scenario s10          # demonstra bloqueio (ex
 python -m edumetria.cli analyze --scenario s10 --resolve-quarantine
 python -m edumetria.cli recovery-study --reps 100 --dif-reps 50
 python -m edumetria.cli benchmark
-python -m pytest -q                                      # 106 testes (R e PostgreSQL opcionais localmente)
+python -m pytest -q                                      # 119 testes (R e PostgreSQL opcionais localmente)
+python -m edumetria.cli analyze --scenario s12           # run com a Visão do Educador (educator_view.json)
+python scripts/educator_signal_study.py --reps 100       # Monte Carlo do sinal por eixo → reports/ai4good2027/
 jupyter notebook notebooks/edumetria_end_to_end.ipynb     # notebook end-to-end (já executado)
 python scripts/build_notebook.py                         # regenera e reexecuta o notebook
 python scripts/p2_studies.py                             # linking, CAT, bifator, multinível, impacto, copiloto
@@ -331,7 +434,7 @@ python scripts/trilha_b_enem.py --zip <microdados_enem_2023.zip>   # dados reais
 python -m edumetria.cli demo-data --scenario s2          # snapshot p/ a API
 uvicorn apps.api.main:app --port 8000                    # API (tokens demo em configs/demo_users.yaml)
 python -m edumetria.worker --loop                        # worker de jobs
-streamlit run apps/dashboard/app.py                      # painel
+streamlit run apps/dashboard/app.py                      # painel (modo Educador ou Pesquisador)
 
 docker compose --profile core up -d                      # PostgreSQL + RLS (porta 15432)
 docker compose --profile observability up -d             # Collector + Jaeger (16686) + Prometheus (9090) + Grafana (3000)
@@ -350,7 +453,8 @@ EduMetria/
 ├── src/edumetria/      domain · simulation · data_quality · ctt · irt · dif · validity · risk
 │                       registry · reporting · observability · integrations · pipeline · worker · cli
 │                       copilot · impact · irt/linking · irt/cat · risk/multilevel · reporting/pdf
-├── apps/               api (FastAPI, auth OIDC, tracing OTel) · dashboard (Streamlit)
+│                       reporting/educator (Visão do Educador)
+├── apps/               api (FastAPI, auth OIDC, tracing OTel) · dashboard (Streamlit: educador + pesquisador)
 ├── r/                  fit_irt.R · dif.R · cfa_ordinal.R · invariance.R · bifactor.R
 ├── notebooks/          edumetria_end_to_end.ipynb (executado)
 ├── scripts/            build_notebook · p2_studies · trilha_b_enem · dev_oidc
@@ -359,8 +463,8 @@ EduMetria/
 ├── observability/      otel-collector · prometheus + alertas · grafana (datasources + dashboard)
 ├── compose.yaml        perfis core e observability
 ├── tests/              unit · statistical · integration
-├── reports/            monte_carlo/ · demo_runs/ · p2/ · trilha_b_enem/ · benchmark.json
-└── docs/               adr/ · methodology/ · impact/ · runbooks/ · presentation/ · plano/
+├── reports/            monte_carlo/ · demo_runs/ · p2/ · trilha_b_enem/ · ai4good2027/ · benchmark.json
+└── docs/               adr/ · methodology/ · impact/ · runbooks/ · presentation/ · plano/ · ai4good2027/
 ```
 
 Histórico: [CHANGELOG.md](CHANGELOG.md) (documento mestre) · [WORKLOG.md](WORKLOG.md) · [AGENTS.md](AGENTS.md).
@@ -371,10 +475,11 @@ Histórico: [CHANGELOG.md](CHANGELOG.md) (documento mestre) · [WORKLOG.md](WORK
 
 | Camada | Estado |
 |---|---|
-| Implementado e testado | TCT, 2PL/1PL/GRM, EAP, DIF, DQ, risco, registry, API, worker, relatórios HTML/PDF, CFA/invariância, PostgreSQL/RLS, OIDC, OTel, CRUD editorial, copiloto, integrações verificadas, linking, CAT, bifator, 3PL/GPCM, multinível, desenho de impacto |
+| Implementado e testado | TCT, 2PL/1PL/GRM, EAP, DIF, DQ, risco, registry, API, worker, relatórios HTML/PDF, CFA/invariância, PostgreSQL/RLS, OIDC, OTel, CRUD editorial, copiloto, integrações verificadas, linking, CAT, bifator, 3PL/GPCM, multinível, desenho de impacto, Visão do Educador (jornada, sinal por eixo, encaminhamento e revisão via API, exportação) |
+| Validado em simulação com gabarito | recuperação 2PL, poder/falso positivo de DIF, sinal por eixo da Visão do Educador |
 | Validado com dados reais | motor de TRI × ENEM 2023 (parâmetros e notas oficiais do Inep) |
-| Planejado | Sympson-Hetter no CAT, Alembic, linking com dados reais entre edições |
-| Depende de parceria | piloto, juízes reais, entrevistas cognitivas, execução do estudo de impacto |
+| Planejado | Sympson-Hetter no CAT, Alembic, linking com dados reais entre edições, calibração purificada entre escolas no sinal por eixo |
+| Depende de parceria | piloto, educadores e juízes reais, entrevistas cognitivas, execução do estudo de impacto |
 
 ## Contexto / Observações
 
@@ -385,6 +490,11 @@ Histórico: [CHANGELOG.md](CHANGELOG.md) (documento mestre) · [WORKLOG.md](WORK
 - `compose.yaml` usa credenciais **locais de demonstração**; em pastas sincronizadas (Google Drive) o Docker Desktop
   não monta arquivos — rode o compose a partir de uma cópia local.
 - Referências normativas (LGPD, Enunciado ANPD 1/2023) orientam o desenho; não há parecer jurídico.
+
+## 📄 Licença
+
+Código sob licença [MIT](LICENSE). Itens autorais de `configs/item_bank.yaml` sob CC BY 4.0 (licença separada,
+declarada no próprio arquivo). Microdados do ENEM não são redistribuídos.
 
 ---
 

@@ -153,7 +153,7 @@ def _school_tab(view: dict, school: dict):
         dist["estudantes_plot"] = [0 if (0 < n < k) else n for n in dist["estudantes"]]
         st.altair_chart(alt.Chart(dist).mark_bar().encode(
             x=alt.X("estudantes_plot:Q", title="estudantes"),
-            y=alt.Y("situação:N", sort=None, title=None),
+            y=alt.Y("situação:N", sort=None, title=None, axis=alt.Axis(labelLimit=260)),
             tooltip=["situação", "exibição"]).properties(height=140), use_container_width=True)
         st.caption(f"Corte θ = {cfg['proficiency']['reference_cut']}: {cfg['proficiency']['reference_cut_label']}. "
                    "'Claramente' = o intervalo de 90% inteiro de um lado do corte. "
@@ -161,22 +161,28 @@ def _school_tab(view: dict, school: dict):
                    f"acima {m['display']['n_clearly_above']}.")
     with c2.container(border=True):
         st.markdown("##### 🔎 Sinal observado — acertos por eixo × esperado pela própria escola")
-        rows = pd.DataFrame([{"eixo": cfg["axis_labels"].get(r["axis"], r["axis"]), "diferença (p.p.)": r["diff_pp"],
+        # nomes de campo sem "." — o Altair/Vega lê ponto como acesso aninhado
+        rows = pd.DataFrame([{"eixo": cfg["axis_labels"].get(r["axis"], r["axis"]), "dif": r["diff_pp"],
                               "inf": r["interval_pp"][0], "sup": r["interval_pp"][1],
                               "acertos": f"{r['observed_pct']:.0f}%", "esperado": f"{r['expected_pct']:.0f}%",
                               "leitura": signal_label(r["signal"])} for r in school["axis"]])
         if rows.empty:
             st.info("Sem dados de eixo neste run.")
         else:
-            base = alt.Chart(rows).encode(y=alt.Y("eixo:N", title=None))
-            chart = (base.mark_rule(strokeWidth=3).encode(x=alt.X("inf:Q", title="observado − esperado (p.p.), IC 90%"),
-                                                          x2="sup:Q", color=alt.Color("leitura:N", legend=None))
-                     + base.mark_point(filled=True, size=80).encode(x="diferença (p.p.):Q",
-                                                                     color="leitura:N",
-                                                                     tooltip=["eixo", "acertos", "esperado",
-                                                                              "leitura"])
-                     + alt.Chart(pd.DataFrame({"x": [0]})).mark_rule(strokeDash=[4, 4]).encode(x="x:Q"))
+            labels = [signal_label(s) for s in ("lower_than_expected", "no_signal", "higher_than_expected",
+                                                "insufficient_data")]
+            color = alt.Color("leitura:N", legend=None,
+                              scale=alt.Scale(domain=labels, range=["#c0392b", "#8a94a6", "#2e6fbf", "#c9a227"]))
+            base = alt.Chart(rows).encode(y=alt.Y("eixo:N", title=None, axis=alt.Axis(labelLimit=220)))
+            chart = (alt.Chart(pd.DataFrame({"x": [0]})).mark_rule(strokeDash=[4, 4], color="#555").encode(x="x:Q")
+                     + base.mark_rule(strokeWidth=4).encode(
+                         x=alt.X("inf:Q", title="observado − esperado (pontos percentuais), IC 90%"),
+                         x2="sup:Q", color=color)
+                     + base.mark_point(filled=True, size=110, opacity=1).encode(
+                         x="dif:Q", color=color, tooltip=["eixo", "acertos", "esperado", "leitura"]))
             st.altair_chart(chart.properties(height=150), use_container_width=True)
+            st.caption("Ponto = diferença; barra = intervalo de 90%. Barra cruzando o zero tracejado = dentro da "
+                       "incerteza, não interpretar. Vermelho = abaixo do esperado além da incerteza.")
             st.dataframe(rows[["eixo", "acertos", "esperado", "leitura"]], hide_index=True, use_container_width=True)
     c3, c4 = st.columns(2)
     att = school.get("attendance") or {}

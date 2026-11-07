@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.1.0",
+  "report_id": "evr-run-s12-20261107T155216-6daa13",
+  "instrument_version_id": "math6-v0.1",
+  "population_and_purpose": "População artificial (6º ano, 2 municípios fictícios); propósito: demonstrar engenharia de medição — sem uso decisório.",
+  "data_origin": "synthetic",
+  "content_review": {
+    "status": "exploratory",
+    "summary": "S-CVI/Ave=0.90 com pareceres SIMULADOS; itens para revisão: A09, A20, A21, A23, B02. Não conta como evidência humana.",
+    "run_id": "run-s12-20261107T155216-6daa13",
+    "details": {
+      "evidence_origin": [
+        "simulated_review"
+      ],
+      "counts_as_human_evidence": false
+    }
+  },
+  "response_process": {
+    "status": "not_assessed",
+    "summary": "Entrevistas cognitivas não realizadas (exige piloto aprovado).",
+    "run_id": null,
+    "details": {}
+  },
+  "dimensionality": {
+    "status": "exploratory",
+    "summary": "Triagem por autovalores (razão 1º/2º=4.52) e Q3 (0 pares sinalizados). CFA ordinal: ver seção structure_invariance.",
+    "run_id": "run-s12-20261107T155216-6daa13",
+    "details": {
+      "q3_flags": []
+    }
+  },
+  "ctt": {
+    "status": "supported",
+    "summary": "α=0.832 (IC95% 0.816–0.847, n=830 casos completos). 0 itens com flags investigativas.",
+    "run_id": "run-s12-20261107T155216-6daa13",
+    "details": {
+      "evidence_basis": "synthetic_simulation"
+    }
+  },
+  "irt": {
+    "status": "supported",
+    "summary": "2PL convergiu=True em 24 ciclos; GRM convergiu=True; 0 avisos de item.",
+    "run_id": "run-s12-20261107T155216-6daa13",
+    "details": {
+      "evidence_basis": "synthetic_simulation",
+      "engine": "python-native"
+    }
+  },
+  "precision": {
+    "status": "supported",
+    "summary": "posterior_sd mediano=0.378; 0 estudantes sem evidência suficiente (θ ausente).",
+    "run_id": "run-s12-20261107T155216-6daa13",
+    "details": {
+      "evidence_basis": "synthetic_simulation"
+    }
+  },
+  "dif": {
+    "status": "exploratory",
+    "summary": "0 itens sinalizados para revisão humana (nenhum); nenhuma remoção automática.",
+    "run_id": "run-s12-20261107T155216-6daa13",
+    "details": {
+      "review_state": "no_action"
+    }
+  },
+  "external_relations": {
+    "status": "exploratory",
+    "summary": "AUC B2−B1 (escolas externas, t0=40) = -0.009 IC95% [-0.033; 0.004]. Relação gerada pela simulação — não prova ganho real.",
+    "run_id": "run-s12-20261107T155216-6daa13",
+    "details": {}
+  },
+  "structure_invariance": {
+    "status": "not_assessed",
+    "summary": "Rscript + lavaan indisponíveis (parte bloqueada, não substituída)",
+    "run_id": "run-s12-20261107T155216-6daa13",
+    "details": {}
+  },
+  "limitations": [
+    "Todos os dados são sintéticos; nenhuma conclusão sobre estudantes, escolas ou redes reais.",
+    "Pareceres de juízes são simulados; nenhuma revisão humana real ocorreu.",
+    "Sem entrevistas cognitivas; linking entre versões só em estudo simulado (scripts/p2_studies.py).",
+    "Escala interna (θ ~ N(0,1)) não é comparável a SAEB, ENEM ou PISA.",
+    "Alvo preditivo é proxy demonstrativo, não definição de evasão."
+  ],
+  "prohibited_uses": [
+    "Decisão automática sobre estudantes",
+    "Ranking punitivo de escolas/docentes",
+    "Diagnóstico psicológico",
+    "Comparação com escalas oficiais"
+  ],
+  "approval_state": "candidate — requer liberação manual por psicometrista",
+  "artifacts": [
+    "ctt_items.csv",
+    "item_parameters_math6.csv",
+    "item_parameters_belong6.csv",
+    "fit_diagnostics.json",
+    "dif_report.csv",
+    "precision_curves.json",
+    "risk_evaluation.json",
+    "content_validity.json",
+    "manifest.json"
+  ],
+  "lineage": {
+    "report": "run-s12-20261107T155216-6daa13",
+    "snapshot": "synthetic-s12-c61c06d631de",
+    "dataset_hash": "c61c06d631dee3ec73112e5b503bc170aa93d217d7ba1894c5287f2b8fb17e5d",
+    "instrument_versions": [
+      "math6-v0.1",
+      "belong6-v0.1"
+    ],
+    "item_bank": "configs/item_bank.yaml",
+    "schema_version": "1.1.0"
+  }
+}

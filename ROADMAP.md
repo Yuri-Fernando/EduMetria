@@ -42,3 +42,17 @@ DIF com revisão · registro de calibração com liberação manual · API · pa
 | Juízes reais, entrevistas cognitivas | 🧪 |
 | Execução do estudo de impacto | 🧪 |
 | Validação externa em outras redes | 🧪 |
+
+## EduMetria Social — AI4Good 2027 (v0.4.0)
+
+Escopo do plano de melhorias de 07/11/2026; matriz completa em `docs/ai4good2027/matriz_plano.md`.
+
+| Item | Estado |
+|---|---|
+| Visão do Educador (jornada guiada, medida × sinal × risco, encaminhamento pela API, revisão com checklist) | ✅ |
+| Artefato `educator_view.json` e sinal por eixo com estudo Monte Carlo | ✅ |
+| Exportação de resumo, tutorial, modo educador × pesquisador, "como chegou aqui" | ✅ |
+| Matriz de evidências, roteiro de 3 min, pitch de 60 s | ✅ |
+| Plano de piloto responsável | ✅ documento; execução 🧪 |
+| Calibração purificada entre escolas (resíduo de falso positivo no sinal por eixo) | ⏳ |
+| Entrevistas com educadores reais (usabilidade e compreensão da incerteza) | 🧪 |

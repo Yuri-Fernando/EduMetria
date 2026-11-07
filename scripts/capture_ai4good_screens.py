@@ -15,12 +15,14 @@ coord-bruno) e aprova com checklist (perfil coord-clara). Nada é simulado na ca
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 IMG = ROOT / "docs" / "images"
+sys.path[:0] = [str(ROOT), str(ROOT / "src")]
 
 
 def main() -> None:
@@ -30,7 +32,7 @@ def main() -> None:
     IMG.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
-        page = browser.new_page(viewport={"width": 1440, "height": 1500}, accept_downloads=True)
+        page = browser.new_page(viewport={"width": 1440, "height": 1900}, accept_downloads=True)
         page.goto(args.url, wait_until="networkidle")
         page.get_by_text("EduMetria Social · Visão do Educador").wait_for(timeout=60000)
         page.wait_for_timeout(2500)
@@ -49,10 +51,10 @@ def main() -> None:
         page.wait_for_timeout(1000)
         page.screenshot(path=str(IMG / "ai4good_3_pontos_encaminhado.png"))
         tab("4 · Revisão pedagógica", None, 3000)
-        for box in page.get_by_role("checkbox").all():
-            if box.is_visible():
-                box.check(force=True)
-                page.wait_for_timeout(400)
+        from apps.dashboard.educator_page import CHECKLIST  # mesmos textos do painel
+        for text in CHECKLIST:
+            page.get_by_text(text, exact=True).first.click()   # o input do Streamlit fica oculto; clica no rótulo
+            page.wait_for_timeout(700)
         page.get_by_label("Justificativa (mín. 10 caracteres)").first.fill(
             "Sinal além da margem de erro no eixo; planejar revisão do conteúdo com a docente de referência.")
         page.keyboard.press("Tab")

@@ -1,0 +1,3393 @@
+{
+  "schema": "educator_view/1.0",
+  "run_id": "run-s12-20261107T155216-6daa13",
+  "scenario_id": "s12",
+  "data_origin": "synthetic",
+  "label": "DEMONSTRAÇÃO COM DADOS SINTÉTICOS",
+  "config": {
+    "version": "1.0",
+    "proficiency": {
+      "reference_cut": -1.0,
+      "reference_cut_label": "1 desvio-padrão abaixo da média da população simulada (corte ilustrativo)"
+    },
+    "axis_signal": {
+      "interval_level": 0.9,
+      "fdr_alpha": 0.05,
+      "min_responses": 100
+    },
+    "attendance": {
+      "t0_day": 40,
+      "window_days": 10,
+      "unjustified_threshold": 3
+    },
+    "privacy": {
+      "small_cell": 5
+    },
+    "axis_labels": {
+      "numeros_operacoes": "Números e operações",
+      "resolucao_problemas": "Resolução de problemas",
+      "dados_graficos": "Dados e gráficos"
+    }
+  },
+  "provenance": {
+    "model": "2PL MML-EM (motor nativo), escores EAP com prior N(0,1)",
+    "calibration_converged": true,
+    "n_items_by_axis": {
+      "numeros_operacoes": 10,
+      "resolucao_problemas": 8,
+      "dados_graficos": 6
+    },
+    "n_students": 2000,
+    "n_schools": 20
+  },
+  "method": {
+    "measure": "Proficiência estimada por TRI (2PL) com escore EAP; cada estudante tem um intervalo de 90% da posterior. A escola mostra quantos estudantes ficam claramente abaixo, claramente acima ou com intervalo cruzando o corte ilustrativo.",
+    "axis_signal": "Para cada eixo, o esperado de acertos vem da proficiência estimada só com os itens dos OUTROS eixos (leave-axis-out), com prior da própria escola estimado por verossimilhança marginal (evita puxar a escola para a média geral) e variância preditiva posterior. Eixos sinalizados como baixos saem da referência dos demais eixos da mesma escola (purificação iterativa, como em DIF). A diferença observado − esperado é testada com correção de Benjamini-Hochberg sobre todas as escolas × eixos.",
+    "attendance": "Contagem de faltas não justificadas na janela anterior a t0, usando só registros disponíveis em t0 (point-in-time).",
+    "risk": "Avaliação dos modelos B0–B3 em escolas externas (ver risk_evaluation.json)."
+  },
+  "axis_flag_summary": {
+    "n_tests": 60,
+    "n_flagged": 2,
+    "flagged": [
+      [
+        "SCH01",
+        "dados_graficos",
+        "lower_than_expected"
+      ],
+      [
+        "SCH07",
+        "resolucao_problemas",
+        "lower_than_expected"
+      ]
+    ]
+  },
+  "risk_model": {
+    "auc_B1_attendance_only": 0.9271629778672033,
+    "auc_B2_attendance_plus_scores": 0.9179577464788733,
+    "delta_auc_B2_minus_B1": -0.009450216920819099,
+    "delta_ci95": [
+      -0.03253781950965051,
+      0.0041102103293838566
+    ],
+    "target_definition": "proxy sintético: ≥5 faltas não justificadas nos 20 dias letivos seguintes a t0; não é definição oficial de abandono/evasão",
+    "used_for_prioritization": false,
+    "message": "O modelo de risco foi avaliado em escolas externas, mas acrescentar a proficiência à frequência não melhorou a previsão de forma comprovada nesta simulação (o intervalo do ganho inclui zero). Por isso o risco preditivo NÃO gera prioridades nesta visão."
+  },
+  "schools": [
+    {
+      "school_id": "SCH01",
+      "label": "Escola fictícia SCH01 · 6º ano",
+      "measure": {
+        "n_students": 95,
+        "n_computed": 95,
+        "n_insufficient": 0,
+        "theta_mean": -0.2833557920859325,
+        "theta_mean_interval_90": [
+          -0.42796470042143886,
+          -0.13874688375042613
+        ],
+        "mean_posterior_sd": 0.3959496395531587,
+        "n_clearly_below": 5,
+        "n_uncertain": 43,
+        "n_clearly_above": 47,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "5",
+          "n_uncertain": "43",
+          "n_clearly_above": "47"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH01",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 546,
+          "observed_pct": 25.641025641025642,
+          "expected_pct": 38.796133238809276,
+          "diff_pp": -13.155107597783635,
+          "interval_pp": [
+            -16.344740385854692,
+            -9.965474809712576
+          ],
+          "z": -6.783924007201179,
+          "p_value": 1.1695486450207538e-11,
+          "group_prior": [
+            -0.17314572413265938,
+            0.9636664430118146
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 7.017291870124523e-10,
+          "signal": "lower_than_expected",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH01",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 894,
+          "observed_pct": 47.651006711409394,
+          "expected_pct": 47.229025144156964,
+          "diff_pp": 0.4219815672524314,
+          "interval_pp": [
+            -2.7619914839615256,
+            3.605954618466389
+          ],
+          "z": 0.2179974202787894,
+          "p_value": 0.8274311214127449,
+          "group_prior": [
+            -0.18027201501190648,
+            0.9380230045475096
+          ],
+          "reference_excludes": [
+            "dados_graficos"
+          ],
+          "q_value_bh": 0.9861598284903856,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH01",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 727,
+          "observed_pct": 44.97936726272352,
+          "expected_pct": 45.150490947503094,
+          "diff_pp": -0.17112368477957493,
+          "interval_pp": [
+            -3.2787837834167757,
+            2.9365364138576258
+          ],
+          "z": -0.0905740668647831,
+          "p_value": 0.9278310388578128,
+          "group_prior": [
+            -0.15961035612649455,
+            0.9089297809329768
+          ],
+          "reference_excludes": [
+            "dados_graficos"
+          ],
+          "q_value_bh": 0.9972187542609366,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 95,
+        "n_with_signal": 4,
+        "unjustified_rate_window": 0.05052631578947368,
+        "unjustified_rate_baseline": 0.041578947368421056
+      },
+      "cards": [
+        {
+          "card_id": "SCH01-axis-dados_graficos",
+          "kind": "sinal_observado",
+          "title": "Possível dificuldade localizada em Dados e gráficos",
+          "what_we_see": "Os estudantes acertaram 26% dos itens de Dados e gráficos; pelo desempenho deles nos outros eixos, o esperado era 39% (diferença -13.2 p.p., intervalo 90% [-16.3; -10.0]).",
+          "why": "A diferença continua significativa depois de corrigir para múltiplas comparações (Benjamini-Hochberg, q = 7.02e-10) e foi calculada com a própria escola como referência — não é comparação com outras escolas.",
+          "uncertainty": "546 respostas em 6 itens; o intervalo mostra a margem.",
+          "could_be_wrong": [
+            "conteúdo ainda não trabalhado no período (não é falta de capacidade)",
+            "item ambíguo ou com problema de redação/acessibilidade",
+            "problema na aplicação (tempo, caderno, ordem dos itens)",
+            "falso positivo — a correção reduz, mas não elimina"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH01-dados_graficos",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH01/axis/dados_graficos",
+            "item_parameters_math6.csv"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH01-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 43 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.40 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH01-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH01/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH01-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "menos de 5 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 5.1% dos dias; no início do período: 4.2%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH01-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH01/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH02",
+      "label": "Escola fictícia SCH02 · 6º ano",
+      "measure": {
+        "n_students": 94,
+        "n_computed": 94,
+        "n_insufficient": 0,
+        "theta_mean": 0.0698526889174184,
+        "theta_mean_interval_90": [
+          -0.08892658655476314,
+          0.22863196438959993
+        ],
+        "mean_posterior_sd": 0.39151272245217594,
+        "n_clearly_below": 3,
+        "n_uncertain": 29,
+        "n_clearly_above": 62,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "29",
+          "n_clearly_above": "62"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH02",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 540,
+          "observed_pct": 44.81481481481482,
+          "expected_pct": 43.40927603304386,
+          "diff_pp": 1.4055387817709561,
+          "interval_pp": [
+            -1.7576785240743642,
+            4.5687560876162765
+          ],
+          "z": 0.730871558759094,
+          "p_value": 0.46485760961692757,
+          "group_prior": [
+            0.06726360141229831,
+            1.0536018933208846
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8451956538489592,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH02",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 901,
+          "observed_pct": 52.94117647058823,
+          "expected_pct": 52.982506682506056,
+          "diff_pp": -0.04133021191782004,
+          "interval_pp": [
+            -2.972977230429501,
+            2.890316806593861
+          ],
+          "z": -0.02318906353542248,
+          "p_value": 0.981499462297716,
+          "group_prior": [
+            0.08611869044159635,
+            0.9712599661569578
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9972187542609366,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH02",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 729,
+          "observed_pct": 50.617283950617285,
+          "expected_pct": 50.61095986906972,
+          "diff_pp": 0.006324081547566946,
+          "interval_pp": [
+            -2.9778526328063686,
+            2.9905007959015024
+          ],
+          "z": 0.003485781663203015,
+          "p_value": 0.9972187542609366,
+          "group_prior": [
+            0.10150678589030958,
+            0.968979351187933
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9972187542609366,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 94,
+        "n_with_signal": 4,
+        "unjustified_rate_window": 0.05531914893617021,
+        "unjustified_rate_baseline": 0.03031914893617021
+      },
+      "cards": [
+        {
+          "card_id": "SCH02-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 29 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH02-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH02/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH02-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "menos de 5 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 5.5% dos dias; no início do período: 3.0%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH02-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH02/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH03",
+      "label": "Escola fictícia SCH03 · 6º ano",
+      "measure": {
+        "n_students": 109,
+        "n_computed": 109,
+        "n_insufficient": 0,
+        "theta_mean": 0.18634013704022404,
+        "theta_mean_interval_90": [
+          0.0454222358274782,
+          0.32725803825296984
+        ],
+        "mean_posterior_sd": 0.3909309374412928,
+        "n_clearly_below": 3,
+        "n_uncertain": 33,
+        "n_clearly_above": 73,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "33",
+          "n_clearly_above": "73"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH03",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 626,
+          "observed_pct": 44.56869009584665,
+          "expected_pct": 46.5038308589685,
+          "diff_pp": -1.935140763121856,
+          "interval_pp": [
+            -4.890221739509035,
+            1.0199402132653232
+          ],
+          "z": -1.0771357293816437,
+          "p_value": 0.2814196330067169,
+          "group_prior": [
+            0.24803581238171107,
+            1.0568966991919073
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.7675080900183189,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH03",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 1040,
+          "observed_pct": 56.44230769230769,
+          "expected_pct": 55.16978579355544,
+          "diff_pp": 1.2725218987522497,
+          "interval_pp": [
+            -1.4678198752128053,
+            4.012863672717304
+          ],
+          "z": 0.7638143097418268,
+          "p_value": 0.44497790803749393,
+          "group_prior": [
+            0.193269047246391,
+            0.859542128136097
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8343335775703011,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH03",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 827,
+          "observed_pct": 53.2043530834341,
+          "expected_pct": 52.563609140313744,
+          "diff_pp": 0.6407439431203514,
+          "interval_pp": [
+            -2.149475622845268,
+            3.4309635090859705
+          ],
+          "z": 0.3777229618931302,
+          "p_value": 0.7056364082254191,
+          "group_prior": [
+            0.21324933218062123,
+            0.944828865424981
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9593712344360166,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 109,
+        "n_with_signal": 9,
+        "unjustified_rate_window": 0.07706422018348624,
+        "unjustified_rate_baseline": 0.044954128440366975
+      },
+      "cards": [
+        {
+          "card_id": "SCH03-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 33 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH03-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH03/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH03-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "9 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 7.7% dos dias; no início do período: 4.5%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH03-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH03/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH04",
+      "label": "Escola fictícia SCH04 · 6º ano",
+      "measure": {
+        "n_students": 108,
+        "n_computed": 108,
+        "n_insufficient": 0,
+        "theta_mean": -0.10074087800946845,
+        "theta_mean_interval_90": [
+          -0.24346461452480211,
+          0.04198285850586521
+        ],
+        "mean_posterior_sd": 0.39308430684817786,
+        "n_clearly_below": 2,
+        "n_uncertain": 50,
+        "n_clearly_above": 56,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "50",
+          "n_clearly_above": "56"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH04",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 619,
+          "observed_pct": 41.51857835218094,
+          "expected_pct": 38.914793798260625,
+          "diff_pp": 2.6037845539203097,
+          "interval_pp": [
+            -0.3799556829022725,
+            5.587524790742893
+          ],
+          "z": 1.4353945475752576,
+          "p_value": 0.1511746988522734,
+          "group_prior": [
+            -0.1490440531027069,
+            0.9050470810260471
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.643330130386301,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH04",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 1043,
+          "observed_pct": 47.3633748801534,
+          "expected_pct": 49.01948855143706,
+          "diff_pp": -1.656113671283658,
+          "interval_pp": [
+            -4.369091491739262,
+            1.0568641491719466
+          ],
+          "z": -1.0040865643337167,
+          "p_value": 0.31533689089947736,
+          "group_prior": [
+            -0.07949148808978465,
+            1.0438304294050276
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.7737187932524088,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH04",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 826,
+          "observed_pct": 44.18886198547216,
+          "expected_pct": 45.24315045520393,
+          "diff_pp": -1.054288469731773,
+          "interval_pp": [
+            -3.8289436039135496,
+            1.7203666644500044
+          ],
+          "z": -0.6249966678481688,
+          "p_value": 0.5319732450640229,
+          "group_prior": [
+            -0.12742359892092542,
+            0.9915805915411791
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8739242071860449,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 108,
+        "n_with_signal": 10,
+        "unjustified_rate_window": 0.08333333333333333,
+        "unjustified_rate_baseline": 0.05277777777777778
+      },
+      "cards": [
+        {
+          "card_id": "SCH04-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 50 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH04-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH04/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH04-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "10 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 8.3% dos dias; no início do período: 5.3%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH04-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH04/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH05",
+      "label": "Escola fictícia SCH05 · 6º ano",
+      "measure": {
+        "n_students": 97,
+        "n_computed": 97,
+        "n_insufficient": 0,
+        "theta_mean": 0.18516975401390856,
+        "theta_mean_interval_90": [
+          0.025787070546375995,
+          0.34455243748144115
+        ],
+        "mean_posterior_sd": 0.3947999038800134,
+        "n_clearly_below": 3,
+        "n_uncertain": 24,
+        "n_clearly_above": 70,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "24",
+          "n_clearly_above": "70"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH05",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 557,
+          "observed_pct": 47.93536804308797,
+          "expected_pct": 45.458776963591596,
+          "diff_pp": 2.4765910794963752,
+          "interval_pp": [
+            -0.6338296101214631,
+            5.587011769114214
+          ],
+          "z": 1.3096716573364167,
+          "p_value": 0.19030693567646928,
+          "group_prior": [
+            0.19646425828043768,
+            1.1008738762752177
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.6716715376816563,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH05",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 931,
+          "observed_pct": 54.13533834586466,
+          "expected_pct": 57.17612395205004,
+          "diff_pp": -3.04078560618538,
+          "interval_pp": [
+            -5.9056701819636475,
+            -0.175901030407112
+          ],
+          "z": -1.7458459846526686,
+          "p_value": 0.08083771797157499,
+          "group_prior": [
+            0.2845917429547611,
+            0.9644172016556927
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.49949563078550463,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH05",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 744,
+          "observed_pct": 53.763440860215056,
+          "expected_pct": 52.38180213321362,
+          "diff_pp": 1.3816387270014332,
+          "interval_pp": [
+            -1.549210849204139,
+            4.312488303207005
+          ],
+          "z": 0.7754043365770883,
+          "p_value": 0.43810077343486875,
+          "group_prior": [
+            0.20106282791681607,
+            1.0378943624442554
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8343335775703011,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 97,
+        "n_with_signal": 3,
+        "unjustified_rate_window": 0.03917525773195876,
+        "unjustified_rate_baseline": 0.030927835051546393
+      },
+      "cards": [
+        {
+          "card_id": "SCH05-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 24 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH05-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH05/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH05-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "menos de 5 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 3.9% dos dias; no início do período: 3.1%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH05-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH05/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH06",
+      "label": "Escola fictícia SCH06 · 6º ano",
+      "measure": {
+        "n_students": 88,
+        "n_computed": 88,
+        "n_insufficient": 0,
+        "theta_mean": 0.07724388413563615,
+        "theta_mean_interval_90": [
+          -0.07287624314954855,
+          0.22736401142082086
+        ],
+        "mean_posterior_sd": 0.38518836734911877,
+        "n_clearly_below": 2,
+        "n_uncertain": 29,
+        "n_clearly_above": 57,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "29",
+          "n_clearly_above": "57"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH06",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 517,
+          "observed_pct": 44.48742746615087,
+          "expected_pct": 43.91872652593308,
+          "diff_pp": 0.5687009402177892,
+          "interval_pp": [
+            -2.730115774966703,
+            3.8675176554022808
+          ],
+          "z": 0.283565255342059,
+          "p_value": 0.776743566750324,
+          "group_prior": [
+            0.08864133993897086,
+            0.8928110739439958
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9709294584379049,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH06",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 855,
+          "observed_pct": 53.801169590643276,
+          "expected_pct": 52.2855019552722,
+          "diff_pp": 1.5156676353710776,
+          "interval_pp": [
+            -1.4916570216143261,
+            4.522992292356482
+          ],
+          "z": 0.8289931057168127,
+          "p_value": 0.40710830842477563,
+          "group_prior": [
+            0.07403237664699544,
+            0.9748255830547636
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8343335775703011,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH06",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 677,
+          "observed_pct": 48.15361890694239,
+          "expected_pct": 50.199648625170056,
+          "diff_pp": -2.0460297182276657,
+          "interval_pp": [
+            -5.154977811128197,
+            1.0629183746728665
+          ],
+          "z": -1.0824945616050683,
+          "p_value": 0.27903283062545514,
+          "group_prior": [
+            0.11809517335891717,
+            0.8561171237381333
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.7675080900183189,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 88,
+        "n_with_signal": 3,
+        "unjustified_rate_window": 0.04772727272727273,
+        "unjustified_rate_baseline": 0.025
+      },
+      "cards": [
+        {
+          "card_id": "SCH06-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 29 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH06-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH06/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH06-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "menos de 5 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 4.8% dos dias; no início do período: 2.5%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH06-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH06/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH07",
+      "label": "Escola fictícia SCH07 · 6º ano",
+      "measure": {
+        "n_students": 113,
+        "n_computed": 113,
+        "n_insufficient": 0,
+        "theta_mean": -0.09223732327939042,
+        "theta_mean_interval_90": [
+          -0.22658372293188622,
+          0.04210907637310536
+        ],
+        "mean_posterior_sd": 0.3890354177132248,
+        "n_clearly_below": 5,
+        "n_uncertain": 41,
+        "n_clearly_above": 67,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "5",
+          "n_uncertain": "41",
+          "n_clearly_above": "67"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH07",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 663,
+          "observed_pct": 44.34389140271493,
+          "expected_pct": 41.84252245942821,
+          "diff_pp": 2.5013689432867228,
+          "interval_pp": [
+            -0.5421440414882189,
+            5.544881928061665
+          ],
+          "z": 1.3518541893170806,
+          "p_value": 0.17642196488089412,
+          "group_prior": [
+            -0.004725778970489018,
+            0.8764497090462302
+          ],
+          "reference_excludes": [
+            "resolucao_problemas"
+          ],
+          "q_value_bh": 0.6615823683033529,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH07",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 1083,
+          "observed_pct": 51.338873499538316,
+          "expected_pct": 53.92970263159219,
+          "diff_pp": -2.590829132053879,
+          "interval_pp": [
+            -5.629839655554571,
+            0.4481813914468127
+          ],
+          "z": -1.4022770443589705,
+          "p_value": 0.16083253259657526,
+          "group_prior": [
+            0.13507686953747527,
+            1.0777884547607794
+          ],
+          "reference_excludes": [
+            "resolucao_problemas"
+          ],
+          "q_value_bh": 0.643330130386301,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH07",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 864,
+          "observed_pct": 39.699074074074076,
+          "expected_pct": 49.01516475235815,
+          "diff_pp": -9.316090678284079,
+          "interval_pp": [
+            -12.053374934861356,
+            -6.578806421706803
+          ],
+          "z": -5.598105313455877,
+          "p_value": 2.1670710237836756e-08,
+          "group_prior": [
+            0.035501788437365844,
+            0.936325375581046
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 6.501213071351026e-07,
+          "signal": "lower_than_expected",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 113,
+        "n_with_signal": 6,
+        "unjustified_rate_window": 0.061061946902654866,
+        "unjustified_rate_baseline": 0.03761061946902655
+      },
+      "cards": [
+        {
+          "card_id": "SCH07-axis-resolucao_problemas",
+          "kind": "sinal_observado",
+          "title": "Possível dificuldade localizada em Resolução de problemas",
+          "what_we_see": "Os estudantes acertaram 40% dos itens de Resolução de problemas; pelo desempenho deles nos outros eixos, o esperado era 49% (diferença -9.3 p.p., intervalo 90% [-12.1; -6.6]).",
+          "why": "A diferença continua significativa depois de corrigir para múltiplas comparações (Benjamini-Hochberg, q = 6.5e-07) e foi calculada com a própria escola como referência — não é comparação com outras escolas.",
+          "uncertainty": "864 respostas em 8 itens; o intervalo mostra a margem.",
+          "could_be_wrong": [
+            "conteúdo ainda não trabalhado no período (não é falta de capacidade)",
+            "item ambíguo ou com problema de redação/acessibilidade",
+            "problema na aplicação (tempo, caderno, ordem dos itens)",
+            "falso positivo — a correção reduz, mas não elimina"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH07-resolucao_problemas",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH07/axis/resolucao_problemas",
+            "item_parameters_math6.csv"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH07-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 41 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH07-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH07/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH07-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "6 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 6.1% dos dias; no início do período: 3.8%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH07-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH07/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH08",
+      "label": "Escola fictícia SCH08 · 6º ano",
+      "measure": {
+        "n_students": 117,
+        "n_computed": 117,
+        "n_insufficient": 0,
+        "theta_mean": 0.12958001210429432,
+        "theta_mean_interval_90": [
+          0.006361430591776587,
+          0.25279859361681206
+        ],
+        "mean_posterior_sd": 0.38262344524737163,
+        "n_clearly_below": 0,
+        "n_uncertain": 37,
+        "n_clearly_above": 80,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "0",
+          "n_uncertain": "37",
+          "n_clearly_above": "80"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH08",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 671,
+          "observed_pct": 45.603576751117735,
+          "expected_pct": 44.879495491880235,
+          "diff_pp": 0.7240812592374978,
+          "interval_pp": [
+            -2.190893331296211,
+            3.639055849771206
+          ],
+          "z": 0.4085825273853669,
+          "p_value": 0.6828460553277089,
+          "group_prior": [
+            0.14781773478962765,
+            0.8229389310423761
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9593712344360166,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH08",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 1133,
+          "observed_pct": 54.36893203883495,
+          "expected_pct": 54.07501762324882,
+          "diff_pp": 0.29391441558613546,
+          "interval_pp": [
+            -2.3455487963534982,
+            2.933377627525769
+          ],
+          "z": 0.1831607996289944,
+          "p_value": 0.8546718513583342,
+          "group_prior": [
+            0.14616223466396344,
+            0.8405001483563284
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9861598284903856,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH08",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 900,
+          "observed_pct": 51.111111111111114,
+          "expected_pct": 51.476694537729024,
+          "diff_pp": -0.3655834266179075,
+          "interval_pp": [
+            -3.0718490644353564,
+            2.3406822111995416
+          ],
+          "z": -0.2221996306729056,
+          "p_value": 0.824158481611411,
+          "group_prior": [
+            0.16097312064468872,
+            0.8253567348231279
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9861598284903856,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 117,
+        "n_with_signal": 15,
+        "unjustified_rate_window": 0.1094017094017094,
+        "unjustified_rate_baseline": 0.08376068376068375
+      },
+      "cards": [
+        {
+          "card_id": "SCH08-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "15 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 10.9% dos dias; no início do período: 8.4%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH08-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH08/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH09",
+      "label": "Escola fictícia SCH09 · 6º ano",
+      "measure": {
+        "n_students": 88,
+        "n_computed": 88,
+        "n_insufficient": 0,
+        "theta_mean": -0.5738636105242038,
+        "theta_mean_interval_90": [
+          -0.7172744646941988,
+          -0.43045275635420877
+        ],
+        "mean_posterior_sd": 0.40512216297244696,
+        "n_clearly_below": 8,
+        "n_uncertain": 53,
+        "n_clearly_above": 27,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "8",
+          "n_uncertain": "53",
+          "n_clearly_above": "27"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH09",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 510,
+          "observed_pct": 29.019607843137255,
+          "expected_pct": 29.113029278484337,
+          "diff_pp": -0.09342143534708242,
+          "interval_pp": [
+            -3.241865781516493,
+            3.055022910822328
+          ],
+          "z": -0.04880651200095651,
+          "p_value": 0.9610734925349965,
+          "group_prior": [
+            -0.6716820881496715,
+            0.8616751530602444
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9972187542609366,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH09",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 841,
+          "observed_pct": 35.07728894173603,
+          "expected_pct": 36.84324325106741,
+          "diff_pp": -1.765954309331389,
+          "interval_pp": [
+            -4.701297228725059,
+            1.169388610062281
+          ],
+          "z": -0.989573085837046,
+          "p_value": 0.322382830521837,
+          "group_prior": [
+            -0.6585757749500045,
+            0.9217413264961122
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.7737187932524088,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH09",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 673,
+          "observed_pct": 35.21545319465082,
+          "expected_pct": 34.34446922649305,
+          "diff_pp": 0.8709839681577671,
+          "interval_pp": [
+            -2.1071053353032343,
+            3.849073271618768
+          ],
+          "z": 0.48106050324815236,
+          "p_value": 0.6304734982693299,
+          "group_prior": [
+            -0.7004597693175355,
+            0.881997986106534
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9457102474039948,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 88,
+        "n_with_signal": 3,
+        "unjustified_rate_window": 0.05909090909090909,
+        "unjustified_rate_baseline": 0.03125
+      },
+      "cards": [
+        {
+          "card_id": "SCH09-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "8 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 53 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.41 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH09-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH09/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH09-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "menos de 5 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 5.9% dos dias; no início do período: 3.1%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH09-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH09/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH10",
+      "label": "Escola fictícia SCH10 · 6º ano",
+      "measure": {
+        "n_students": 102,
+        "n_computed": 102,
+        "n_insufficient": 0,
+        "theta_mean": -0.14180478347767375,
+        "theta_mean_interval_90": [
+          -0.28944960323628943,
+          0.0058400362809419015
+        ],
+        "mean_posterior_sd": 0.3959853154800558,
+        "n_clearly_below": 5,
+        "n_uncertain": 42,
+        "n_clearly_above": 55,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "5",
+          "n_uncertain": "42",
+          "n_clearly_above": "55"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH10",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 576,
+          "observed_pct": 41.31944444444444,
+          "expected_pct": 38.695047160562176,
+          "diff_pp": 2.6243972838822702,
+          "interval_pp": [
+            -0.43971139665496634,
+            5.688505964419507
+          ],
+          "z": 1.4088107965538872,
+          "p_value": 0.15889112181958143,
+          "group_prior": [
+            -0.20018028670183036,
+            0.9902292635179224
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.643330130386301,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH10",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 973,
+          "observed_pct": 48.201438848920866,
+          "expected_pct": 46.67572561209379,
+          "diff_pp": 1.5257132368270692,
+          "interval_pp": [
+            -1.2984427059591013,
+            4.34986917961324
+          ],
+          "z": 0.8886106157463297,
+          "p_value": 0.3742123838298148,
+          "group_prior": [
+            -0.19071942108527923,
+            0.9117478944697472
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8343335775703011,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH10",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 775,
+          "observed_pct": 42.064516129032256,
+          "expected_pct": 45.95970692483995,
+          "diff_pp": -3.895190795807689,
+          "interval_pp": [
+            -6.752156228887981,
+            -1.038225362727396
+          ],
+          "z": -2.2425958095140186,
+          "p_value": 0.024922890722515505,
+          "group_prior": [
+            -0.11309718331694561,
+            1.0707016416420405
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.29907468867018605,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 102,
+        "n_with_signal": 8,
+        "unjustified_rate_window": 0.059803921568627454,
+        "unjustified_rate_baseline": 0.03333333333333333
+      },
+      "cards": [
+        {
+          "card_id": "SCH10-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 42 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.40 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH10-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH10/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH10-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "8 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 6.0% dos dias; no início do período: 3.3%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH10-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH10/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH11",
+      "label": "Escola fictícia SCH11 · 6º ano",
+      "measure": {
+        "n_students": 95,
+        "n_computed": 95,
+        "n_insufficient": 0,
+        "theta_mean": 0.09839948328845763,
+        "theta_mean_interval_90": [
+          -0.04853832130483779,
+          0.24533728788175305
+        ],
+        "mean_posterior_sd": 0.3867478862331051,
+        "n_clearly_below": 2,
+        "n_uncertain": 26,
+        "n_clearly_above": 67,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "26",
+          "n_clearly_above": "67"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH11",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 537,
+          "observed_pct": 42.45810055865922,
+          "expected_pct": 45.934494533199796,
+          "diff_pp": -3.4763939745405743,
+          "interval_pp": [
+            -6.706617199442559,
+            -0.24617074963858937
+          ],
+          "z": -1.7702055986885594,
+          "p_value": 0.07669289701753203,
+          "group_prior": [
+            0.16360692248897518,
+            0.9266334915786587
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.49949563078550463,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH11",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 915,
+          "observed_pct": 52.78688524590164,
+          "expected_pct": 54.70675120213135,
+          "diff_pp": -1.9198659562297087,
+          "interval_pp": [
+            -4.838529546395991,
+            0.9987976339365737
+          ],
+          "z": -1.0819672715981565,
+          "p_value": 0.2792670709147582,
+          "group_prior": [
+            0.1581636499315482,
+            0.8896348624402943
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.7675080900183189,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH11",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 736,
+          "observed_pct": 53.125,
+          "expected_pct": 49.47002503286944,
+          "diff_pp": 3.6549749671305647,
+          "interval_pp": [
+            0.6716094191110421,
+            6.638340515150088
+          ],
+          "z": 2.015139859442463,
+          "p_value": 0.04388999683604766,
+          "group_prior": [
+            0.05015178432129342,
+            0.9218316521542591
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.4388999683604766,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 95,
+        "n_with_signal": 4,
+        "unjustified_rate_window": 0.05789473684210526,
+        "unjustified_rate_baseline": 0.03315789473684211
+      },
+      "cards": [
+        {
+          "card_id": "SCH11-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 26 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH11-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH11/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH11-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "menos de 5 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 5.8% dos dias; no início do período: 3.3%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH11-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH11/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH12",
+      "label": "Escola fictícia SCH12 · 6º ano",
+      "measure": {
+        "n_students": 102,
+        "n_computed": 102,
+        "n_insufficient": 0,
+        "theta_mean": 0.26195391075003255,
+        "theta_mean_interval_90": [
+          0.12058839596985754,
+          0.40331942553020755
+        ],
+        "mean_posterior_sd": 0.38607457223401986,
+        "n_clearly_below": 0,
+        "n_uncertain": 30,
+        "n_clearly_above": 72,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "0",
+          "n_uncertain": "30",
+          "n_clearly_above": "72"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH12",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 591,
+          "observed_pct": 48.900169204737736,
+          "expected_pct": 47.301606332165576,
+          "diff_pp": 1.5985628725721568,
+          "interval_pp": [
+            -1.4821755488701123,
+            4.679301294014426
+          ],
+          "z": 0.8534973045940405,
+          "p_value": 0.3933835817610387,
+          "group_prior": [
+            0.28313470938962315,
+            0.9081092257169631
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8343335775703011,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH12",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 992,
+          "observed_pct": 57.96370967741935,
+          "expected_pct": 57.34564491637314,
+          "diff_pp": 0.6180647610462177,
+          "interval_pp": [
+            -2.155723684064339,
+            3.391853206156774
+          ],
+          "z": 0.3665117524336813,
+          "p_value": 0.7139832446357208,
+          "group_prior": [
+            0.2993583045389677,
+            0.9785613743104277
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9593712344360166,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH12",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 791,
+          "observed_pct": 53.603034134007586,
+          "expected_pct": 54.76875140030076,
+          "diff_pp": -1.1657172662931683,
+          "interval_pp": [
+            -4.0335367289679445,
+            1.7021021963816074
+          ],
+          "z": -0.6686035499856425,
+          "p_value": 0.503748407439785,
+          "group_prior": [
+            0.3338700298634609,
+            0.9123672341304404
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8739242071860449,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 102,
+        "n_with_signal": 11,
+        "unjustified_rate_window": 0.08529411764705883,
+        "unjustified_rate_baseline": 0.056372549019607844
+      },
+      "cards": [
+        {
+          "card_id": "SCH12-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "11 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 8.5% dos dias; no início do período: 5.6%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH12-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH12/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH13",
+      "label": "Escola fictícia SCH13 · 6º ano",
+      "measure": {
+        "n_students": 97,
+        "n_computed": 97,
+        "n_insufficient": 0,
+        "theta_mean": 0.4359429424406926,
+        "theta_mean_interval_90": [
+          0.28161018106625246,
+          0.5902757038151327
+        ],
+        "mean_posterior_sd": 0.3957140277303902,
+        "n_clearly_below": 2,
+        "n_uncertain": 21,
+        "n_clearly_above": 74,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "21",
+          "n_clearly_above": "74"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH13",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 557,
+          "observed_pct": 51.166965888689404,
+          "expected_pct": 52.15050480270909,
+          "diff_pp": -0.9835389140196805,
+          "interval_pp": [
+            -4.100604562343104,
+            2.1335267343037425
+          ],
+          "z": -0.5190065697985341,
+          "p_value": 0.6037561598279391,
+          "group_prior": [
+            0.5284523507147068,
+            1.0529357307795946
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9304124781901246,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH13",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 931,
+          "observed_pct": 61.76154672395274,
+          "expected_pct": 61.741874939536494,
+          "diff_pp": 0.019671784416247083,
+          "interval_pp": [
+            -2.7923941832928127,
+            2.831737752125307
+          ],
+          "z": 0.01150656005841581,
+          "p_value": 0.9908192959708362,
+          "group_prior": [
+            0.5079972019686307,
+            0.9887300927887575
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9972187542609366,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH13",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 746,
+          "observed_pct": 58.98123324396783,
+          "expected_pct": 58.47359218009268,
+          "diff_pp": 0.5076410638751446,
+          "interval_pp": [
+            -2.381033072162018,
+            3.396315199912307
+          ],
+          "z": 0.28905830349214345,
+          "p_value": 0.7725367611466805,
+          "group_prior": [
+            0.5234294496513673,
+            1.0262653216940973
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9709294584379049,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 97,
+        "n_with_signal": 1,
+        "unjustified_rate_window": 0.020618556701030927,
+        "unjustified_rate_baseline": 0.01443298969072165
+      },
+      "cards": [
+        {
+          "card_id": "SCH13-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 21 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.40 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH13-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH13/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH13-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "menos de 5 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 2.1% dos dias; no início do período: 1.4%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH13-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH13/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH14",
+      "label": "Escola fictícia SCH14 · 6º ano",
+      "measure": {
+        "n_students": 106,
+        "n_computed": 106,
+        "n_insufficient": 0,
+        "theta_mean": -0.20725629497705184,
+        "theta_mean_interval_90": [
+          -0.3543618282231242,
+          -0.060150761730979496
+        ],
+        "mean_posterior_sd": 0.3963288260340644,
+        "n_clearly_below": 5,
+        "n_uncertain": 47,
+        "n_clearly_above": 54,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "5",
+          "n_uncertain": "47",
+          "n_clearly_above": "54"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH14",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 616,
+          "observed_pct": 37.98701298701299,
+          "expected_pct": 37.427318817887645,
+          "diff_pp": 0.5596941691253415,
+          "interval_pp": [
+            -2.3707703758637315,
+            3.4901587141144144
+          ],
+          "z": 0.3141532579343462,
+          "p_value": 0.7534046415130284,
+          "group_prior": [
+            -0.2544125695936046,
+            1.0422761882242564
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9709294584379049,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH14",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 1022,
+          "observed_pct": 43.54207436399217,
+          "expected_pct": 47.630402607804776,
+          "diff_pp": -4.0883282438126045,
+          "interval_pp": [
+            -6.84242212965587,
+            -1.3342343579693394
+          ],
+          "z": -2.4417110740378027,
+          "p_value": 0.01461784032026369,
+          "group_prior": [
+            -0.1589208657811395,
+            0.9951898849602541
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.2874986057342348,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH14",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 807,
+          "observed_pct": 45.9727385377943,
+          "expected_pct": 42.019877278248345,
+          "diff_pp": 3.952861259545949,
+          "interval_pp": [
+            1.1769799139551467,
+            6.728742605136751
+          ],
+          "z": 2.3422752524806847,
+          "p_value": 0.019166573715615653,
+          "group_prior": [
+            -0.3107229174905824,
+            1.0179004024652678
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.2874986057342348,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 106,
+        "n_with_signal": 11,
+        "unjustified_rate_window": 0.09528301886792453,
+        "unjustified_rate_baseline": 0.08349056603773584
+      },
+      "cards": [
+        {
+          "card_id": "SCH14-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 47 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.40 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH14-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH14/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH14-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "11 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 9.5% dos dias; no início do período: 8.3%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH14-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH14/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH15",
+      "label": "Escola fictícia SCH15 · 6º ano",
+      "measure": {
+        "n_students": 88,
+        "n_computed": 88,
+        "n_insufficient": 0,
+        "theta_mean": 0.08792663015530383,
+        "theta_mean_interval_90": [
+          -0.06195326741573137,
+          0.23780652772633903
+        ],
+        "mean_posterior_sd": 0.38652225314929306,
+        "n_clearly_below": 1,
+        "n_uncertain": 31,
+        "n_clearly_above": 56,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "31",
+          "n_clearly_above": "56"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH15",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 503,
+          "observed_pct": 45.12922465208747,
+          "expected_pct": 44.07256825324371,
+          "diff_pp": 1.0566563988437683,
+          "interval_pp": [
+            -2.3015216947705044,
+            4.4148344924580405
+          ],
+          "z": 0.5175559668454227,
+          "p_value": 0.6047681108235811,
+          "group_prior": [
+            0.08461747455596928,
+            0.9043742761677305
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9304124781901246,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH15",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 847,
+          "observed_pct": 51.239669421487605,
+          "expected_pct": 54.424252575954625,
+          "diff_pp": -3.184583154467023,
+          "interval_pp": [
+            -6.208694315422007,
+            -0.16047199351203975
+          ],
+          "z": -1.7321364437871662,
+          "p_value": 0.08324927179758411,
+          "group_prior": [
+            0.1641140724713617,
+            0.9465959822603294
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.49949563078550463,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH15",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 680,
+          "observed_pct": 51.470588235294116,
+          "expected_pct": 49.576353983980944,
+          "diff_pp": 1.8942342513131691,
+          "interval_pp": [
+            -1.2110754927759897,
+            4.999543995402328
+          ],
+          "z": 1.0033582268238663,
+          "p_value": 0.31568805157263835,
+          "group_prior": [
+            0.07598619651794164,
+            0.8466403668166905
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.7737187932524088,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 88,
+        "n_with_signal": 15,
+        "unjustified_rate_window": 0.10568181818181818,
+        "unjustified_rate_baseline": 0.0625
+      },
+      "cards": [
+        {
+          "card_id": "SCH15-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 31 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH15-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH15/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH15-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "15 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 10.6% dos dias; no início do período: 6.2%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH15-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH15/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH16",
+      "label": "Escola fictícia SCH16 · 6º ano",
+      "measure": {
+        "n_students": 112,
+        "n_computed": 112,
+        "n_insufficient": 0,
+        "theta_mean": -0.2110791082640002,
+        "theta_mean_interval_90": [
+          -0.3476864166068234,
+          -0.07447179992117697
+        ],
+        "mean_posterior_sd": 0.3935080765958027,
+        "n_clearly_below": 5,
+        "n_uncertain": 45,
+        "n_clearly_above": 62,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "5",
+          "n_uncertain": "45",
+          "n_clearly_above": "62"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH16",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 639,
+          "observed_pct": 37.40219092331768,
+          "expected_pct": 37.75210305074739,
+          "diff_pp": -0.3499121274297004,
+          "interval_pp": [
+            -3.2667916234015846,
+            2.566967368542184
+          ],
+          "z": -0.197318481175472,
+          "p_value": 0.8435783177600806,
+          "group_prior": [
+            -0.237996150617949,
+            0.9465733088631503
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9861598284903856,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH16",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 1084,
+          "observed_pct": 44.64944649446495,
+          "expected_pct": 45.70670730934787,
+          "diff_pp": -1.0572608148829277,
+          "interval_pp": [
+            -3.730878245491518,
+            1.6163566157256624
+          ],
+          "z": -0.6504443253865227,
+          "p_value": 0.5154052534259324,
+          "group_prior": [
+            -0.22769303292860205,
+            0.9072799324268389
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8739242071860449,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH16",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 863,
+          "observed_pct": 44.0324449594438,
+          "expected_pct": 42.71466141615573,
+          "diff_pp": 1.3177835432880733,
+          "interval_pp": [
+            -1.3916468909823672,
+            4.027213977558514
+          ],
+          "z": 0.8000061611834672,
+          "p_value": 0.4237072274899799,
+          "group_prior": [
+            -0.28035404667164054,
+            0.9844788049804813
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8343335775703011,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 112,
+        "n_with_signal": 13,
+        "unjustified_rate_window": 0.09910714285714285,
+        "unjustified_rate_baseline": 0.06875
+      },
+      "cards": [
+        {
+          "card_id": "SCH16-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 45 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH16-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH16/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH16-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "13 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 9.9% dos dias; no início do período: 6.9%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH16-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH16/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH17",
+      "label": "Escola fictícia SCH17 · 6º ano",
+      "measure": {
+        "n_students": 98,
+        "n_computed": 98,
+        "n_insufficient": 0,
+        "theta_mean": -0.2894587351363039,
+        "theta_mean_interval_90": [
+          -0.45768791691249977,
+          -0.12122955336010799
+        ],
+        "mean_posterior_sd": 0.4064457124934932,
+        "n_clearly_below": 7,
+        "n_uncertain": 44,
+        "n_clearly_above": 47,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "7",
+          "n_uncertain": "44",
+          "n_clearly_above": "47"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH17",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 559,
+          "observed_pct": 38.46153846153846,
+          "expected_pct": 35.40346072710897,
+          "diff_pp": 3.0580777344294843,
+          "interval_pp": [
+            0.03970388957906318,
+            6.076451579279906
+          ],
+          "z": 1.6664901405628068,
+          "p_value": 0.09561583033584446,
+          "group_prior": [
+            -0.3994280722855324,
+            1.152167035193193
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.5111733454001582,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH17",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 934,
+          "observed_pct": 42.29122055674518,
+          "expected_pct": 45.08784022584777,
+          "diff_pp": -2.796619669102586,
+          "interval_pp": [
+            -5.611617091885489,
+            0.01837775368031796
+          ],
+          "z": -1.6341151749189273,
+          "p_value": 0.10223466908003163,
+          "group_prior": [
+            -0.3040886851323967,
+            1.174161381205544
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.5111733454001582,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH17",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 750,
+          "observed_pct": 42.53333333333333,
+          "expected_pct": 41.91111855209693,
+          "diff_pp": 0.6222147812364028,
+          "interval_pp": [
+            -2.2279196359845965,
+            3.4723491984574024
+          ],
+          "z": 0.35908911294696855,
+          "p_value": 0.7195284258270125,
+          "group_prior": [
+            -0.36319250295822536,
+            1.1811897008080419
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9593712344360166,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 98,
+        "n_with_signal": 1,
+        "unjustified_rate_window": 0.04285714285714286,
+        "unjustified_rate_baseline": 0.03469387755102041
+      },
+      "cards": [
+        {
+          "card_id": "SCH17-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "7 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 44 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.41 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH17-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH17/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH17-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "menos de 5 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 4.3% dos dias; no início do período: 3.5%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH17-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH17/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH18",
+      "label": "Escola fictícia SCH18 · 6º ano",
+      "measure": {
+        "n_students": 98,
+        "n_computed": 98,
+        "n_insufficient": 0,
+        "theta_mean": 0.44551317715362554,
+        "theta_mean_interval_90": [
+          0.3029526620872075,
+          0.5880736922200436
+        ],
+        "mean_posterior_sd": 0.39307614496677695,
+        "n_clearly_below": 1,
+        "n_uncertain": 19,
+        "n_clearly_above": 78,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "19",
+          "n_clearly_above": "78"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH18",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 556,
+          "observed_pct": 52.33812949640288,
+          "expected_pct": 52.624113178052546,
+          "diff_pp": -0.28598368164966936,
+          "interval_pp": [
+            -3.429466294947419,
+            2.85749893164808
+          ],
+          "z": -0.14964335861775532,
+          "p_value": 0.8810459980876238,
+          "group_prior": [
+            0.526509055805042,
+            0.8858899992322096
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9972187542609366,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH18",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 928,
+          "observed_pct": 62.82327586206897,
+          "expected_pct": 62.186238304268606,
+          "diff_pp": 0.6370375578003581,
+          "interval_pp": [
+            -2.1738345747537817,
+            3.4479096903544977
+          ],
+          "z": 0.37277879890612386,
+          "p_value": 0.7093130833567709,
+          "group_prior": [
+            0.5180831104979258,
+            0.9563258543230476
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9593712344360166,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH18",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 753,
+          "observed_pct": 58.831341301460824,
+          "expected_pct": 58.8404295137529,
+          "diff_pp": -0.009088212292078108,
+          "interval_pp": [
+            -2.912910254316344,
+            2.894733829732188
+          ],
+          "z": -0.005147966622881881,
+          "p_value": 0.9958925350544537,
+          "group_prior": [
+            0.5320656947756373,
+            0.9243192991227664
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9972187542609366,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 98,
+        "n_with_signal": 8,
+        "unjustified_rate_window": 0.07857142857142857,
+        "unjustified_rate_baseline": 0.05714285714285714
+      },
+      "cards": [
+        {
+          "card_id": "SCH18-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 19 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH18-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH18/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH18-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "8 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 7.9% dos dias; no início do período: 5.7%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH18-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH18/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH19",
+      "label": "Escola fictícia SCH19 · 6º ano",
+      "measure": {
+        "n_students": 98,
+        "n_computed": 98,
+        "n_insufficient": 0,
+        "theta_mean": 0.017773585324049376,
+        "theta_mean_interval_90": [
+          -0.11717721340496592,
+          0.15272438405306468
+        ],
+        "mean_posterior_sd": 0.3852322028950391,
+        "n_clearly_below": 2,
+        "n_uncertain": 30,
+        "n_clearly_above": 66,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "menos de 5",
+          "n_uncertain": "30",
+          "n_clearly_above": "66"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH19",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 567,
+          "observed_pct": 42.504409171075835,
+          "expected_pct": 42.66469652063664,
+          "diff_pp": -0.1602873495608057,
+          "interval_pp": [
+            -3.336989769630923,
+            3.0164150705093116
+          ],
+          "z": -0.08299462568914792,
+          "p_value": 0.9338558129508852,
+          "group_prior": [
+            0.038535432391644066,
+            0.771021453249921
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.9972187542609366,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH19",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 943,
+          "observed_pct": 53.022269353128316,
+          "expected_pct": 51.005115831445636,
+          "diff_pp": 2.017153521682676,
+          "interval_pp": [
+            -0.8705354779556316,
+            4.904842521320984
+          ],
+          "z": 1.1489887888457744,
+          "p_value": 0.25056060356781285,
+          "group_prior": [
+            -0.00832865100557963,
+            0.8917372909726741
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.7675080900183189,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH19",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 745,
+          "observed_pct": 47.651006711409394,
+          "expected_pct": 49.22681531112059,
+          "diff_pp": -1.5758085997111986,
+          "interval_pp": [
+            -4.5495732004833025,
+            1.3979560010609053
+          ],
+          "z": -0.8716138762104133,
+          "p_value": 0.3834190580985156,
+          "group_prior": [
+            0.05830877762223677,
+            0.7944845256827668
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8343335775703011,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 98,
+        "n_with_signal": 0,
+        "unjustified_rate_window": 0.01020408163265306,
+        "unjustified_rate_baseline": 0.013265306122448979
+      },
+      "cards": [
+        {
+          "card_id": "SCH19-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "menos de 5 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 30 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.39 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH19-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH19/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    },
+    {
+      "school_id": "SCH20",
+      "label": "Escola fictícia SCH20 · 6º ano",
+      "measure": {
+        "n_students": 95,
+        "n_computed": 95,
+        "n_insufficient": 0,
+        "theta_mean": -0.12212266310639594,
+        "theta_mean_interval_90": [
+          -0.28939697114311197,
+          0.04515164493032009
+        ],
+        "mean_posterior_sd": 0.4002661443648825,
+        "n_clearly_below": 7,
+        "n_uncertain": 35,
+        "n_clearly_above": 53,
+        "display": {
+          "n_insufficient": "0",
+          "n_clearly_below": "7",
+          "n_uncertain": "35",
+          "n_clearly_above": "53"
+        }
+      },
+      "axis": [
+        {
+          "school_id": "SCH20",
+          "axis": "dados_graficos",
+          "n_items": 6,
+          "n_responses": 541,
+          "observed_pct": 36.96857670979667,
+          "expected_pct": 40.52033788245635,
+          "diff_pp": -3.5517611726596785,
+          "interval_pp": [
+            -6.689503228656552,
+            -0.4140191166628056
+          ],
+          "z": -1.861888945188842,
+          "p_value": 0.0626187456011087,
+          "group_prior": [
+            -0.09953767839982203,
+            1.0699606514056315
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.49949563078550463,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH20",
+          "axis": "numeros_operacoes",
+          "n_items": 10,
+          "n_responses": 910,
+          "observed_pct": 48.68131868131868,
+          "expected_pct": 47.61185276348163,
+          "diff_pp": 1.0694659178370522,
+          "interval_pp": [
+            -1.7934573974999002,
+            3.9323892331740047
+          ],
+          "z": 0.6144470878530048,
+          "p_value": 0.5389199277647276,
+          "group_prior": [
+            -0.18237845945358286,
+            1.1668288830624371
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.8739242071860449,
+          "signal": "no_signal",
+          "purification_pass": 2
+        },
+        {
+          "school_id": "SCH20",
+          "axis": "resolucao_problemas",
+          "n_items": 8,
+          "n_responses": 724,
+          "observed_pct": 47.23756906077348,
+          "expected_pct": 45.084551581705206,
+          "diff_pp": 2.1530174790682746,
+          "interval_pp": [
+            -0.7804626978297133,
+            5.086497655966262
+          ],
+          "z": 1.2072345459242964,
+          "p_value": 0.22734182983557238,
+          "group_prior": [
+            -0.1852893179655089,
+            1.1240140449165112
+          ],
+          "reference_excludes": [],
+          "q_value_bh": 0.757806099451908,
+          "signal": "no_signal",
+          "purification_pass": 2
+        }
+      ],
+      "attendance": {
+        "t0_day": 40,
+        "window": [
+          30,
+          39
+        ],
+        "threshold": 3,
+        "n_students": 95,
+        "n_with_signal": 5,
+        "unjustified_rate_window": 0.05894736842105263,
+        "unjustified_rate_baseline": 0.035263157894736843
+      },
+      "cards": [
+        {
+          "card_id": "SCH20-measure-below",
+          "kind": "medida_psicometrica",
+          "title": "Estudantes com proficiência abaixo do corte ilustrativo, com incerteza baixa",
+          "what_we_see": "7 estudantes têm o intervalo de 90% da proficiência inteiro abaixo do corte ilustrativo (θ = -1.0). Outros 35 têm intervalo que cruza o corte: para eles a medida não permite concluir.",
+          "why": "Só entram estudantes cuja incerteza não alcança o corte; o restante não é tratado como sinal.",
+          "uncertainty": "incerteza posterior média da escola: 0.40 (escala θ)",
+          "could_be_wrong": [
+            "o corte é ilustrativo e não é padrão de desempenho",
+            "o instrumento é autoral e não tem validade estabelecida em contexto real",
+            "um único teste é uma fotografia, não uma trajetória"
+          ],
+          "suggested_discussion": {
+            "id": "PB-03",
+            "name": "Apoio pedagógico direcionado",
+            "responsible": "docente de referência",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH20-proficiencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH20/measure",
+            "restricted/scores.csv (acesso restrito)"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        },
+        {
+          "card_id": "SCH20-attendance",
+          "kind": "sinal_observado",
+          "title": "Aumento de faltas não justificadas",
+          "what_we_see": "5 estudantes têm 3 ou mais faltas não justificadas nos dias letivos 30–39.",
+          "why": "É um registro observado (frequência), não uma previsão. Taxa de faltas não justificadas na janela: 5.9% dos dias; no início do período: 3.5%.",
+          "uncertainty": "registro de frequência pode ter erro de lançamento — verificar antes de agir",
+          "could_be_wrong": [
+            "justificativa não lançada",
+            "transferência não registrada",
+            "erro de digitação no diário"
+          ],
+          "suggested_discussion": {
+            "id": "PB-01",
+            "name": "Checagem da qualidade do registro de frequência",
+            "responsible": "secretaria escolar",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "next_if_confirmed": {
+            "id": "PB-02",
+            "name": "Conversa acolhedora com o estudante",
+            "responsible": "coordenação pedagógica",
+            "status": "ilustrativo — requer aprovação institucional"
+          },
+          "subject_ref": "turma-SCH20-frequencia",
+          "evidence_refs": [
+            "educator_view.json#schools/SCH20/attendance"
+          ],
+          "requires_human_review": true,
+          "decided_by_model": false
+        }
+      ]
+    }
+  ],
+  "what_it_does_not_do": [
+    "Não classifica, pune nem ranqueia estudantes, turmas, escolas ou docentes.",
+    "Não decide sozinho aprovação, reprovação, encaminhamento ou direito a atendimento.",
+    "Não compara escolas entre si: cada eixo é comparado ao desempenho da própria escola nos outros eixos.",
+    "Não usa dados reais de menores nesta demonstração — toda a população é artificial.",
+    "Não transforma ausência de resposta em nota zero: sem resposta informativa não há medida.",
+    "Não usa o risco preditivo para priorizar: nesta simulação ele não superou a frequência sozinha.",
+    "Toda sugestão pode ser contestada e só vira caso de apoio após revisão por profissional autorizado."
+  ],
+  "limitations": [
+    "População, itens e frequência são sintéticos; nenhum número descreve escolas reais.",
+    "Itens autorais e ilustrativos, sem revisão de especialistas reais nem entrevista cognitiva.",
+    "Os resultados podem mudar com outros dados; a incerteza mostrada é parte do resultado.",
+    "Nenhum piloto com escolas, educadores reais ou estudo de impacto foi realizado."
+  ]
+}
